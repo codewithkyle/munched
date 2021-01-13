@@ -3,7 +3,7 @@ const path = require("path");
 const cwd = process.cwd();
 
 const project = require(path.join(cwd, "package.json"));
-const publicDir = path.join(cwd, "Client", "wwwroot");
+const publicDir = path.join(cwd, "wwwroot");
 
 if (fs.existsSync(path.join(publicDir, "app.json"))){
     fs.unlinkSync(path.join(publicDir, "app.json"));

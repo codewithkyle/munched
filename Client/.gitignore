@@ -5,6 +5,7 @@ node_modules
 /_js
 web_modules
 compiled
+public
 /wwwroot/js
 /wwwroot/css
 .editorconfig
