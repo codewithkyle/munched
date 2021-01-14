@@ -6,59 +6,32 @@ use Closure;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use App\Models\User;
 use \Firebase\JWT\JWT;
+use \Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Log;
 
 class Authenticate
 {
-    /**
-     * The authentication guard factory instance.
-     *
-     * @var \Illuminate\Contracts\Auth\Factory
-     */
+    /** @var Auth */
     protected $auth;
 
-    /**
-     * Create a new middleware instance.
-     *
-     * @param  \Illuminate\Contracts\Auth\Factory  $auth
-     * @return void
-     */
     public function __construct(Auth $auth)
     {
         $this->auth = $auth;
     }
 
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string|null  $guard
-     * @return mixed
-     */
-    public function handle($request, Closure $next, $guard = null)
+    public function handle(Request $request, Closure $next, $guard = null): mixed
     {
-        $token = $request->header("authorization");
-        if (!$token){
-            $token = $request->input("token");
-        } else {
-            $token = trim(substr($token, 7));
-        }
-        if (!$token) {
-            return response()->json([
-                "success" => false,
-                "data" => null,
-                "error" => "Unauthorized."
-            ], 401);
+        $token = $this->getTokenFromRequeset($request);
+
+        if (empty($token)) {
+            $this->returnUnauthorized();
         }
 
         try{
             $payload = JWT::decode($token, env("JWT_SECRET"), ['HS256']);
         }catch (\Exception $e){
-            return response()->json([
-                "success" => false,
-                "data" => null,
-                "error" => $e->getMessage()
-            ], 500);
+            $this->returnException($e);
         }
 
         $user = User::where("id", $payload->sub)->first();
@@ -70,5 +43,36 @@ class Authenticate
         ]);
 
         return $next($request);
+    }
+
+    private function getTokenFromRequeset(Request $request): string
+    {
+        $token = $request->header("authorization");
+        if (!$token){
+            $token = $request->input("token");
+        } else if (str_contains($token, "bearer")) {
+            $token = trim(substr($token, 7));
+        } else {
+            Log::error('JWT token mising bearer keyword');
+            $token = null;
+        }
+    }
+
+    private function returnException(\Exception $e): JsonResponse
+    {
+        return response()->json([
+            "success" => false,
+            "data" => null,
+            "error" => $e->getMessage()
+        ], 500);
+    }
+
+    private function returnUnauthorized(): JsonResponse
+    {
+        return response()->json([
+            "success" => false,
+            "data" => null,
+            "error" => "Unauthorized."
+        ], 401);
     }
 }
