@@ -7,13 +7,26 @@ namespace Munched.Models
         [Required(
             ErrorMessage = "An email is requried."
         )]
+        [StringLength(
+            255,
+            ErrorMessage = "Names cannot be longer than 255 characters."
+        )]
         public string Email { get; set; }
+
+        [Required(
+            ErrorMessage = "Your name is requried."
+        )]
+        [StringLength(
+            255,
+            ErrorMessage = "Names cannot be longer than 255 characters."
+        )]
+        public string FullName { get; set; }
 
         [Required(
             ErrorMessage = "A password is requried."
         )]
         [StringLength(
-            128,
+            255,
             MinimumLength = 6,
             ErrorMessage = "Passwords must be at least 6 characters."
         )]

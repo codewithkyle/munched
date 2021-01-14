@@ -1,8 +1,9 @@
-async function RegisterUser(email: string, password: string): Promise<boolean> {
+async function RegisterUser(email: string, password: string, fullName: string): Promise<boolean> {
     let success = false;
     const data = {
         email: email,
         password: password,
+        fullName: fullName,
     };
     const request = await fetch(`${API_URL}/${API_VERSION}/register`, {
         method: "POST",

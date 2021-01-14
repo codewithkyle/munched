@@ -1,0 +1,27 @@
+@page "/"
+@inherits LoginBase;
+
+<div class="block mx-auto w-full max-w-mobile">
+    <div class="radius-0.5 p-2 bg-white shadow-md border-1 border-solid border-grey-300 block mb-1.5">
+        <h1 class="font-medium block mb-2.5 font-lg text-center">Login</h1>
+        <EditForm Model="@LoginForm" OnValidSubmit="@LoginUser" grid="columns 1 gap-1.5">
+            <DataAnnotationsValidator />
+            <div class="input">
+                <label for="loginEmail">Email Address</label>
+                <InputText type="email" id="loginEmail" @bind-Value="@LoginForm.Email" />
+                <ValidationMessage For="@(() => LoginForm.Email)" />
+            </div>
+            <div class="input">
+                <label for="loginPassword">Password</label>
+                <InputText type="password" id="loginPassword" @bind-Value="@LoginForm.Password" />
+                <ValidationMessage For="@(() => LoginForm.Password)" />
+            </div>
+            <button type="submit" class="button -solid -primary block w-full">
+                Log in
+            </button>
+        </EditForm>
+    </div>
+    <p class="block text-center font-grey-700 font-sm">Don't have an account? <a class="font-primary-700"
+            href="/register">Sign
+            up.</a></p>
+</div>

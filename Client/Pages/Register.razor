@@ -1,0 +1,32 @@
+﻿@page "/register"
+@inherits RegisterBase;
+
+<div class="block w-full mx-auto w-full max-w-mobile">
+    <div class="radius-0.5 p-2 bg-white shadow-md border-1 border-solid border-grey-300 block mb-1.5">
+        <h1 class="font-medium block mb-2.5 font-lg text-center">Register</h1>
+        <EditForm Model="@RegistrationForm" OnValidSubmit="@RegisterUser" grid="columns 1 gap-1.5">
+            <DataAnnotationsValidator />
+            <div class="input">
+                <label for="fullName">Full Name</label>
+                <InputText id="fullName" @bind-Value="@RegistrationForm.FullName" />
+                <ValidationMessage For="@(() => RegistrationForm.FullName)" />
+            </div>
+            <div class="input">
+                <label for="registerEmail">Email Address</label>
+                <InputText type="email" id="registerEmail" @bind-Value="@RegistrationForm.Email" />
+                <ValidationMessage For="@(() => RegistrationForm.Email)" />
+            </div>
+            <div class="input">
+                <label for="registerPassword">Password</label>
+                <InputText type="password" id="registerPassword" @bind-Value="@RegistrationForm.Password" />
+                <ValidationMessage For="@(() => RegistrationForm.Password)" />
+            </div>
+            <button type="submit" class="button -solid -primary block w-full">
+                Register
+            </button>
+        </EditForm>
+    </div>
+    <p class="block text-center font-grey-700 font-sm">Already have an account? <a class="font-primary-700"
+            href="/">Sign
+            in.</a></p>
+</div>

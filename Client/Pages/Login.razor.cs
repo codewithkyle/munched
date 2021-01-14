@@ -6,7 +6,7 @@ using Munched.Models;
 
 namespace Munched.Pages
 {
-    public class IndexBase : ComponentBase
+    public class LoginBase : ComponentBase
     {
 
         [Inject]
@@ -15,14 +15,7 @@ namespace Munched.Pages
         [Inject]
         private IJSRuntime JSRuntime { get; set; }
 
-        public RegistrationForm RegistrationForm = new RegistrationForm();
         public LoginForm LoginForm = new LoginForm();
-
-        public async Task RegisterUser()
-        {
-            bool Success = await JSRuntime.InvokeAsync<bool>("RegisterUser", RegistrationForm.Email, RegistrationForm.Password);
-            Console.WriteLine(Success);
-        }
 
         public async Task LoginUser()
         {

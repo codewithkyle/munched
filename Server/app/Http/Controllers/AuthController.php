@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use \Firebase\JWT\JWT;
 use Illuminate\Http\JsonResponse;
+use Ramsey\Uuid\Uuid;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\EmailConfirm;
 
 class AuthController extends Controller
 {
@@ -73,7 +76,8 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             "email" => "required|email|unique:users|max:255",
-            "password" => "required|min:6"
+            "password" => "required|min:6|max:255",
+            "fullName" => "required|max:255",
         ]);
         if ($validator->fails()){
             return response()->json([
@@ -85,11 +89,19 @@ class AuthController extends Controller
 
         $email = $request->input("email");
         $password = Hash::make($request->input("password"));
+        $fullName = $request->input("fullName");
 
+        $uid = Uuid::uuid4()->toString();
+        $verificationCode = str_replace("-", "", Uuid::uuid4()->toString());
         $user = User::create([
+            "full_name" => $fullName,
             "email" => $email,
             "password" => $password,
+            "uid" => $uid,
+            "email_verification_code" => $verificationCode,
         ]);
+
+        Mail::to($email)->send(new EmailConfirm($verificationCode, $fullName));
 
         return response()->json([
             "success" => true,
@@ -98,11 +110,23 @@ class AuthController extends Controller
         ]);
     }
 
+    public function verify(Request $request)
+    {
+        $code = $request->input("code");
+        $user = User::where('email_verification_code', $code)->first();
+        if (!empty($user)){
+            $user["email_verification_code"] = null;
+            $user->verified = true;
+            $user->save();
+        }
+        return redirect(rtrim(env("APP_URL"), "/") . "/verified");
+    }
+
     protected function generateToken(int $userId): JsonResponse
     {
         $iat = time();
         $payload = [
-            "iss" => env("APP_URL"),
+            "iss" => env("API_URL"),
             "iat" => $iat,
             "nbf" => $iat,
             "exp" => $iat + 900,
