@@ -1,6 +1,6 @@
 module.exports = {
     env: "production",
     outDir: "./wwwroot/css",
-    sources: "./stylesheets",
+    sources: "./Stylesheets",
     purge: false,
 };

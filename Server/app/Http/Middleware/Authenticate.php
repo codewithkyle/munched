@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use App\Models\User;
+use \Firebase\JWT\JWT;
 
 class Authenticate
 {
@@ -35,9 +37,37 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+        $token = $request->header("authorization");
+        if (!$token){
+            $token = $request->input("token");
+        } else {
+            $token = trim(substr($token, 7));
         }
+        if (!$token) {
+            return response()->json([
+                "success" => false,
+                "data" => null,
+                "error" => "Unauthorized."
+            ], 401);
+        }
+
+        try{
+            $payload = JWT::decode($token, env("JWT_SECRET"), ['HS256']);
+        }catch (\Exception $e){
+            return response()->json([
+                "success" => false,
+                "data" => null,
+                "error" => $e->getMessage()
+            ], 500);
+        }
+
+        $user = User::where("id", $payload->sub)->first();
+
+        $request->request->add([
+            'token' => $token,
+            'payload' => $payload,
+            'user' => $user,
+        ]);
 
         return $next($request);
     }
