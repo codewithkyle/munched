@@ -35,6 +35,7 @@ class Authenticate
 
         $user = User::where("id", $payload->sub)->first();
 
+        // Remove if users are allowed to use the applcation without a verified status
         if (!$user->verified){
             return $this->returnUnverified();
         }

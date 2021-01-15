@@ -1,11 +1,13 @@
-async function RegisterUser(email: string, password: string, fullName: string): Promise<boolean> {
+const API_URL = "http://api.munched.local";
+
+async function RegisterUser(email: string, password: string, name: string): Promise<boolean> {
     let success = false;
     const data = {
         email: email,
         password: password,
-        fullName: fullName,
+        name: name,
     };
-    const request = await fetch(`${API_URL}/${API_VERSION}/register`, {
+    const request = await fetch(`${API_URL}/v1/register`, {
         method: "POST",
         body: JSON.stringify(data),
         headers: new Headers({
@@ -28,7 +30,7 @@ async function LoginUser(email: string, password: string): Promise<boolean> {
         email: email,
         password: password,
     };
-    const request = await fetch(`${API_URL}/${API_VERSION}/login`, {
+    const request = await fetch(`${API_URL}/v1/login`, {
         method: "POST",
         body: JSON.stringify(data),
         headers: new Headers({
@@ -38,8 +40,9 @@ async function LoginUser(email: string, password: string): Promise<boolean> {
     const response = await request.json();
     if (request.ok) {
         success = response.success;
-        console.log(response.data);
-        await GetProfile(response.data.token);
+        if (response.success) {
+            localStorage.setItem("token", response.data.token);
+        }
     } else {
         const error = response?.error || "Something went wrong on the server.";
         console.error(error);
@@ -48,7 +51,7 @@ async function LoginUser(email: string, password: string): Promise<boolean> {
 }
 
 async function GetProfile(token: string) {
-    const request = await fetch(`${API_URL}/${API_VERSION}/user/profile`, {
+    const request = await fetch(`${API_URL}/v1/user/profile`, {
         method: "GET",
         headers: new Headers({
             "Content-Type": "application/json",

@@ -7,9 +7,9 @@
         <EditForm Model="@RegistrationForm" OnValidSubmit="@RegisterUser" grid="columns 1 gap-1.5">
             <DataAnnotationsValidator />
             <div class="input">
-                <label for="fullName">Full Name</label>
-                <InputText id="fullName" @bind-Value="@RegistrationForm.FullName" />
-                <ValidationMessage For="@(() => RegistrationForm.FullName)" />
+                <label for="Name">Name</label>
+                <InputText id="Name" @bind-Value="@RegistrationForm.Name" />
+                <ValidationMessage For="@(() => RegistrationForm.Name)" />
             </div>
             <div class="input">
                 <label for="registerEmail">Email Address</label>

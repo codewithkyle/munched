@@ -36,6 +36,6 @@ class EmailConfirm extends Mailable
             "url" => rtrim(env("API_URL"), "/") . "/v1/verify?code=" . $this->verificationCode,
             "verificationCode" => $this->verificationCode,
             "name" => $this->fullName,
-        ]);
+        ])->subject("Confirm Email Address");
     }
 }

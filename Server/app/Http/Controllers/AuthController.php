@@ -58,7 +58,7 @@ class AuthController extends Controller
 
     public function logout(): JsonResponse
     {
-        auth()->logout();
+        // TODO: logout user
 
         return response()->json([
             "success" => true,
@@ -67,9 +67,9 @@ class AuthController extends Controller
         ]);
     }
 
-    public function refresh(): JsonResponse
+    public function refresh(Request $request): JsonResponse
     {
-        return $this->respondWithToken(auth()->refresh());
+        return $this->generateToken($request->user->id);
     }
 
     public function register(Request $request): JsonResponse
@@ -77,7 +77,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             "email" => "required|email|unique:users|max:255",
             "password" => "required|min:6|max:255",
-            "fullName" => "required|max:255",
+            "name" => "required|max:255",
         ]);
         if ($validator->fails()){
             return response()->json([
@@ -89,19 +89,24 @@ class AuthController extends Controller
 
         $email = $request->input("email");
         $password = Hash::make($request->input("password"));
-        $fullName = $request->input("fullName");
+        $name = $request->input("name");
 
         $uid = Uuid::uuid4()->toString();
         $verificationCode = str_replace("-", "", Uuid::uuid4()->toString());
         $user = User::create([
-            "full_name" => $fullName,
+            "name" => $name,
             "email" => $email,
             "password" => $password,
             "uid" => $uid,
             "email_verification_code" => $verificationCode,
         ]);
 
-        Mail::to($email)->send(new EmailConfirm($verificationCode, $fullName));
+        $encodedData = $this->encodeData(json_encode([
+            "email" => $email,
+            "code" => $verificationCode,
+        ]));
+
+        Mail::to($email)->send(new EmailConfirm($encodedData, $name));
 
         return response()->json([
             "success" => true,
@@ -112,8 +117,11 @@ class AuthController extends Controller
 
     public function verify(Request $request)
     {
-        $code = $request->input("code");
-        $user = User::where('email_verification_code', $code)->first();
+        $data = $request->input("code");
+        $data = json_decode($this->decodeData($data));
+        $user = User::where('email_verification_code', $data->code)
+                    ->where("email", $data->email)
+                    ->first();
         if (!empty($user)){
             $user["email_verification_code"] = null;
             $user->verified = true;
@@ -122,7 +130,7 @@ class AuthController extends Controller
         return redirect(rtrim(env("APP_URL"), "/") . "/verified");
     }
 
-    protected function generateToken(int $userId): JsonResponse
+    private function generateToken(int $userId): JsonResponse
     {
         $iat = time();
         $payload = [

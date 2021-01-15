@@ -20,7 +20,7 @@ namespace Munched.Models
             255,
             ErrorMessage = "Names cannot be longer than 255 characters."
         )]
-        public string FullName { get; set; }
+        public string Name { get; set; }
 
         [Required(
             ErrorMessage = "A password is requried."

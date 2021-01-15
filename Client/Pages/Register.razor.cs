@@ -19,7 +19,7 @@ namespace Munched.Pages
 
         public async Task RegisterUser()
         {
-            bool Success = await JSRuntime.InvokeAsync<bool>("RegisterUser", RegistrationForm.Email, RegistrationForm.Password, RegistrationForm.FullName);
+            bool Success = await JSRuntime.InvokeAsync<bool>("RegisterUser", RegistrationForm.Email, RegistrationForm.Password, RegistrationForm.Name);
             Console.WriteLine(Success);
         }
     }
