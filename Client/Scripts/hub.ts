@@ -1,7 +1,16 @@
 const API_URL = "http://api.munched.local";
 
-async function RegisterUser(email: string, password: string, name: string): Promise<boolean> {
-    let success = false;
+interface ResponseCore {
+    Success: boolean;
+    StatusCode: number;
+    Error: string;
+}
+
+interface FormResponse extends ResponseCore {
+    FieldErrors: string[];
+}
+
+async function RegisterUser(email: string, password: string, name: string): Promise<FormResponse> {
     const data = {
         email: email,
         password: password,
@@ -14,18 +23,18 @@ async function RegisterUser(email: string, password: string, name: string): Prom
             "Content-Type": "application/json",
         }),
     });
-    const response = await request.json();
-    if (request.ok) {
-        success = response.success;
-    } else {
-        const error = response?.error || "Something went wrong on the server.";
-        console.error(error);
+    const fetchResponse = await request.json();
+    const response: Partial<FormResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    if (!response.Success) {
+        response.FieldErrors = fetchResponse.data;
     }
-    return success;
+    return response as FormResponse;
 }
 
-async function LoginUser(email: string, password: string): Promise<boolean> {
-    let success = false;
+interface LoginResponse extends FormResponse {
+    IsPendingEmailVerificaiton: boolean;
+}
+async function LoginUser(email: string, password: string): Promise<LoginResponse> {
     const data = {
         email: email,
         password: password,
@@ -37,33 +46,44 @@ async function LoginUser(email: string, password: string): Promise<boolean> {
             "Content-Type": "application/json",
         }),
     });
-    const response = await request.json();
-    if (request.ok) {
-        success = response.success;
-        if (response.success) {
-            localStorage.setItem("token", response.data.token);
-        }
+    const fetchResponse = await request.json();
+    const response: Partial<LoginResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    if (response.Success) {
+        localStorage.setItem("token", fetchResponse.data.token);
+        response.IsPendingEmailVerificaiton = fetchResponse.data.pendingEmailVerification;
     } else {
-        const error = response?.error || "Something went wrong on the server.";
-        console.error(error);
+        response.FieldErrors = fetchResponse.data;
+        response.IsPendingEmailVerificaiton = false;
     }
-    return success;
+    console.log(response);
+    return response as LoginResponse;
 }
 
-async function GetProfile(token: string) {
+interface ProfileResponse extends ResponseCore {
+    Name: string;
+    Email: string;
+    UID: string;
+}
+async function GetProfile(): Promise<ProfileResponse> {
     const request = await fetch(`${API_URL}/v1/user/profile`, {
         method: "GET",
-        headers: new Headers({
-            "Content-Type": "application/json",
-            Authorization: `bearer ${token}`,
-        }),
+        headers: buildHeaders(),
     });
-    const response = await request.json();
-    if (request.ok) {
-        console.log(response);
-    } else {
-        const error = response?.error || "Something went wrong on the server.";
-        console.error(error);
+    const fetchResponse = await request.json();
+    const response: Partial<ProfileResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    if (response.Success) {
+        response.Name = fetchResponse.data.name;
+        response.Email = fetchResponse.data.email;
+        response.UID = fetchResponse.data.uid;
     }
-    return;
+    return response as ProfileResponse;
+}
+
+async function ResendVerificationEmail(): Promise<ResponseCore> {
+    const request = await fetch(`${API_URL}/v1/user/resend-verification-email`, {
+        method: "POST",
+        headers: buildHeaders(),
+    });
+    const fetchResponse = await request.json();
+    return buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
 }

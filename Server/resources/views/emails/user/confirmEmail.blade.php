@@ -7,8 +7,6 @@ Welcome to Munched, the calorie tracking app for nerds. Before you start crushin
 Confirm Email
 @endcomponent
 
-If you didn’t ask to verify this address please change your password immediately.
-
 Thanks,<br>
 The Munched Team
 @endcomponent

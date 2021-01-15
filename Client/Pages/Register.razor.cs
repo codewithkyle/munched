@@ -2,7 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Munched.Models;
+using Munched.Models.Forms;
+using Munched.Models.API;
 
 namespace Munched.Pages
 {
@@ -19,8 +20,15 @@ namespace Munched.Pages
 
         public async Task RegisterUser()
         {
-            bool Success = await JSRuntime.InvokeAsync<bool>("RegisterUser", RegistrationForm.Email, RegistrationForm.Password, RegistrationForm.Name);
-            Console.WriteLine(Success);
+            RegistrationForm.Submit();
+            StateHasChanged();
+            FormResponse Response = await JSRuntime.InvokeAsync<FormResponse>("RegisterUser", RegistrationForm.Email, RegistrationForm.Password, RegistrationForm.Name);
+            if (Response.Success){
+                RegistrationForm.Succeed();
+            } else {
+                RegistrationForm.Fail(Response.FieldErrors[0]);
+            }
+            StateHasChanged();
         }
     }
 }

@@ -33,7 +33,7 @@ class EmailConfirm extends Mailable
     public function build()
     {
         return $this->markdown('emails.user.confirmEmail', [
-            "url" => rtrim(env("API_URL"), "/") . "/v1/verify?code=" . $this->verificationCode,
+            "url" => rtrim(env("API_URL"), "/") . "/v1/verify-email?code=" . $this->verificationCode,
             "verificationCode" => $this->verificationCode,
             "name" => $this->fullName,
         ])->subject("Confirm Email Address");

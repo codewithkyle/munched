@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Munched.Models
+namespace Munched.Models.Forms
 {
-    public class LoginForm
+    public class LoginForm : FormCore
     {
         [Required(
             ErrorMessage = "Your email address is required."

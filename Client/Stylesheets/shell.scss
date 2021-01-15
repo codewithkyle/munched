@@ -38,6 +38,21 @@ a {
     user-select: none;
 }
 
+.hidden {
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+form {
+    &.submitting {
+        cursor: not-allowed;
+
+        * {
+            pointer-events: none;
+        }
+    }
+}
+
 .spinner {
     animation: spinner 600ms linear infinite;
 }

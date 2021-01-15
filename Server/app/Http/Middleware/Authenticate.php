@@ -36,7 +36,7 @@ class Authenticate
         $user = User::where("id", $payload->sub)->first();
 
         // Remove if users are allowed to use the applcation without a verified status
-        if (!$user->verified){
+        if (!$user->verified && !str_contains($request->url(), "resend-verification-email")){
             return $this->returnUnverified();
         }
 
