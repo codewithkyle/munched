@@ -18,6 +18,10 @@ $router->group(["prefix" => "v1"], function() use ($router) {
     $router->post("login", "AuthController@login");
     $router->get("verify-email", "AuthController@verifyEmail");
 
+    $router->group(["middleware" => "auth"], function() use ($router) {
+        $router->post("refresh-token", "AuthController@refreshToken");
+    });
+
     $router->group(["prefix" => "user", "middleware" => "auth"], function() use ($router) {
         $router->get("profile", "AuthController@profile");
         $router->post("resend-verification-email", "AuthController@resendVerificationEmail");

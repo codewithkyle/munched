@@ -59,7 +59,7 @@ class AuthController extends Controller
         return $this->buildSuccessResponse();
     }
 
-    public function refresh(Request $request): JsonResponse
+    public function refreshToken(Request $request): JsonResponse
     {
         return $this->buildSuccessResponse($this->generateToken($request->user->id));
     }

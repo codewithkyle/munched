@@ -55,7 +55,6 @@ async function LoginUser(email: string, password: string): Promise<LoginResponse
         response.FieldErrors = fetchResponse.data;
         response.IsPendingEmailVerificaiton = false;
     }
-    console.log(response);
     return response as LoginResponse;
 }
 
@@ -86,4 +85,17 @@ async function ResendVerificationEmail(): Promise<ResponseCore> {
     });
     const fetchResponse = await request.json();
     return buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+}
+
+async function RefreshToken(): Promise<ResponseCore> {
+    const request = await fetch(`${API_URL}/v1/refresh-token`, {
+        method: "POST",
+        headers: buildHeaders(),
+    });
+    const fetchResponse = await request.json();
+    const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    if (response.Success) {
+        localStorage.setItem("token", fetchResponse.data.token);
+    }
+    return response;
 }

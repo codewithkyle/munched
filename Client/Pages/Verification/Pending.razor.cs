@@ -15,10 +15,20 @@ namespace Munched.Pages.Verification
         [Inject]
         private IJSRuntime JSRuntime { get; set; }
 
+        public bool IsSending = false;
+
         public async Task ResendVerificationEmail()
         {
+            IsSending = true;
+            StateHasChanged();
             ResponseCore Response = await JSRuntime.InvokeAsync<ResponseCore>("ResendVerificationEmail");
-            Console.WriteLine(Response.Success);
+            IsSending = false;
+            StateHasChanged();
+            if (Response.Success){
+                await JSRuntime.InvokeVoidAsync("Notify", "Verification email has been sent.");
+            } else {
+                NavigationManager.NavigateTo("/");
+            }
         }
     }
 }

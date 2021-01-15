@@ -30,7 +30,7 @@ class Authenticate
         try{
             $payload = JWT::decode($token, env("JWT_SECRET"), ['HS256']);
         }catch (\Exception $e){
-            return $this->returnException($e);
+            return $this->returnTokenException($e);
         }
 
         $user = User::where("id", $payload->sub)->first();
@@ -75,13 +75,13 @@ class Authenticate
         return $token;
     }
 
-    private function returnException(\Exception $e): JsonResponse
+    private function returnTokenException(\Exception $e): JsonResponse
     {
         return response()->json([
             "success" => false,
             "data" => null,
             "error" => $e->getMessage()
-        ], 500);
+        ]);
     }
 
     private function returnUnauthorized(): JsonResponse

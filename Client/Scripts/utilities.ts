@@ -17,3 +17,14 @@ function buildResponseCore(success: boolean, statusCode: number, error: string =
         Error: error,
     };
 }
+
+function Logout() {
+    localStorage.clear();
+    sessionStorage.clear();
+}
+
+function Notify(message: string) {
+    snackbar({
+        message: message,
+    });
+}

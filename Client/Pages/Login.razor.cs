@@ -18,6 +18,18 @@ namespace Munched.Pages
 
         public LoginForm LoginForm = new LoginForm();
 
+        public bool ViewIsReady = false;
+
+        protected override async Task OnInitializedAsync()
+        {
+            ResponseCore TokenCheckResponse = await JSRuntime.InvokeAsync<ResponseCore>("RefreshToken");
+            if (TokenCheckResponse.Success){
+                NavigationManager.NavigateTo("/dashboard");
+            } else {
+                ViewIsReady = true;
+            }
+        }
+
         public async Task LoginUser()
         {
             LoginForm.Submit();
