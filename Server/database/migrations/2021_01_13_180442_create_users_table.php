@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->boolean('admin')->default(false);
             $table->boolean('verified')->default(false);
             $table->boolean('suspended')->default(false);
+            $table->json('groups');
             $table->string("email_verification_code")->nullable();
             $table->timestamps();
         });

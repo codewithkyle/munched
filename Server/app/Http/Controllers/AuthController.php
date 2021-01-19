@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\EmailConfirm;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use App\Services\UserService;
 
 class AuthController extends Controller
 {
@@ -47,7 +48,19 @@ class AuthController extends Controller
 
     public function logout(): JsonResponse
     {
-        // TODO: logout user
+        /**
+         * TODO:
+         * Blacklist the token ID.
+         *
+         * Explainer:
+         * The JWT library does not track blacklisted tokens, it simply creates and validates.
+         * If we wish to add a global logout trigger OR if we want to force a token to become invalid
+         * we will need to create a per user token blacklist that is check with every request.
+         *
+         * Implementation notes:
+         * Since Lumen is stateless we could use Redis to store an array of blacklisted tokens per user ID.
+         * To keep the blacklist clean we could drop any expired tokens everytime the query is performed.
+         */
 
         return $this->buildSuccessResponse();
     }
@@ -74,12 +87,14 @@ class AuthController extends Controller
 
         $uid = Uuid::uuid4()->toString();
         $verificationCode = str_replace("-", "", Uuid::uuid4()->toString());
+
         $user = User::create([
             "name" => $name,
             "email" => $email,
             "password" => $password,
             "uid" => $uid,
             "email_verification_code" => $verificationCode,
+            "groups" => ["global"],
         ]);
 
         $encodedData = $this->encodeData(json_encode([

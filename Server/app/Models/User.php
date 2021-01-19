@@ -19,7 +19,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'email', 'password', 'uid', 'email_verification_code', 'name'
+        'email', 'password', 'uid', 'email_verification_code', 'name', "groups"
     ];
 
     /**
@@ -35,5 +35,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         "verified",
         "created_at",
         "updated_at",
+    ];
+
+    protected $casts = [
+        'groups' => 'array'
     ];
 }
