@@ -45,13 +45,6 @@ class AuthController extends Controller
         }
     }
 
-    public function profile(Request $request): JsonResponse
-    {
-        $user = $request->user;
-
-        return $this->buildSuccessResponse($user);
-    }
-
     public function logout(): JsonResponse
     {
         // TODO: logout user

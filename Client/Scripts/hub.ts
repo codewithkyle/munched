@@ -79,7 +79,7 @@ async function GetProfile(): Promise<ProfileResponse> {
 }
 
 async function ResendVerificationEmail(): Promise<ResponseCore> {
-    const request = await fetch(`${API_URL}/v1/user/resend-verification-email`, {
+    const request = await fetch(`${API_URL}/v1/resend-verification-email`, {
         method: "POST",
         headers: buildHeaders(),
     });
