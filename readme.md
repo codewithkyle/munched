@@ -1,3 +1,3 @@
-# Munched
+# Boilerplate
 
-A macro & calorie tracking app for fitness nerds.
+A Blazor PWA boilerplate built using Lumen and Redis.
