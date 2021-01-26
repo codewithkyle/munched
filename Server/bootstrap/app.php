@@ -102,6 +102,7 @@ $app->routeMiddleware([
 $app->register(App\Providers\CatchAllOptionsRequestsProvider::class);
 $app->register(Illuminate\Mail\MailServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+$app->register(Illuminate\Redis\RedisServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

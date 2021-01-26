@@ -31,8 +31,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password',
         'email_verification_code',
         "admin",
-        "suspended",
-        "verified",
         "created_at",
         "updated_at",
     ];

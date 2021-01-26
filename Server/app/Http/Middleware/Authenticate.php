@@ -8,6 +8,7 @@ use App\Models\User;
 use \Firebase\JWT\JWT;
 use \Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
 class Authenticate
 {
@@ -33,7 +34,12 @@ class Authenticate
             return $this->returnTokenException($e);
         }
 
-        $user = User::where("id", $payload->sub)->first();
+        $user = Cache::get("user-" . $payload->sub);
+        if (\is_null($user)){
+            return $this->returnUnauthorized();
+        } else {
+            $user = \json_decode($user, false);
+        }
 
         // Remove if users are allowed to use the applcation without a verified status
         if (!$user->verified && !str_contains($request->url(), "resend-verification-email")){

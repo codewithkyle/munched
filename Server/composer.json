@@ -13,7 +13,9 @@
         "firebase/php-jwt": "^5.2",
         "flipbox/lumen-generator": "^8.2",
         "illuminate/mail": "^8.22",
+        "illuminate/redis": "^8.25",
         "laravel/lumen-framework": "^8.0",
+        "predis/predis": "^1.1",
         "ramsey/uuid": "^4.1"
     },
     "require-dev": {

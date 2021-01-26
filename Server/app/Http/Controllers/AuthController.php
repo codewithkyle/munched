@@ -14,6 +14,7 @@ use App\Mail\EmailConfirm;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Cache;
 
 class AuthController extends Controller
 {
@@ -40,13 +41,14 @@ class AuthController extends Controller
             $data = array_merge($this->generateToken($user->id), [
                 "pendingEmailVerification" => $user->verified ? false : true,
             ]);
+            Cache::put("user-" . $user->id, json_encode($user));
             return $this->buildSuccessResponse($data);
         } else {
             return $this->buildErrorResponse("Incorrect email or password.");
         }
     }
 
-    public function logout(): JsonResponse
+    public function logout(Request $request): JsonResponse
     {
         /**
          * TODO:
@@ -61,6 +63,8 @@ class AuthController extends Controller
          * Since Lumen is stateless we could use Redis to store an array of blacklisted tokens per user ID.
          * To keep the blacklist clean we could drop any expired tokens everytime the query is performed.
          */
+
+        Cache::forget("user-" . $request->user->id);
 
         return $this->buildSuccessResponse();
     }
