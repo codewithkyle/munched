@@ -34,11 +34,16 @@ class Authenticate
             return $this->returnTokenException($e);
         }
 
+        if ($this->tokenIsBlacklisted($token)){
+            return $this->returnUnauthorized();
+        }
+
         $user = Cache::get("user-" . $payload->sub);
         if (\is_null($user)){
             return $this->returnUnauthorized();
         } else {
-            $user = \json_decode($user, false);
+            $user = User::where('id', $payload->sub)->first();
+            Cache::put("user-" . $user->id, json_encode($user));
         }
 
         // Remove if users are allowed to use the applcation without a verified status
@@ -57,6 +62,24 @@ class Authenticate
         ]);
 
         return $next($request);
+    }
+
+    private function tokenIsBlacklisted(string $token): bool
+    {
+        $blacklist = Cache::get("blacklist", json_encode([]));
+        $blacklist = json_decode($blacklist);
+        $currentTime = time();
+        $isBlacklisted = false;
+        foreach($blacklist as $key => $jwt){
+            if ($jwt["token"] === $token){
+                $isBlacklisted = true;
+            }
+            if ($jwt["exp"] <= $currentTime){
+                unset($blacklist[$key]);
+            }
+        }
+        Cache::put("blacklist", json_encode($blacklist));
+        return $isBlacklisted;
     }
 
     private function returnUnverified(): JsonResponse

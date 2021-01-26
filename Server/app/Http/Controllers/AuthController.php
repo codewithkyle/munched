@@ -50,22 +50,13 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        /**
-         * TODO:
-         * Blacklist the token ID.
-         *
-         * Explainer:
-         * The JWT library does not track blacklisted tokens, it simply creates and validates.
-         * If we wish to add a global logout trigger OR if we want to force a token to become invalid
-         * we will need to create a per user token blacklist that is check with every request.
-         *
-         * Implementation notes:
-         * Since Lumen is stateless we could use Redis to store an array of blacklisted tokens per user ID.
-         * To keep the blacklist clean we could drop any expired tokens everytime the query is performed.
-         */
-
-        Cache::forget("user-" . $request->user->id);
-
+        $blacklist = Cache::get("blacklist", json_encode([]));
+        $blacklist = json_decode($blacklist);
+        $blacklist[] = [
+            "token" => $request->token,
+            "exp" => $request->payload->exp,
+        ];
+        Cache::put("blacklist", json_encode($blacklist));
         return $this->buildSuccessResponse();
     }
 

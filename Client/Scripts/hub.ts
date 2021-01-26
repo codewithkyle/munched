@@ -99,3 +99,12 @@ async function RefreshToken(): Promise<ResponseCore> {
     }
     return response;
 }
+
+function Logout() {
+    fetch(`${API_URL}/v1/logout`, {
+        method: "POST",
+        headers: buildHeaders(),
+        keepalive: true,
+    });
+    ClearStorage();
+}

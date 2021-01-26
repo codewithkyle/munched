@@ -18,7 +18,7 @@ function buildResponseCore(success: boolean, statusCode: number, error: string =
     };
 }
 
-function Logout() {
+function ClearStorage() {
     localStorage.clear();
     sessionStorage.clear();
 }
