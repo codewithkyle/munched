@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use \Firebase\JWT\JWT;
 use Ramsey\Uuid\Uuid;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\EmailConfirm;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use App\Services\UserService;
@@ -82,7 +80,6 @@ class AuthController extends Controller
         $name = $request->input("name");
 
         $uid = Uuid::uuid4()->toString();
-        $verificationCode = base64_encode(Uuid::uuid4()->toString());
 
         $user = User::create([
             "name" => $name,
@@ -92,45 +89,37 @@ class AuthController extends Controller
             "groups" => ["global"],
         ]);
 
-        $encodedData = $this->encodeData(json_encode([
-            "email" => $email,
-            "code" => $verificationCode,
-        ]));
-
-        $verification = EmailVerification::create([
-            "emailVerificationCode" => $encodedData,
-            "userId" => $user->id,
-            "email" => $email,
-        ]);
-
-        Mail::to($email)->send(new EmailConfirm($encodedData, $name));
+        $userService = new UserService($user);
+        $userService->createEmailVerification($email);
 
         return $this->buildSuccessResponse();
     }
 
     public function verifyEmail(Request $request)
     {
+        $success = false;
         $data = $request->input("code");
         $verificationRequest = EmailVerification::where('emailVerificationCode', $data)->first();
         if (!empty($verificationRequest)){
             $user = User::where('id', $verificationRequest->userId)->first();
-            $user->email = $verificationRequest->email;
-            $user->verified = true;
-            $user->save();
-            $verificationRequest["emailVerificationCode"] = null;
-            $verificationRequest->save();
+            if (!empty($user)){
+                $userService = new UserService($user);
+                $userService->verifyEmailAddress($verificationRequest);
+                $success = true;
+            }
         }
-        return redirect(rtrim(env("APP_URL"), "/") . "/verification/success");
+        if ($success){
+            return redirect(rtrim(env("APP_URL"), "/") . "/verification/success");
+        } else{
+            return redirect(rtrim(env("APP_URL"), "/") . "/verification/error");
+        }
     }
 
     public function resendVerificationEmail(Request $request): JsonResponse
     {
         $user = $request->user;
-
-        $verificationRequest = EmailVerification::where("userId", $user->id)->whereNotNull("emailVerificationCode")->first();
-
-        Mail::to($verificationRequest->email)->send(new EmailConfirm($verificationRequest->emailVerificationCode, $user->name));
-
+        $userService = new UserService($user);
+        $userService->resendVerificationEmail();
         return $this->buildSuccessResponse();
     }
 

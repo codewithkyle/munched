@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\UserService;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
@@ -11,5 +14,23 @@ class UserController extends Controller
         $user = $request->user;
 
         return $this->buildSuccessResponse($user);
+    }
+
+    public function updateEmail(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            "email" => "required|email|unique:users|max:255",
+        ]);
+        if ($validator->fails()){
+            return $this->buildValidationErrorResponse($validator, "Email update form contains errors.");
+        }
+
+        $user = $request->user;
+        $newEmail = $request->input("email");
+
+        $userService = new UserService($user);
+        $userService->createEmailVerification($newEmail);
+
+        return $this->buildSuccessResponse();
     }
 }

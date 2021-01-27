@@ -8,16 +8,6 @@ use Illuminate\Validation\Validator;
 
 class Controller extends BaseController
 {
-    protected function encodeData (string $data): string
-    {
-        return base64_encode($data);
-    }
-
-    protected function decodeData(string $encodedData): string
-    {
-        return base64_decode($encodedData);
-    }
-
     protected function buildValidationErrorResponse(Validator $validator, string $error = "Something went wrong on the server."): JsonResponse
     {
         $errors = [];

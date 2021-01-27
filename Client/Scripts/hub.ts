@@ -108,3 +108,17 @@ function Logout() {
     });
     ClearStorage();
 }
+
+async function UpdateEmailAddress(email: string): Promise<ResponseCore> {
+    const data = {
+        email: email,
+    };
+    const request = await fetch(`${API_URL}/v1/user/update-email`, {
+        method: "POST",
+        headers: buildHeaders(),
+        body: JSON.stringify(data),
+    });
+    const fetchResponse = await request.json();
+    const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    return response;
+}
