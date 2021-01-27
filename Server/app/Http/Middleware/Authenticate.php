@@ -71,10 +71,10 @@ class Authenticate
         $currentTime = time();
         $isBlacklisted = false;
         foreach($blacklist as $key => $jwt){
-            if ($jwt["token"] === $token){
+            if ($jwt->token === $token){
                 $isBlacklisted = true;
             }
-            if ($jwt["exp"] <= $currentTime){
+            if ($jwt->exp <= $currentTime){
                 unset($blacklist[$key]);
             }
         }

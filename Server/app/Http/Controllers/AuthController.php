@@ -15,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Cache;
+use App\Models\EmailVerification;
 
 class AuthController extends Controller
 {
@@ -81,14 +82,13 @@ class AuthController extends Controller
         $name = $request->input("name");
 
         $uid = Uuid::uuid4()->toString();
-        $verificationCode = str_replace("-", "", Uuid::uuid4()->toString());
+        $verificationCode = base64_encode(Uuid::uuid4()->toString());
 
         $user = User::create([
             "name" => $name,
             "email" => $email,
             "password" => $password,
             "uid" => $uid,
-            "email_verification_code" => $verificationCode,
             "groups" => ["global"],
         ]);
 
@@ -96,6 +96,12 @@ class AuthController extends Controller
             "email" => $email,
             "code" => $verificationCode,
         ]));
+
+        $verification = EmailVerification::create([
+            "emailVerificationCode" => $encodedData,
+            "userId" => $user->id,
+            "email" => $email,
+        ]);
 
         Mail::to($email)->send(new EmailConfirm($encodedData, $name));
 
@@ -105,14 +111,14 @@ class AuthController extends Controller
     public function verifyEmail(Request $request)
     {
         $data = $request->input("code");
-        $data = json_decode($this->decodeData($data));
-        $user = User::where('email_verification_code', $data->code)
-                    ->where("email", $data->email)
-                    ->first();
-        if (!empty($user)){
-            $user["email_verification_code"] = null;
+        $verificationRequest = EmailVerification::where('emailVerificationCode', $data)->first();
+        if (!empty($verificationRequest)){
+            $user = User::where('id', $verificationRequest->userId)->first();
+            $user->email = $verificationRequest->email;
             $user->verified = true;
             $user->save();
+            $verificationRequest["emailVerificationCode"] = null;
+            $verificationRequest->save();
         }
         return redirect(rtrim(env("APP_URL"), "/") . "/verification/success");
     }
@@ -121,12 +127,9 @@ class AuthController extends Controller
     {
         $user = $request->user;
 
-        $encodedData = $this->encodeData(json_encode([
-            "email" => $user->email,
-            "code" => $user["email_verification_code"],
-        ]));
+        $verificationRequest = EmailVerification::where("userId", $user->id)->whereNotNull("emailVerificationCode")->first();
 
-        Mail::to($user->email)->send(new EmailConfirm($encodedData, $user->name));
+        Mail::to($verificationRequest->email)->send(new EmailConfirm($verificationRequest->emailVerificationCode, $user->name));
 
         return $this->buildSuccessResponse();
     }
