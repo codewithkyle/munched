@@ -18,6 +18,9 @@ namespace Munched.Pages
 
         public bool ViewIsReady = false;
 
+        public string OldPassword = "";
+        public string NewPassword = "";
+
         protected override async Task OnInitializedAsync()
         {
             ResponseCore TokenCheckResponse = await JSRuntime.InvokeAsync<ResponseCore>("RefreshToken");
@@ -29,6 +32,11 @@ namespace Munched.Pages
             {
                 ViewIsReady = true;
             }
+        }
+
+        public async Task UpdateProfile()
+        {
+            ResponseCore Response = await JSRuntime.InvokeAsync<ResponseCore>("UpdatePassword", OldPassword, NewPassword);
         }
     }
 }

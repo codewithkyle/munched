@@ -122,3 +122,32 @@ async function UpdateEmailAddress(email: string): Promise<ResponseCore> {
     const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
     return response;
 }
+
+async function UpdateProfile(name: string): Promise<ResponseCore> {
+    const data = {
+        name: name,
+    };
+    const request = await fetch(`${API_URL}/v1/user/profile`, {
+        method: "POST",
+        headers: buildHeaders(),
+        body: JSON.stringify(data),
+    });
+    const fetchResponse = await request.json();
+    const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    return response;
+}
+
+async function UpdatePassword(oldPassword: string, newPassword: string): Promise<ResponseCore> {
+    const data = {
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+    };
+    const request = await fetch(`${API_URL}/v1/user/update-password`, {
+        method: "POST",
+        headers: buildHeaders(),
+        body: JSON.stringify(data),
+    });
+    const fetchResponse = await request.json();
+    const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    return response;
+}

@@ -111,6 +111,12 @@ class UserService
         $this->purgeEmailVerificationRequests();
     }
 
+    public function updateProfile(array $params): void
+    {
+        $this->user->name = $params["name"];
+        $this->save();
+    }
+
     private function purgeEmailVerificationRequests(): void
     {
         $requests = EmailVerification::where("userId", $this->user->id)->whereNotNull("emailVerificationCode")->get();

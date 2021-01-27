@@ -123,6 +123,31 @@ class AuthController extends Controller
         return $this->buildSuccessResponse();
     }
 
+    public function updatePassword(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            "newPassword" => "required|min:6|max:255",
+            "oldPassword" => "required|min:6|max:255",
+        ]);
+        if ($validator->fails()){
+            return $this->buildValidationErrorResponse($validator, "Password update form contains errors.");
+        }
+
+        $user = User::where('id', $request->user->id)->first();
+        if (!empty($user)){
+            if (Hash::check($request->input("oldPassword"), $user->password)){
+                $newPassword = Hash::make($request->input("newPassword"));
+                $user->password = $newPassword;
+                $user->save();
+                return $this->buildSuccessResponse();
+            } else {
+                return $this->buildErrorResponse("Incorrect current password.");
+            }
+        } else {
+            return $this->buildErrorResponse("Failed to find user.");
+        }
+    }
+
     private function generateToken(int $userId): array
     {
         $iat = time();

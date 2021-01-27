@@ -33,4 +33,20 @@ class UserController extends Controller
 
         return $this->buildSuccessResponse();
     }
+
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            "name" => "required|max:255",
+        ]);
+        if ($validator->fails()){
+            return $this->buildValidationErrorResponse($validator, "Profile update form contains errors.");
+        }
+
+        $user = $request->user;
+        $userService = new UserService($user);
+        $userService->updateProfile($request->all());
+
+        return $this->buildSuccessResponse();
+    }
 }

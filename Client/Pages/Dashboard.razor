@@ -5,5 +5,10 @@
 {
     <div>
         <h1 class="font-medium block font-lg font-grey-800">Dashboard</h1>
+        <form @onsubmit="UpdateProfile">
+            <input type="password" @bind="OldPassword">
+            <input type="password" @bind="NewPassword">
+            <button type="submit" class="button -solid -primary block">Submit</button>
+        </form>
     </div>
 }
