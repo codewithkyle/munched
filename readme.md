@@ -1,3 +1,3 @@
 # Boilerplate
 
-A Blazor PWA boilerplate built using Lumen and Redis.
+A PWA boilerplate built using Blazor, Lumen, and Redis.
