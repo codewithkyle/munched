@@ -20,6 +20,8 @@ namespace Munched.Pages
 
         public bool ViewIsReady = false;
 
+        public bool TrustDevice = true;
+
         protected override async Task OnInitializedAsync()
         {
             ResponseCore TokenCheckResponse = await JSRuntime.InvokeAsync<ResponseCore>("RefreshToken");
@@ -34,7 +36,7 @@ namespace Munched.Pages
         {
             LoginForm.Submit();
             StateHasChanged();
-            LoginResponse Response = await JSRuntime.InvokeAsync<LoginResponse>("LoginUser", LoginForm.Email, LoginForm.Password);
+            LoginResponse Response = await JSRuntime.InvokeAsync<LoginResponse>("LoginUser", LoginForm.Email, LoginForm.Password, TrustDevice);
             if (Response.Success){
                 LoginForm.Succeed();
                 if (Response.IsPendingEmailVerificaiton){

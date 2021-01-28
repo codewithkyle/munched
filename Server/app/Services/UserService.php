@@ -129,7 +129,7 @@ class UserService
     private function save()
     {
         $this->user->save();
-        Cache::put("user-" . $this->user->id, json_encode($this->user));
+        Cache::put("user-" . $this->user->uid, json_encode($this->user));
     }
 
     private function sendMail(string $email, \Illuminate\Mail\Mailable $mail): void

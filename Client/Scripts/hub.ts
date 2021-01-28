@@ -34,7 +34,7 @@ async function RegisterUser(email: string, password: string, name: string): Prom
 interface LoginResponse extends FormResponse {
     IsPendingEmailVerificaiton: boolean;
 }
-async function LoginUser(email: string, password: string): Promise<LoginResponse> {
+async function LoginUser(email: string, password: string, trustDevice: boolean): Promise<LoginResponse> {
     const data = {
         email: email,
         password: password,
@@ -49,7 +49,14 @@ async function LoginUser(email: string, password: string): Promise<LoginResponse
     const fetchResponse = await request.json();
     const response: Partial<LoginResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
     if (response.Success) {
-        localStorage.setItem("token", fetchResponse.data.token);
+        if (trustDevice) {
+            localStorage.setItem("token", fetchResponse.data.token);
+        } else {
+            sessionStorage.setItem("token", fetchResponse.data.token);
+            window.onbeforeunload = (e: Event) => {
+                Logout();
+            };
+        }
         response.IsPendingEmailVerificaiton = fetchResponse.data.pendingEmailVerification;
     } else {
         response.FieldErrors = fetchResponse.data;
@@ -95,7 +102,11 @@ async function RefreshToken(): Promise<ResponseCore> {
     const fetchResponse = await request.json();
     const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
     if (response.Success) {
-        localStorage.setItem("token", fetchResponse.data.token);
+        if (localStorage.getItem("token")) {
+            localStorage.setItem("token", fetchResponse.data.token);
+        } else {
+            sessionStorage.setItem("token", fetchResponse.data.token);
+        }
     }
     return response;
 }

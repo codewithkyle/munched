@@ -55,8 +55,11 @@ class AuthController extends Controller
 
     public function refreshToken(Request $request): JsonResponse
     {
-        $this->blacklistToken($request->token, $request->payload->exp);
-        return $this->buildSuccessResponse($this->generateToken($request->user->uid));
+        $newToken = $this->generateToken($request->user->uid);
+        if ($newToken["token"] !== $request->token){
+            $this->blacklistToken($request->token, $request->payload->exp);
+        }
+        return $this->buildSuccessResponse($newToken);
     }
 
     public function register(Request $request): JsonResponse

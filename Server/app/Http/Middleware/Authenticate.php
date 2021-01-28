@@ -39,9 +39,15 @@ class Authenticate
         }
 
         $user = Cache::get("user-" . $payload->sub);
-        if (\is_null($user)){
+        if (is_null($user)){
             $user = User::where('uid', $payload->sub)->first();
             Cache::put("user-" . $user->uid, json_encode($user));
+        } else {
+            $user = json_decode($user);
+        }
+
+        if (empty($user)){
+            return $this->returnUnauthorized();
         }
 
         // Remove if users are allowed to use the applcation without a verified status
