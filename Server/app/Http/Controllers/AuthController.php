@@ -49,18 +49,13 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $blacklist = Cache::get("blacklist", json_encode([]));
-        $blacklist = json_decode($blacklist);
-        $blacklist[] = [
-            "token" => $request->token,
-            "exp" => $request->payload->exp,
-        ];
-        Cache::put("blacklist", json_encode($blacklist));
+        $this->blacklistToken($request->token, $request->payload->exp);
         return $this->buildSuccessResponse();
     }
 
     public function refreshToken(Request $request): JsonResponse
     {
+        $this->blacklistToken($request->token, $request->payload->exp);
         return $this->buildSuccessResponse($this->generateToken($request->user->id));
     }
 
@@ -165,5 +160,16 @@ class AuthController extends Controller
             'type' => 'bearer',
             'expires' => $exp,
         ];
+    }
+
+    private function blacklistToken(string $token, int $exp): void
+    {
+        $blacklist = Cache::get("blacklist", json_encode([]));
+        $blacklist = json_decode($blacklist);
+        $blacklist[] = [
+            "token" => $token,
+            "exp" => $exp,
+        ];
+        Cache::put("blacklist", json_encode($blacklist));
     }
 }
