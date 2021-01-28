@@ -37,10 +37,10 @@ class AuthController extends Controller
         }
 
         if (Hash::check($password, $user->password)){
-            $data = array_merge($this->generateToken($user->id), [
+            $data = array_merge($this->generateToken($user->uid), [
                 "pendingEmailVerification" => $user->verified ? false : true,
             ]);
-            Cache::put("user-" . $user->id, json_encode($user));
+            Cache::put("user-" . $user->uid, json_encode($user));
             return $this->buildSuccessResponse($data);
         } else {
             return $this->buildErrorResponse("Incorrect email or password.");
@@ -56,7 +56,7 @@ class AuthController extends Controller
     public function refreshToken(Request $request): JsonResponse
     {
         $this->blacklistToken($request->token, $request->payload->exp);
-        return $this->buildSuccessResponse($this->generateToken($request->user->id));
+        return $this->buildSuccessResponse($this->generateToken($request->user->uid));
     }
 
     public function register(Request $request): JsonResponse
@@ -75,6 +75,7 @@ class AuthController extends Controller
         $name = $request->input("name");
 
         $uid = Uuid::uuid4()->toString();
+        $secret = Uuid::uuid4()->toString();
 
         $user = User::create([
             "name" => $name,
@@ -82,6 +83,7 @@ class AuthController extends Controller
             "password" => $password,
             "uid" => $uid,
             "groups" => ["global"],
+            "secret" => $secret,
         ]);
 
         $userService = new UserService($user);
@@ -143,7 +145,7 @@ class AuthController extends Controller
         }
     }
 
-    private function generateToken(int $userId): array
+    private function generateToken(string $userUid): array
     {
         $iat = time();
         $exp = $iat + env("JWT_TIMEOUT");
@@ -152,7 +154,7 @@ class AuthController extends Controller
             "iat" => $iat,
             "nbf" => $iat,
             "exp" => $exp,
-            "sub" => $userId,
+            "sub" => $userUid,
         ];
         $token = JWT::encode($payload, env("JWT_SECRET"), 'HS256');
         return [
