@@ -151,18 +151,19 @@ class AuthController extends Controller
     private function generateToken(int $userId): array
     {
         $iat = time();
+        $exp = $iat + env("JWT_TIMEOUT");
         $payload = [
             "iss" => env("API_URL"),
             "iat" => $iat,
             "nbf" => $iat,
-            "exp" => $iat + 900,
+            "exp" => $exp,
             "sub" => $userId,
         ];
         $token = JWT::encode($payload, env("JWT_SECRET"), 'HS256');
         return [
             'token' => $token,
             'type' => 'bearer',
-            'expires' => $iat + 900
+            'expires' => $exp,
         ];
     }
 }
