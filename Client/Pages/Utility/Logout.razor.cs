@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace Munched.Pages
+namespace Munched.Pages.Utility
 {
     public class LogoutBase : ComponentBase
     {

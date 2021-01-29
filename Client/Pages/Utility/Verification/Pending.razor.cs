@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Munched.Models.API;
 
-namespace Munched.Pages.Verification
+namespace Munched.Pages.Utility.Verification
 {
     public class PendingEmailVerificationBase : ComponentBase
     {

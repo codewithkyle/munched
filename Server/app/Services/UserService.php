@@ -10,9 +10,12 @@ use Illuminate\Support\Facades\Mail;
 // Models
 use App\Models\User;
 use App\Models\EmailVerification;
+use App\Models\PasswordReset;
 
 // Emails
 use App\Mail\EmailConfirm;
+use App\Mail\ForgottenPassword;
+use App\Mail\PasswordChanged;
 
 class UserService
 {
@@ -115,6 +118,36 @@ class UserService
     {
         $this->user->name = $params["name"];
         $this->save();
+    }
+
+    public function createPasswordReset(): void
+    {
+        $verificationCode = Uuid::uuid4()->toString();
+        $encodedData = $this->encodeData($verificationCode);
+        $passwordResetRequeset = PasswordReset::create([
+            "userId" => $this->user->id,
+            "emailVerificationCode" => $encodedData,
+        ]);
+        $mail = new ForgottenPassword($passwordResetRequeset->emailVerificationCode, $this->user->name);
+        $this->sendMail($this->user->email, $mail);
+    }
+
+    public function resetPassword(string $password): void
+    {
+        $this->user->password = $password;
+        $this->save();
+        $this->prugePasswordResetRequests();
+        $mail = new PasswordChanged($this->user->name);
+        $this->sendMail($this->user->email, $mail);
+    }
+
+    private function prugePasswordResetRequests(): void
+    {
+        $requests = PasswordReset::where("userId", $this->user->id)->whereNotNull("emailVerificationCode")->get();
+        foreach ($requests as $request){
+            $request->emailVerificationCode = null;
+            $request->save();
+        }
     }
 
     private function purgeEmailVerificationRequests(): void

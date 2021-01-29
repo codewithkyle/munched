@@ -5,9 +5,9 @@ using Microsoft.JSInterop;
 using Munched.Models.Forms;
 using Munched.Models.API;
 
-namespace Munched.Pages
+namespace Munched.Pages.Utility
 {
-    public class RegisterBase : ComponentBase
+    public class LoginBase : ComponentBase
     {
 
         [Inject]
@@ -16,9 +16,11 @@ namespace Munched.Pages
         [Inject]
         private IJSRuntime JSRuntime { get; set; }
 
-        public RegistrationForm RegistrationForm = new RegistrationForm();
+        public LoginForm LoginForm = new LoginForm();
 
         public bool ViewIsReady = false;
+
+        public bool TrustDevice = true;
 
         protected override async Task OnInitializedAsync()
         {
@@ -30,15 +32,24 @@ namespace Munched.Pages
             }
         }
 
-        public async Task RegisterUser()
+        public async Task LoginUser()
         {
-            RegistrationForm.Submit();
+            LoginForm.Submit();
             StateHasChanged();
-            FormResponse Response = await JSRuntime.InvokeAsync<FormResponse>("RegisterUser", RegistrationForm.Email, RegistrationForm.Password, RegistrationForm.Name);
+            LoginResponse Response = await JSRuntime.InvokeAsync<LoginResponse>("LoginUser", LoginForm.Email, LoginForm.Password, TrustDevice);
             if (Response.Success){
-                RegistrationForm.Succeed();
+                LoginForm.Succeed();
+                if (Response.IsPendingEmailVerificaiton){
+                    NavigationManager.NavigateTo("/verification/pending");
+                } else {
+                    NavigationManager.NavigateTo("/dashboard");
+                }
             } else {
-                RegistrationForm.Fail(Response.FieldErrors[0]);
+                if (Response.FieldErrors != null){
+                    LoginForm.Fail(Response.FieldErrors[0]);
+                } else {
+                    LoginForm.Fail(Response.Error);
+                }
             }
             StateHasChanged();
         }

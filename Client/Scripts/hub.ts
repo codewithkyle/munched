@@ -162,3 +162,42 @@ async function UpdatePassword(oldPassword: string, newPassword: string): Promise
     const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
     return response;
 }
+
+async function ForgotPassword(email: string): Promise<FormResponse> {
+    const data = {
+        email: email,
+    };
+    const request = await fetch(`${API_URL}/v1/forgot-password`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: new Headers({
+            "Content-Type": "application/json",
+        }),
+    });
+    const fetchResponse = await request.json();
+    const response: Partial<FormResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    if (!response.Success) {
+        response.FieldErrors = fetchResponse.data;
+    }
+    return response as FormResponse;
+}
+
+async function ResetPassword(password: string, verificationCode: string): Promise<FormResponse> {
+    const data = {
+        password: password,
+        code: verificationCode,
+    };
+    const request = await fetch(`${API_URL}/v1/reset-password`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: new Headers({
+            "Content-Type": "application/json",
+        }),
+    });
+    const fetchResponse = await request.json();
+    const response: Partial<FormResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    if (!response.Success) {
+        response.FieldErrors = fetchResponse.data;
+    }
+    return response as FormResponse;
+}

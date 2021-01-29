@@ -17,6 +17,8 @@ $router->group(["prefix" => "v1"], function() use ($router) {
     $router->post("register", "AuthController@register");
     $router->post("login", "AuthController@login");
     $router->get("verify-email", "AuthController@verifyEmail");
+    $router->post("forgot-password", "AuthController@forgotPassword");
+    $router->post("reset-password", "AuthController@resetPassword");
 
     $router->group(["middleware" => "auth"], function() use ($router) {
         $router->post("refresh-token", "AuthController@refreshToken");
