@@ -1,4 +1,4 @@
-namespace Munched.Models.API
+namespace Client.Models.API
 {
     public class ResponseCore
     {

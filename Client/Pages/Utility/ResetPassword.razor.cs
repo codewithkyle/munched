@@ -2,11 +2,11 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Munched.Models.Forms;
-using Munched.Models.API;
+using Client.Models.Forms;
+using Client.Models.API;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Munched.Pages.Utility
+namespace Client.Pages.Utility
 {
     public class ResetPasswordBase : ComponentBase
     {

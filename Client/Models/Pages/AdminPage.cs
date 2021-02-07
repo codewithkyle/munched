@@ -2,9 +2,9 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Munched.Models.API;
+using Client.Models.API;
 
-namespace Munched.Models.Pages
+namespace Client.Models.Pages
 {
     public class AdminPage : ComponentBase
     {

@@ -1,4 +1,4 @@
-namespace Munched.Models.Forms
+namespace Client.Models.Forms
 {
     public class FormCore
     {
