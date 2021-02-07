@@ -2,40 +2,29 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
-use Illuminate\Contracts\Auth\Factory as Auth;
-use App\Models\User;
-use \Firebase\JWT\JWT;
 use \Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
+use \Firebase\JWT\JWT;
 
-class Authenticate
+class AuthCore
 {
-    /** @var Auth */
-    protected $auth;
-
-    public function __construct(Auth $auth)
-    {
-        $this->auth = $auth;
-    }
-
-    public function handle(Request $request, Closure $next, $guard = null)
+    protected function processRequest(Request $request): Request
     {
         $token = $this->getTokenFromRequeset($request);
 
         if (empty($token)) {
-            return $this->returnUnauthorized();
+            return null;
         }
 
         try{
             $payload = JWT::decode($token, env("JWT_SECRET"), ['HS256']);
         }catch (\Exception $e){
-            return $this->returnTokenException($e);
+            return null;
         }
 
         if ($this->tokenIsBlacklisted($token)){
-            return $this->returnUnauthorized();
+            return null;
         }
 
         $user = Cache::get("user-" . $payload->sub);
@@ -46,29 +35,16 @@ class Authenticate
             $user = json_decode($user);
         }
 
-        if (empty($user)){
-            return $this->returnUnauthorized();
-        }
-
-        // Remove if users are allowed to use the applcation without a verified status
-        if (!$user->verified && !str_contains($request->url(), "resend-verification-email")){
-            return $this->returnUnverified();
-        }
-
-        if ($user->suspended){
-            return $this->returnUnauthorized();
-        }
-
         $request->request->add([
-            'token' => $token,
-            'payload' => $payload,
-            'user' => $user,
+            "user" => $user,
+            "token" => $token,
+            "payload" => $payload,
         ]);
 
-        return $next($request);
+        return $request;
     }
 
-    private function tokenIsBlacklisted(string $token): bool
+    protected function tokenIsBlacklisted(string $token): bool
     {
         $blacklist = Cache::get("blacklist", json_encode([]));
         $blacklist = json_decode($blacklist);
@@ -86,7 +62,7 @@ class Authenticate
         return $isBlacklisted;
     }
 
-    private function returnUnverified(): JsonResponse
+    protected function returnUnverified(): JsonResponse
     {
         return response()->json([
             "success" => false,
@@ -95,7 +71,7 @@ class Authenticate
         ], 403);
     }
 
-    private function getTokenFromRequeset(Request $request): string
+    protected function getTokenFromRequeset(Request $request): string
     {
         $token = $request->header("authorization");
         if (!$token){
@@ -108,7 +84,7 @@ class Authenticate
         return $token;
     }
 
-    private function returnTokenException(\Exception $e): JsonResponse
+    protected function returnTokenException(\Exception $e): JsonResponse
     {
         return response()->json([
             "success" => false,
@@ -117,7 +93,7 @@ class Authenticate
         ]);
     }
 
-    private function returnUnauthorized(): JsonResponse
+    protected function returnUnauthorized(): JsonResponse
     {
         return response()->json([
             "success" => false,

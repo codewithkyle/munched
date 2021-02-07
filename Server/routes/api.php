@@ -32,5 +32,10 @@ $router->group(["prefix" => "v1"], function() use ($router) {
         $router->post("update-email", "UserController@updateEmail");
         $router->post("update-password", "AuthController@updatePassword");
     });
+
+    $router->group(["prefix" => "admin", "middleware" => ["auth", "admin"]], function() use($router) {
+        $router->get("verify", "AdminController@verify");
+        $router->get("users", "AdminController@getUsers");
+    });
 });
 

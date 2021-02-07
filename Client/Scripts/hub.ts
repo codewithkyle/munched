@@ -201,3 +201,13 @@ async function ResetPassword(password: string, verificationCode: string): Promis
     }
     return response as FormResponse;
 }
+
+async function VerifyAdmin(): Promise<ResponseCore> {
+    const request = await fetch(`${API_URL}/v1/admin/verify`, {
+        method: "GET",
+        headers: buildHeaders(),
+    });
+    const fetchResponse = await request.json();
+    const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    return response;
+}
