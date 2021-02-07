@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Munched.Models.Forms;
 using Munched.Models.API;
+using Munched.Models.Pages;
 
 namespace Munched.Pages.Utility
 {

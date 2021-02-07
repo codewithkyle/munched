@@ -20,7 +20,7 @@ $router->group(["prefix" => "v1"], function() use ($router) {
     $router->post("forgot-password", "AuthController@forgotPassword");
     $router->post("reset-password", "AuthController@resetPassword");
 
-    $router->group(["middleware" => "auth"], function() use ($router) {
+    $router->group(["middleware" => "user"], function() use ($router) {
         $router->post("refresh-token", "AuthController@refreshToken");
         $router->post("resend-verification-email", "AuthController@resendVerificationEmail");
         $router->post("logout", "AuthController@logout");
@@ -33,7 +33,7 @@ $router->group(["prefix" => "v1"], function() use ($router) {
         $router->post("update-password", "AuthController@updatePassword");
     });
 
-    $router->group(["prefix" => "admin", "middleware" => ["auth", "admin"]], function() use($router) {
+    $router->group(["prefix" => "admin", "middleware" => ["admin"]], function() use($router) {
         $router->get("verify", "AdminController@verify");
         $router->get("users", "AdminController@getUsers");
     });
