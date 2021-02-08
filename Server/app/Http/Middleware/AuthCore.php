@@ -9,7 +9,7 @@ use \Firebase\JWT\JWT;
 
 class AuthCore
 {
-    protected function processRequest(Request $request): Request
+    protected function processRequest(Request $request)
     {
         $token = $this->getTokenFromRequeset($request);
 

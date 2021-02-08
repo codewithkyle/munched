@@ -211,3 +211,13 @@ async function VerifyAdmin(): Promise<ResponseCore> {
     const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
     return response;
 }
+
+async function GetUsers(): Promise<ResponseCore> {
+    const request = await fetch(`${API_URL}/v1/admin/users`, {
+        method: "GET",
+        headers: buildHeaders(),
+    });
+    const fetchResponse = await request.json();
+    const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    return response;
+}

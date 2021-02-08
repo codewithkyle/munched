@@ -10,6 +10,9 @@ namespace Client.Pages.Admin
 {
     public class UsersAdmin : AdminPage
     {
-        
+        protected override async Task Main()
+        {
+            ResponseCore UsersResponse = await JSRuntime.InvokeAsync<ResponseCore>("GetUsers");
+        }
     }
 }

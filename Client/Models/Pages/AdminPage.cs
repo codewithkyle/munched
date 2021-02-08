@@ -10,10 +10,10 @@ namespace Client.Models.Pages
     {
 
         [Inject]
-        private NavigationManager NavigationManager { get; set; }
+        public NavigationManager NavigationManager { get; set; }
 
         [Inject]
-        private IJSRuntime JSRuntime { get; set; }
+        public IJSRuntime JSRuntime { get; set; }
 
         public bool ViewIsReady = false;
 
@@ -31,11 +31,11 @@ namespace Client.Models.Pages
                 {
                     NavigationManager.NavigateTo("/");
                 }
-                else
-                {
-                    ViewIsReady = true;
-                }
             }
+            await Main();
+            ViewIsReady = true;
         }
+
+        protected virtual async Task Main() {}
     }
 }

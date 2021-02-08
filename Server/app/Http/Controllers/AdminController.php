@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\UserService;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
+
+// Services
+use App\Services\UserService;
+use App\Services\AdminService;
 
 class AdminController extends Controller
 {
@@ -16,6 +19,10 @@ class AdminController extends Controller
 
     public function getUsers(Request $request): JsonResponse
     {
-        return $this->buildSuccessResponse();
+        $adminService = new AdminService();
+        $page = $request->input("p", 0);
+        $limit = $request->input("limit", 10);
+        $users = $adminService->getUsers($page, $limit);
+        return $this->buildSuccessResponse($users);
     }
 }

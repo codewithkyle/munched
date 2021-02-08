@@ -10,14 +10,14 @@ namespace Client.Models.Pages
     {
 
         [Inject]
-        private NavigationManager NavigationManager { get; set; }
+        public NavigationManager NavigationManager { get; set; }
 
         [Inject]
-        private IJSRuntime JSRuntime { get; set; }
+        public IJSRuntime JSRuntime { get; set; }
 
         public bool ViewIsReady = false;
 
-        protected override async Task OnInitializedAsync()
+        protected new async Task OnInitializedAsync()
         {
             ResponseCore TokenCheckResponse = await JSRuntime.InvokeAsync<ResponseCore>("RefreshToken");
             if (!TokenCheckResponse.Success)
