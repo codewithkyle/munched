@@ -98,7 +98,7 @@ class AuthCore
         return response()->json([
             "success" => false,
             "data" => null,
-            "error" => "Unauthorized."
+            "error" => "You are not authorized to preform this action."
         ], 401);
     }
 }

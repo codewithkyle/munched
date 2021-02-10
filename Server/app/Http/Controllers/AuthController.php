@@ -220,7 +220,7 @@ class AuthController extends Controller
     private function blacklistToken(string $token, int $exp): void
     {
         $blacklist = Cache::get("blacklist", json_encode([]));
-        $blacklist = json_decode($blacklist);
+        $blacklist = json_decode($blacklist, true);
         $blacklist[] = [
             "token" => $token,
             "exp" => $exp,
