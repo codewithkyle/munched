@@ -1,0 +1,13 @@
+@inherits LayoutComponentBase
+
+<main class="app-shell">
+    <aside class="app-aside">
+        <nav>
+            <NavLink href="/dashboard" Match="NavLinkMatch.All">Dashboard</NavLink>
+            <NavLink href="/admin/users">Manage Users</NavLink>
+        </nav>
+    </aside>
+    <section class="app-body">
+        @Body
+    </section>
+</main>

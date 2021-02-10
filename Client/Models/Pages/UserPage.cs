@@ -28,6 +28,9 @@ namespace Client.Models.Pages
             {
                 ViewIsReady = true;
             }
+            await Main();
         }
+
+        protected virtual async Task Main() {}
     }
 }

@@ -25,12 +25,16 @@ app {
 
 a {
     text-decoration: inherit;
+}
 
-    &:not(.button) {
-        &:hover,
-        &:focus-visible {
-            text-decoration: underline;
-        }
+button {
+    padding: 0;
+}
+
+.link {
+    &:hover,
+    &:focus-visible {
+        text-decoration: underline;
     }
 }
 

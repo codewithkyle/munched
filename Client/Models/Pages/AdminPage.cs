@@ -32,8 +32,8 @@ namespace Client.Models.Pages
                     NavigationManager.NavigateTo("/");
                 }
             }
-            await Main();
             ViewIsReady = true;
+            await Main();
         }
 
         protected virtual async Task Main() {}

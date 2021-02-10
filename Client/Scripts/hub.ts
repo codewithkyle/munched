@@ -212,12 +212,17 @@ async function VerifyAdmin(): Promise<ResponseCore> {
     return response;
 }
 
-async function GetUsers(): Promise<ResponseCore> {
-    const request = await fetch(`${API_URL}/v1/admin/users`, {
+type User = {};
+interface UsersResponse extends ResponseCore {
+    Users: Array<User>;
+}
+async function GetUsers(page: number = 0, limit: number = 10): Promise<UsersResponse> {
+    const request = await fetch(`${API_URL}/v1/admin/users?p=${page}&limit=${limit}`, {
         method: "GET",
         headers: buildHeaders(),
     });
     const fetchResponse = await request.json();
-    const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
-    return response;
+    const response: Partial<UsersResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    response.Users = fetchResponse.data;
+    return response as UsersResponse;
 }

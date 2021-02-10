@@ -1,9 +1,64 @@
+@layout AppShell
 @page "/admin/users"
-@inherits UsersAdmin;
+@inherits UsersAdmin
 
 @if (ViewIsReady)
 {
-    <div>
-        <h1 class="font-medium block font-lg font-grey-800">Admin: User</h1>
-    </div>
+    <data-table class="w-full max-w-laptop mx-auto my-4 scroll-x-auto">
+        @if (!IsLoadingUserData && Users.Count == 0){
+            <p class="block text-center font-grey-700 font-sm">Failed to find user data.</p>
+        } else {
+            <table class="table user-table w-laptop">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email Address</th>
+                        <th class="text-center">Verified</th>
+                        <th class="text-center">Suspended</th>
+                        <th class="text-center">Admin</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (IsLoadingUserData){
+                        @for (int i = 0; i < 3; i++){
+                            <tr>
+                                @for (int j = 0; j < 6; j++){
+                                    <td>
+                                        <span class="skeleton -copy"></span>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    } else {
+                        @for (int i = 0; i < Users.Count; i++){
+                            var User = Users[i];
+                            <tr>
+                                <td title="@User.name">
+                                    <span>@User.name</span>
+                                </td>
+                                <td title="@User.email">
+                                    <span>@User.email</span>
+                                </td>
+                                <td class="text-center">
+                                    <span>@User.verified</span>
+                                </td>
+                                <td class="text-center">
+                                    <span>@User.suspended</span>
+                                </td>
+                                <td class="text-center">
+                                    <span>@User.admin</span>
+                                </td>
+                                <td class="text-center">
+                                    <button class="menu-button" aria-label="open @User.name account action menu" tooltip="Action menu">
+                                        <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 512"><path fill="currentColor" d="M32 224c17.7 0 32 14.3 32 32s-14.3 32-32 32-32-14.3-32-32 14.3-32 32-32zM0 136c0 17.7 14.3 32 32 32s32-14.3 32-32-14.3-32-32-32-32 14.3-32 32zm0 240c0 17.7 14.3 32 32 32s32-14.3 32-32-14.3-32-32-32-32 14.3-32 32z"></path></svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+    </data-table>
 }

@@ -5,14 +5,35 @@ using Microsoft.JSInterop;
 using Client.Models.Forms;
 using Client.Models.API;
 using Client.Models.Pages;
+using Client.Models.Data;
+using System.Collections.Generic;
 
 namespace Client.Pages.Admin
 {
     public class UsersAdmin : AdminPage
     {
+
+        public List<User> Users = new List<User>();
+        public bool IsLoadingUserData = true;
+
         protected override async Task Main()
         {
-            ResponseCore UsersResponse = await JSRuntime.InvokeAsync<ResponseCore>("GetUsers");
+            await LoadUserData();
+        }
+
+        public async Task LoadUserData()
+        {
+            UsersResponse UsersResponse = await JSRuntime.InvokeAsync<UsersResponse>("GetUsers");
+            if (UsersResponse.Success)
+            {
+                Users = UsersResponse.Users;
+                IsLoadingUserData = false;
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("Alert", "error", "Something Went Wrong", UsersResponse.Error);
+            }
+            StateHasChanged();
         }
     }
 }
