@@ -12,6 +12,19 @@
         }
     }
 
+    .icon {
+        width: 24px;
+        height: 24px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+
+        svg {
+            width: 14px;
+            height: 14px;
+        }
+    }
+
     .menu-button {
         width: 52px;
         height: 100%;
@@ -21,6 +34,7 @@
         align-items: center;
         cursor: pointer;
         color: var(--grey-700);
+        position: relative;
 
         &:hover,
         &:focus-visible {
@@ -41,6 +55,14 @@
             }
         }
 
+        &:focus,
+        &:focus-within {
+            dropdown-menu {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+
         &::before {
             content: "";
             display: inline-block;
@@ -57,6 +79,74 @@
         svg {
             width: 24px;
             height: 24px;
+        }
+    }
+
+    dropdown-menu {
+        opacity: 0;
+        visibility: hidden;
+        box-shadow: var(--shadow-md);
+        border-radius: 0.25rem;
+        background-color: var(--white);
+        top: calc(100% - 0.5rem);
+        right: 0;
+        position: absolute;
+        transition: all 150ms var(--ease-in-out);
+        border: 1px solid var(--grey-300);
+        z-index: 1000;
+
+        hr {
+            border-bottom: 1px solid var(--grey-300);
+        }
+
+        button {
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            height: 42px;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--grey-700);
+            position: relative;
+            transition: all 150ms var(--ease-in-out);
+
+            &.-danger {
+                color: var(--danger-700);
+            }
+
+            &:hover,
+            &:focus-visible {
+                color: var(--grey-900);
+
+                &::before {
+                    opacity: 0.07;
+                }
+
+                &.-danger {
+                    color: var(--danger-700);
+                }
+            }
+
+            &:active {
+                &::before {
+                    opacity: 0.15;
+                }
+            }
+
+            &::before {
+                content: "";
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                background-color: var(--grey-500);
+                opacity: 0;
+                position: absolute;
+                top: 0;
+                left: 0;
+                transition: all 150ms var(--ease-in-out);
+            }
         }
     }
 }

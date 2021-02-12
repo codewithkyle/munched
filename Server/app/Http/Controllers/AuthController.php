@@ -44,6 +44,7 @@ class AuthController extends Controller
                 "pendingEmailVerification" => $user->verified ? false : true,
             ]);
             Cache::put("user-" . $user->uid, json_encode($user));
+            $this->setAuthCookie($data["token"], $data["expires"]);
             return $this->buildSuccessResponse($data);
         } else {
             return $this->buildErrorResponse("Incorrect email or password.");
@@ -53,6 +54,10 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         $this->blacklistToken($request->token, $request->payload->exp);
+        if (isset($_COOKIE['JWT'])) {
+            unset($_COOKIE['JWT']);
+            setcookie('JWT', '', time() - 3600, '/');
+        }
         return $this->buildSuccessResponse();
     }
 
@@ -62,6 +67,7 @@ class AuthController extends Controller
         if ($newToken["token"] !== $request->token){
             $this->blacklistToken($request->token, $request->payload->exp);
         }
+        $this->setAuthCookie($newToken["token"], $newToken["expires"]);
         return $this->buildSuccessResponse($newToken);
     }
 
@@ -226,5 +232,10 @@ class AuthController extends Controller
             "exp" => $exp,
         ];
         Cache::put("blacklist", json_encode($blacklist));
+    }
+
+    private function setAuthCookie(string $token, int $expires): void
+    {
+        setcookie("JWT", $token, $expires, "/", "", false, true);
     }
 }

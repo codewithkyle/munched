@@ -1,13 +1,7 @@
-function getToken(): string {
-    let token = localStorage.getItem("token") || sessionStorage.getItem("token") || "";
-    return `bearer ${token}`;
-}
-
 function buildHeaders(): Headers {
     return new Headers({
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: getToken(),
     });
 }
 

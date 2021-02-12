@@ -11,7 +11,7 @@ class AuthCore
 {
     protected function processRequest(Request $request)
     {
-        $token = $this->getTokenFromRequeset($request);
+        $token = $this->getTokenFromRequest($request);
 
         if (empty($token)) {
             return null;
@@ -47,14 +47,14 @@ class AuthCore
     protected function tokenIsBlacklisted(string $token): bool
     {
         $blacklist = Cache::get("blacklist", json_encode([]));
-        $blacklist = json_decode($blacklist);
+        $blacklist = json_decode($blacklist, true);
         $currentTime = time();
         $isBlacklisted = false;
         foreach($blacklist as $key => $jwt){
-            if ($jwt->token === $token){
+            if ($jwt["token"] === $token){
                 $isBlacklisted = true;
             }
-            if ($jwt->exp <= $currentTime){
+            if ($jwt["exp"] <= $currentTime){
                 unset($blacklist[$key]);
             }
         }
@@ -71,16 +71,20 @@ class AuthCore
         ], 403);
     }
 
-    protected function getTokenFromRequeset(Request $request): string
+    protected function getTokenFromRequest(Request $request)
     {
-        $token = $request->header("authorization");
-        if (!$token){
-            $token = $request->input("token");
-        } else if (str_contains($token, "bearer")) {
-            $token = trim(substr($token, 7));
-        } else {
-            $token = null;
+        $token = $_COOKIE["JWT"] ?? null;
+        if ($token){
+            return $token;
         }
+        $token = $request->header("authorization");
+        if ($token){
+            if (str_contains($token, "bearer")){
+                $token = trim(substr($token, 7));
+            }
+            return $token;
+        }
+        $token = $request->input("token", null);
         return $token;
     }
 

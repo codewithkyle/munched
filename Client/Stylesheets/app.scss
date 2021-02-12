@@ -95,7 +95,7 @@
     }
 
     .app-body {
-        overflow-y: auto;
+        overflow: auto;
         overscroll-behavior: contain;
         padding: 0 1rem;
         background-color: var(--white);

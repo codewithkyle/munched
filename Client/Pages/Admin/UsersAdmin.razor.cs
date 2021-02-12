@@ -15,6 +15,8 @@ namespace Client.Pages.Admin
 
         public List<User> Users = new List<User>();
         public bool IsLoadingUserData = true;
+        public int UsersPerPage = 10;
+        public int Page = 0;
 
         protected override async Task Main()
         {
@@ -23,7 +25,7 @@ namespace Client.Pages.Admin
 
         public async Task LoadUserData()
         {
-            UsersResponse UsersResponse = await JSRuntime.InvokeAsync<UsersResponse>("GetUsers");
+            UsersResponse UsersResponse = await JSRuntime.InvokeAsync<UsersResponse>("GetUsers", Page, UsersPerPage);
             if (UsersResponse.Success)
             {
                 Users = UsersResponse.Users;

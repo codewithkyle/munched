@@ -17,7 +17,7 @@ namespace Client.Models.Pages
 
         public bool ViewIsReady = false;
 
-        protected new async Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
             ResponseCore TokenCheckResponse = await JSRuntime.InvokeAsync<ResponseCore>("RefreshToken");
             if (!TokenCheckResponse.Success)

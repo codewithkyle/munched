@@ -4,7 +4,7 @@
 
 @if (ViewIsReady)
 {
-    <data-table class="w-full max-w-laptop mx-auto my-4 scroll-x-auto">
+    <data-table class="w-full max-w-laptop mx-auto my-4">
         @if (!IsLoadingUserData && Users.Count == 0){
             <p class="block text-center font-grey-700 font-sm">Failed to find user data.</p>
         } else {
@@ -25,7 +25,7 @@
                             <tr>
                                 @for (int j = 0; j < 6; j++){
                                     <td>
-                                        <span class="skeleton -copy"></span>
+                                        <span class="skeleton -copy inline-block"></span>
                                     </td>
                                 }
                             </tr>
@@ -33,6 +33,9 @@
                     } else {
                         @for (int i = 0; i < Users.Count; i++){
                             var User = Users[i];
+                            bool IsVerified = User.verified == 1;
+                            bool IsSuspended = User.suspended == 1;
+                            bool IsAdmin = User.admin == 1;
                             <tr>
                                 <td title="@User.name">
                                     <span>@User.name</span>
@@ -41,17 +44,52 @@
                                     <span>@User.email</span>
                                 </td>
                                 <td class="text-center">
-                                    <span>@User.verified</span>
+                                    <i class="icon" aria-label="@User.name is @(IsVerified ? "verified" : "not verified")">
+                                        <svg viewBox="0 0 24 24">
+                                            @if (IsVerified){
+                                                <circle class="font-success-400" fill="currentColor" cx="12" cy="12" r="12"/>
+                                            } else {
+                                                <polygon class="font-warning-400" fill="currentColor" points="0,18 24,18 12,0 "/>
+                                            }
+                                        </svg>
+                                    </i>
                                 </td>
                                 <td class="text-center">
-                                    <span>@User.suspended</span>
+                                    <i class="icon" aria-label="@User.name is @(IsSuspended ? "suspended" : "not suspended")">
+                                        <svg viewBox="0 0 24 24">
+                                            <rect class="@(IsSuspended ? "font-danger-400" : "font-grey-300")" fill="currentColor" width="24" height="24"/>
+                                        </svg>
+                                    </i>
                                 </td>
                                 <td class="text-center">
-                                    <span>@User.admin</span>
+                                    <i class="icon" aria-label="@User.name is @(IsAdmin ? "an admin" : "not an admin")">
+                                        <svg viewBox="0 0 24 24">
+                                            <circle class="@(IsAdmin ? "font-grey-300" : "font-success-400")" fill="currentColor" cx="12" cy="12" r="12"/>
+                                        </svg>
+                                    </i>
                                 </td>
                                 <td class="text-center">
-                                    <button class="menu-button" aria-label="open @User.name account action menu" tooltip="Action menu">
+                                    <button class="menu-button" aria-label="open @User.name account action menu">
                                         <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 512"><path fill="currentColor" d="M32 224c17.7 0 32 14.3 32 32s-14.3 32-32 32-32-14.3-32-32 14.3-32 32-32zM0 136c0 17.7 14.3 32 32 32s32-14.3 32-32-14.3-32-32-32-32 14.3-32 32zm0 240c0 17.7 14.3 32 32 32s32-14.3 32-32-14.3-32-32-32-32 14.3-32 32z"></path></svg>
+                                        <dropdown-menu>
+                                            @if (IsSuspended){
+                                                <button>Unsuspend</button>
+                                            } else {
+                                                @if (!IsVerified){
+                                                    <button>Activate account</button>
+                                                    <button>Send activation email</button>
+                                                } else {
+                                                    <button>Log in as @User.name</button>
+                                                    @if (IsAdmin){
+                                                        <button>Grant admin privileges</button>
+                                                    } else {
+                                                        <button>Revoke admin privileges</button>
+                                                    }
+                                                }
+                                                <hr>
+                                                <button class="-danger">Suspend</button>
+                                            }
+                                        </dropdown-menu>
                                     </button>
                                 </td>
                             </tr>

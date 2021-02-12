@@ -22,6 +22,7 @@ async function RegisterUser(email: string, password: string, name: string): Prom
         headers: new Headers({
             "Content-Type": "application/json",
         }),
+        credentials: "include",
     });
     const fetchResponse = await request.json();
     const response: Partial<FormResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
@@ -45,16 +46,20 @@ async function LoginUser(email: string, password: string, trustDevice: boolean):
         headers: new Headers({
             "Content-Type": "application/json",
         }),
+        credentials: "include",
     });
     const fetchResponse = await request.json();
     const response: Partial<LoginResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
     if (response.Success) {
-        if (trustDevice) {
-            localStorage.setItem("token", fetchResponse.data.token);
-        } else {
-            sessionStorage.setItem("token", fetchResponse.data.token);
+        if (!trustDevice) {
             window.onbeforeunload = (e: Event) => {
-                Logout();
+                ClearStorage();
+                fetch(`${API_URL}/v1/logout`, {
+                    method: "POST",
+                    headers: buildHeaders(),
+                    keepalive: true,
+                    credentials: "include",
+                });
             };
         }
         response.IsPendingEmailVerificaiton = fetchResponse.data.pendingEmailVerification;
@@ -74,6 +79,7 @@ async function GetProfile(): Promise<ProfileResponse> {
     const request = await fetch(`${API_URL}/v1/user/profile`, {
         method: "GET",
         headers: buildHeaders(),
+        credentials: "include",
     });
     const fetchResponse = await request.json();
     const response: Partial<ProfileResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
@@ -89,6 +95,7 @@ async function ResendVerificationEmail(): Promise<ResponseCore> {
     const request = await fetch(`${API_URL}/v1/resend-verification-email`, {
         method: "POST",
         headers: buildHeaders(),
+        credentials: "include",
     });
     const fetchResponse = await request.json();
     return buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
@@ -98,26 +105,26 @@ async function RefreshToken(): Promise<ResponseCore> {
     const request = await fetch(`${API_URL}/v1/refresh-token`, {
         method: "POST",
         headers: buildHeaders(),
+        credentials: "include",
     });
     const fetchResponse = await request.json();
     const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
-    if (response.Success) {
-        if (localStorage.getItem("token")) {
-            localStorage.setItem("token", fetchResponse.data.token);
-        } else {
-            sessionStorage.setItem("token", fetchResponse.data.token);
-        }
-    }
     return response;
 }
 
-function Logout() {
-    fetch(`${API_URL}/v1/logout`, {
+async function Logout() {
+    const request = await fetch(`${API_URL}/v1/logout`, {
         method: "POST",
         headers: buildHeaders(),
-        keepalive: true,
+        credentials: "include",
     });
-    ClearStorage();
+    if (request.ok){
+        ClearStorage();
+        location.href = location.origin;
+    } else {
+        console.error(`Failed to log out user on the server. ${request.status}: ${request.statusText}`);
+        location.href = location.origin;
+    }
 }
 
 async function UpdateEmailAddress(email: string): Promise<ResponseCore> {
@@ -128,6 +135,7 @@ async function UpdateEmailAddress(email: string): Promise<ResponseCore> {
         method: "POST",
         headers: buildHeaders(),
         body: JSON.stringify(data),
+        credentials: "include",
     });
     const fetchResponse = await request.json();
     const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
@@ -142,6 +150,7 @@ async function UpdateProfile(name: string): Promise<ResponseCore> {
         method: "POST",
         headers: buildHeaders(),
         body: JSON.stringify(data),
+        credentials: "include",
     });
     const fetchResponse = await request.json();
     const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
@@ -157,6 +166,7 @@ async function UpdatePassword(oldPassword: string, newPassword: string): Promise
         method: "POST",
         headers: buildHeaders(),
         body: JSON.stringify(data),
+        credentials: "include",
     });
     const fetchResponse = await request.json();
     const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
@@ -173,6 +183,7 @@ async function ForgotPassword(email: string): Promise<FormResponse> {
         headers: new Headers({
             "Content-Type": "application/json",
         }),
+        credentials: "include",
     });
     const fetchResponse = await request.json();
     const response: Partial<FormResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
@@ -193,6 +204,7 @@ async function ResetPassword(password: string, verificationCode: string): Promis
         headers: new Headers({
             "Content-Type": "application/json",
         }),
+        credentials: "include",
     });
     const fetchResponse = await request.json();
     const response: Partial<FormResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
@@ -206,6 +218,7 @@ async function VerifyAdmin(): Promise<ResponseCore> {
     const request = await fetch(`${API_URL}/v1/admin/verify`, {
         method: "GET",
         headers: buildHeaders(),
+        credentials: "include",
     });
     const fetchResponse = await request.json();
     const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
@@ -220,6 +233,7 @@ async function GetUsers(page: number = 0, limit: number = 10): Promise<UsersResp
     const request = await fetch(`${API_URL}/v1/admin/users?p=${page}&limit=${limit}`, {
         method: "GET",
         headers: buildHeaders(),
+        credentials: "include",
     });
     const fetchResponse = await request.json();
     const response: Partial<UsersResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);

@@ -9,12 +9,15 @@ class CorsMiddleware
     {
         $response = $next($request);
 
+        $origin = rtrim(getenv("APP_URL"), "/");
+
         $response->header('Access-Control-Allow-Methods', 'HEAD, GET, POST, PUT, PATCH, DELETE');
         $response->header('Access-Control-Allow-Headers', 'Content-Type, Accpets');
-        $response->header('Access-Control-Allow-Origin', '*');
+        $response->header('Access-Control-Allow-Origin', $origin);
+        $response->header('Access-Control-Allow-Credentials', 'true');
 
         $headers = [
-            'Access-Control-Allow-Origin'      => '*',
+            'Access-Control-Allow-Origin'      => $origin,
             'Access-Control-Allow-Methods'     => 'POST, GET, OPTIONS, PUT, DELETE',
             'Access-Control-Allow-Credentials' => 'true',
             'Access-Control-Max-Age'           => '86400',
