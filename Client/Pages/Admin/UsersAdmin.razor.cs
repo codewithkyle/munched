@@ -74,5 +74,40 @@ namespace Client.Pages.Admin
             Page = Int32.Parse(e.Value.ToString());
             await LoadUserData();
         }
+
+        public async Task SuspendUser(User user)
+        {
+            string ticket = await JSRuntime.InvokeAsync<string>("StartLoading");
+            ResponseCore Response = await JSRuntime.InvokeAsync<ResponseCore>("SuspendUser", user.Uid);
+            if (Response.Success)
+            {
+                user.Suspended = true;
+                user.Admin = false;
+                StateHasChanged();
+                await JSRuntime.InvokeVoidAsync("Alert", "success", "Account Updated", user.Name + " has been suspended.");
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("Alert", "error", "Suspension Failed", Response.Error);
+            }
+            await JSRuntime.InvokeAsync<ResponseCore>("StopLoading", ticket);
+        }
+
+        public async Task UnsuspendUser(User user)
+        {
+            string ticket = await JSRuntime.InvokeAsync<string>("StartLoading");
+            ResponseCore Response = await JSRuntime.InvokeAsync<ResponseCore>("UnsuspendUser", user.Uid);
+            if (Response.Success)
+            {
+                user.Suspended = false;
+                StateHasChanged();
+                await JSRuntime.InvokeVoidAsync("Alert", "success", "Account Updated", user.Name + " has been unsuspended.");
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("Alert", "error", "Unsuspension Failed", Response.Error);
+            }
+            await JSRuntime.InvokeAsync<ResponseCore>("StopLoading", ticket);
+        }
     }
 }

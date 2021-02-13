@@ -36,6 +36,8 @@ $router->group(["prefix" => "v1"], function() use ($router) {
     $router->group(["prefix" => "admin", "middleware" => ["admin"]], function() use($router) {
         $router->get("verify", "AdminController@verify");
         $router->get("users", "AdminController@getUsers");
+        $router->post("ban", "AdminController@banUser");
+        $router->post("unban", "AdminController@unbanUser");
     });
 });
 

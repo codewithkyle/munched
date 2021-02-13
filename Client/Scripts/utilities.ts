@@ -103,3 +103,42 @@ function Alert(type: string, title: string, message: string) {
         icon: icon,
     });
 }
+
+const tickets: Array<string> = [];
+let domState = "idling";
+
+function StopLoading(ticket: string): void {
+    if (!ticket || typeof ticket !== "string") {
+        console.error(`A ticket with the typeof 'string' is required to end the loading state.`);
+        return;
+    }
+
+    for (let i = 0; i < tickets.length; i++) {
+        if (tickets[i] === ticket) {
+            tickets.splice(i, 1);
+            break;
+        }
+    }
+
+    if (tickets.length === 0 && domState === "loading") {
+        domState = "idling";
+        document.documentElement.setAttribute("state", domState);
+    }
+}
+
+async function StartLoading(): Promise<string> {
+    if (domState !== "loading") {
+        domState = "loading";
+        document.documentElement.setAttribute("state", domState);
+    }
+    const ticket = uid();
+    tickets.push(ticket);
+    return ticket;
+}
+
+function uid(): string {
+    return new Array(4)
+        .fill(0)
+        .map(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16))
+        .join("-");
+}

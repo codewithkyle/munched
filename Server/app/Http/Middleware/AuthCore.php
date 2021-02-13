@@ -97,12 +97,12 @@ class AuthCore
         ]);
     }
 
-    protected function returnUnauthorized(): JsonResponse
+    protected function returnUnauthorized(string $error = "You are not authorized to preform this action."): JsonResponse
     {
         return response()->json([
             "success" => false,
             "data" => null,
-            "error" => "You are not authorized to preform this action."
+            "error" => $error,
         ], 401);
     }
 }

@@ -10,12 +10,25 @@ async function GetUsers(page: number = 0, limit: number = 10): Promise<UsersResp
             Email: user.email,
             Uid: user.uid,
             Groups: user.groups,
-            Suspended: user.suspended,
-            Verified: user.verified,
-            Admin: user.admin,
+            Suspended: user.suspended === 1 ? true : false,
+            Verified: user.verified === 1 ? true : false,
+            Admin: user.admin === 1 ? true : false,
         });
     }
     response.Total = fetchResponse.data.total;
     return response as UsersResponse;
 }
 
+async function SuspendUser(uid:string): Promise<ResponseCore> {
+    const request = await apiRequest(`/v1/admin/ban`, "POST", { uid: uid });
+    const fetchResponse:FetchReponse = await request.json();
+    const response: ResponseCore = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    return response;
+}
+
+async function UnsuspendUser(uid:string): Promise<ResponseCore> {
+    const request = await apiRequest(`/v1/admin/unban`, "POST", { uid: uid });
+    const fetchResponse:FetchReponse = await request.json();
+    const response: ResponseCore = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    return response;
+}

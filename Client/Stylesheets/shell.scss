@@ -10,7 +10,7 @@ body {
 }
 
 app {
-    display: none;
+    display: flex;
     width: 100%;
     height: 100%;
     overflow-x: hidden;
@@ -18,9 +18,9 @@ app {
     justify-content: center;
     align-items: center;
 
-    @media (min-width: 768px) and (min-height: 500px) {
-        display: flex;
-    }
+    // @media (min-width: 768px) and (min-height: 500px) {
+    //     display: flex;
+    // }
 }
 
 a {

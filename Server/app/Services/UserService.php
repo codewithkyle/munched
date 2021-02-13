@@ -39,6 +39,20 @@ class UserService
         ]
     ];
 
+    public function suspend(): void
+    {
+        $this->user->suspended = true;
+        $this->user->admin = false;
+        // Add a suspension email here
+        $this->save();
+    }
+
+    public function unsuspend(): void
+    {
+        $this->user->suspended = false;
+        $this->save();
+    }
+
     public function addGroup(string $groupToAdd): void
     {
         if (isset($this->permissions[$groupToAdd]) && !in_array($this->user->groups, $groupToAdd)){

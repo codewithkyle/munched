@@ -40,6 +40,9 @@ class AuthController extends Controller
         }
 
         if (Hash::check($password, $user->password)){
+            if ($user->suspended){
+                return $this->returnUnauthorized("Your account has been suspended.");
+            }
             $data = $this->generateToken($user->uid);
             Cache::put("user-" . $user->uid, json_encode($user));
             $this->setAuthCookie($data["token"], $data["expires"]);

@@ -25,7 +25,7 @@ class UserAuthenticate extends AuthCore
         }
 
         if ($request->user->suspended){
-            return $this->returnUnauthorized();
+            return $this->returnUnauthorized("Your account has been suspended.");
         }
 
         return $next($request);

@@ -27,9 +27,9 @@ type User = {
     Email: string;
     Uid: string;
     Groups: string[];
-    Suspended: number;
-    Verified: number;
-    Admin: number;
+    Suspended: boolean;
+    Verified: boolean;
+    Admin: boolean;
 };
 interface UsersResponse extends ResponseCore {
     Users: Array<User>;

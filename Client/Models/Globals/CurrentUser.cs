@@ -8,9 +8,9 @@ namespace Client.Models.Globals
         public static string Email = null;
         public static string Uid = null;
         public static string[] Groups = null;
-        public static int Suspended = 1;
-        public static int Verified = 0;
-        public static int Admin = 0;
+        public static bool Suspended = false;
+        public static bool Verified = true;
+        public static bool Admin = false;
 
         public static void SetCurrentUser(User User)
         {

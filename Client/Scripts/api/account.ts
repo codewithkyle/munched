@@ -18,9 +18,9 @@ async function GetProfile(): Promise<ProfileResponse> {
             Email: fetchResponse.data.email,
             Uid: fetchResponse.data.uid,
             Groups: fetchResponse.data.groups,
-            Suspended: fetchResponse.data.suspended,
-            Verified: fetchResponse.data.verified,
-            Admin: fetchResponse.data.admin,
+            Suspended: fetchResponse.data.suspended === 1 ? true : false,
+            Verified: fetchResponse.data.verified === 1 ? true : false,
+            Admin: fetchResponse.data.admin === 1 ? true : false,
         };
     }
     return response as ProfileResponse;
