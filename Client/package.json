@@ -3,13 +3,12 @@
     "scripts": {
         "reset": "rm -rf ./wwwroot/css && mkdir ./wwwroot/css && rm -rf ./wwwroot/js && mkdir ./wwwroot/js",
         "brixi": "brixi && mv ./brixi/brixi.css ./Stylesheets/brixi.css && rmdir ./brixi",
-        "build": "npm run reset && npm run prettier && npm-run-all build:* && node ./build/relocate.js && npm run start",
+        "build": "npm run reset && npm run prettier && npm-run-all build:* && node ./build/relocate.js && npm run publish",
         "build:css": "cssmonster",
         "build:js": "tsc",
         "build:client": "dotnet build",
-        "start": "dotnet run",
-        "production": "npm run reset && npm run build:css && npm run build:js && node ./build/minify.js && node ./build/release.js && npm run publish",
-        "publish": "dotnet build && dotnet publish -c Release --self-contained && rm -rf ./public && mkdir ./public && mv ./bin/Release/netstandard2.1/publish/* ./public",
+        "production": "npm run reset && npm-run-all build:* && node ./build/minify.js && node ./build/release.js && npm run publish",
+        "publish": "dotnet publish -c Release --self-contained && rm -rf ./public && mkdir ./public && mv ./bin/Release/netstandard2.1/publish/* ./public",
         "bundle": "snowpack install",
         "prettier": "prettier --write \"./Scripts/*.ts\" && prettier --write \"./Stylesheets/*.scss\""
     },

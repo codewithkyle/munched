@@ -10,12 +10,18 @@ async function UpdateEmailAddress(email: string): Promise<ResponseCore> {
 
 async function GetProfile(): Promise<ProfileResponse> {
     const request = await apiRequest("/v1/user/profile");
-    const fetchResponse = await request.json();
+    const fetchResponse:FetchReponse = await request.json();
     const response: Partial<ProfileResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
     if (response.Success) {
-        response.Name = fetchResponse.data.name;
-        response.Email = fetchResponse.data.email;
-        response.UID = fetchResponse.data.uid;
+        response.User = {
+            Name: fetchResponse.data.name,
+            Email: fetchResponse.data.email,
+            Uid: fetchResponse.data.uid,
+            Groups: fetchResponse.data.groups,
+            Suspended: fetchResponse.data.suspended,
+            Verified: fetchResponse.data.verified,
+            Admin: fetchResponse.data.admin,
+        };
     }
     return response as ProfileResponse;
 }

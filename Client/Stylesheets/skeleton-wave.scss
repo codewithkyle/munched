@@ -1,5 +1,7 @@
 .skeleton {
-    display: block;
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
     position: relative;
     border-radius: 0.25rem;
     overflow: hidden;

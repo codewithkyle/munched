@@ -14,6 +14,11 @@ class AdminService
     {
         $offset = $page * $limit;
         $users = User::limit($limit)->offset($offset)->get();
-        return $users;
+        $total = User::count();
+        $output = [
+            "users" => $users,
+            "total" => $total,
+        ];
+        return $output;
     }
 }

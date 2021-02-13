@@ -22,7 +22,7 @@ class AdminController extends Controller
         $adminService = new AdminService();
         $page = $request->input("p", 0);
         $limit = $request->input("limit", 10);
-        $users = $adminService->getUsers($page, $limit);
-        return $this->buildSuccessResponse($users);
+        $data = $adminService->getUsers($page, $limit);
+        return $this->buildSuccessResponse($data);
     }
 }

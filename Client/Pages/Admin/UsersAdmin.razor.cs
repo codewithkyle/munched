@@ -12,11 +12,12 @@ namespace Client.Pages.Admin
 {
     public class UsersAdmin : AdminPage
     {
-
         public List<User> Users = new List<User>();
         public bool IsLoadingUserData = true;
         public int UsersPerPage = 10;
-        public int Page = 0;
+        public int Page = 1;
+        public int TotalUsers = 0;
+        public int TotalPages = 1;
 
         protected override async Task Main()
         {
@@ -25,10 +26,14 @@ namespace Client.Pages.Admin
 
         public async Task LoadUserData()
         {
-            UsersResponse UsersResponse = await JSRuntime.InvokeAsync<UsersResponse>("GetUsers", Page, UsersPerPage);
+            IsLoadingUserData = true;
+            StateHasChanged();
+            UsersResponse UsersResponse = await JSRuntime.InvokeAsync<UsersResponse>("GetUsers", Page - 1, UsersPerPage);
             if (UsersResponse.Success)
             {
                 Users = UsersResponse.Users;
+                TotalUsers = UsersResponse.Total;
+                TotalPages = (int)Math.Ceiling((decimal)TotalUsers / UsersPerPage);
                 IsLoadingUserData = false;
             }
             else
@@ -36,6 +41,38 @@ namespace Client.Pages.Admin
                 await JSRuntime.InvokeVoidAsync("Alert", "error", "Something Went Wrong", UsersResponse.Error);
             }
             StateHasChanged();
+        }
+
+        public async Task UpdateUsersPerPage(ChangeEventArgs e)
+        {
+            UsersPerPage = Int32.Parse(e.Value.ToString());
+            Page = 1;
+            await LoadUserData();
+        }
+
+        public async Task NextPage()
+        {
+            Page++;
+            Console.Write(Page);
+            if (Page > TotalPages){
+                Page = TotalPages;
+            }
+            await LoadUserData();
+        }
+
+        public async Task PreviousPage()
+        {
+            Page--;
+            if (Page <= 0){
+                Page = 1;
+            }
+            await LoadUserData();
+        }
+
+        public async Task JumpToPage(ChangeEventArgs e)
+        {
+            Page = Int32.Parse(e.Value.ToString());
+            await LoadUserData();
         }
     }
 }

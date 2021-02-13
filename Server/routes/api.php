@@ -26,7 +26,7 @@ $router->group(["prefix" => "v1"], function() use ($router) {
         $router->post("logout", "AuthController@logout");
     });
 
-    $router->group(["prefix" => "user", "middleware" => "auth"], function() use ($router) {
+    $router->group(["prefix" => "user", "middleware" => "user"], function() use ($router) {
         $router->get("profile", "UserController@profile");
         $router->post("profile", "UserController@updateProfile");
         $router->post("update-email", "UserController@updateEmail");

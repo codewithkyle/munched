@@ -2,13 +2,12 @@ namespace Client.Models.Data
 {
     public class User
     {
-        public string name {get;set;}
-        public string email {get;set;}
-        public string uid {get;set;}
-        public string[] groups {get;set;}
-        public int id {get;set;}
-        public int suspended {get;set;}
-        public int verified {get;set;}
-        public int admin {get;set;}
+        public string Name {get;set;}
+        public string Email {get;set;}
+        public string Uid {get;set;}
+        public string[] Groups {get;set;}
+        public int Suspended {get;set;}
+        public int Verified {get;set;}
+        public int Admin {get;set;}
     }
 }

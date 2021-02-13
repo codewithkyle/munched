@@ -1,3 +1,9 @@
+interface FetchReponse {
+    success: boolean;
+    data: any;
+    error: string;
+}
+
 interface ResponseCore {
     Success: boolean;
     StatusCode: number;
@@ -13,23 +19,21 @@ interface LoginResponse extends FormResponse {
 }
 
 interface ProfileResponse extends ResponseCore {
-    Name: string;
-    Email: string;
-    UID: string;
+    User: User;
 }
 
 type User = {
-    name: string;
-    email: string;
-    uid: string;
-    groups: string[];
-    id: number;
-    suspended: number;
-    verified: number;
-    admin: number;
+    Name: string;
+    Email: string;
+    Uid: string;
+    Groups: string[];
+    Suspended: number;
+    Verified: number;
+    Admin: number;
 };
 interface UsersResponse extends ResponseCore {
     Users: Array<User>;
+    Total: number;
 }
 
 type Method = "GET" | "POST" | "PUT" | "HEAD" | "DELETE";
