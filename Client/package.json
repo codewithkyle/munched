@@ -3,7 +3,7 @@
     "scripts": {
         "reset": "rm -rf ./wwwroot/css && mkdir ./wwwroot/css && rm -rf ./wwwroot/js && mkdir ./wwwroot/js",
         "brixi": "brixi && mv ./brixi/brixi.css ./Stylesheets/brixi.css && rmdir ./brixi",
-        "build": "npm run reset && npm run prettier && npm-run-all build:* && mv ./_js/* ./wwwroot/js/ && rmdir ./_js && npm run start",
+        "build": "npm run reset && npm run prettier && npm-run-all build:* && node ./build/relocate.js && npm run start",
         "build:css": "cssmonster",
         "build:js": "tsc",
         "build:client": "dotnet build",

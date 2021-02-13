@@ -5,6 +5,27 @@ function buildHeaders(): Headers {
     });
 }
 
+function buildRequestOptions(method: Method = "GET", body: any = null): RequestInit {
+    const options: RequestInit = {
+        method: method,
+        headers: buildHeaders(),
+        credentials: "include",
+    };
+    if (body) {
+        options.body = JSON.stringify(body);
+    }
+    return options;
+}
+
+/**
+ * Build and returns a API fetch request.
+ * @example buildRequest("v1/user/profile", "GET");
+ * @example buildRequest("v1/login", "POST", { email: email, password: password, name: name,});
+ */
+function apiRequest(route: string, method: Method = "GET", body: any = null) {
+    return fetch(`${API_URL}/${route.replace(/^\//, "").trim()}`, buildRequestOptions(method, body));
+}
+
 function buildResponseCore(success: boolean, statusCode: number, error: string = null): ResponseCore {
     return {
         Success: success,

@@ -25,7 +25,7 @@ const options = {
 };
 
 async function run(){
-    glob(`${cwd}/_js/*.js`, (err, files) => {
+    glob(`${cwd}/_js/**/*.js`, (err, files) => {
         if (err){
             console.log(err);
             process.exit(1);
@@ -50,6 +50,7 @@ async function run(){
                         }
                         finished++;
                         if (finished === files.length){
+                            fs.rmdirSync(path.join(cwd, "_js"), {recursive: true, force: true});
                             process.exit(0);
                         }
                     }); 

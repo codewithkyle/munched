@@ -40,12 +40,12 @@ class AuthController extends Controller
         }
 
         if (Hash::check($password, $user->password)){
-            $data = array_merge($this->generateToken($user->uid), [
-                "pendingEmailVerification" => $user->verified ? false : true,
-            ]);
+            $data = $this->generateToken($user->uid);
             Cache::put("user-" . $user->uid, json_encode($user));
             $this->setAuthCookie($data["token"], $data["expires"]);
-            return $this->buildSuccessResponse($data);
+            return $this->buildSuccessResponse([
+                "pendingEmailVerification" => $user->verified ? false : true,
+            ]);
         } else {
             return $this->buildErrorResponse("Incorrect email or password.");
         }
@@ -68,7 +68,7 @@ class AuthController extends Controller
             $this->blacklistToken($request->token, $request->payload->exp);
         }
         $this->setAuthCookie($newToken["token"], $newToken["expires"]);
-        return $this->buildSuccessResponse($newToken);
+        return $this->buildSuccessResponse();
     }
 
     public function register(Request $request): JsonResponse
