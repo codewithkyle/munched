@@ -39,6 +39,25 @@ class UserService
         ]
     ];
 
+    public function grantAdminStatus(): void
+    {
+        $this->user->admin = true;
+        $this->save();
+    }
+
+    public function revokeAdminStatus(): void
+    {
+        $this->user->admin = false;
+        $this->save();
+    }
+
+    public function activate(): void
+    {
+        $this->user->verified = true;
+        $this->purgeEmailVerificationRequests();
+        $this->save();
+    }
+
     public function suspend(): void
     {
         $this->user->suspended = true;

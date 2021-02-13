@@ -68,4 +68,84 @@ class AdminController extends Controller
             return $this->buildErrorResponse("Failed to find user to unsuspend.");
         }
     }
+
+    public function activateUser(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            "uid" => "required",
+        ]);
+        if ($validator->fails()){
+            return $this->buildValidationErrorResponse($validator, "Request is missing uid parameter.");
+        }
+
+        $uid = $request->input("uid");
+        $user = User::where("uid", $uid)->first();
+        if (!empty($user)){
+            $userService = new UserService($user);
+            $userService->activate();
+            return $this->buildSuccessResponse();
+        } else {
+            return $this->buildErrorResponse("Failed to find user to unsuspend.");
+        }
+    }
+
+    public function sendActivationEmail(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            "uid" => "required",
+        ]);
+        if ($validator->fails()){
+            return $this->buildValidationErrorResponse($validator, "Request is missing uid parameter.");
+        }
+
+        $uid = $request->input("uid");
+        $user = User::where("uid", $uid)->first();
+        if (!empty($user)){
+            $userService = new UserService($user);
+            $userService->resendVerificationEmail();
+            return $this->buildSuccessResponse();
+        } else {
+            return $this->buildErrorResponse("Failed to find user to unsuspend.");
+        }
+    }
+
+    public function revokeAdminStatus(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            "uid" => "required",
+        ]);
+        if ($validator->fails()){
+            return $this->buildValidationErrorResponse($validator, "Request is missing uid parameter.");
+        }
+
+        $uid = $request->input("uid");
+        $user = User::where("uid", $uid)->first();
+        if (!empty($user)){
+            $userService = new UserService($user);
+            $userService->revokeAdminStatus();
+            return $this->buildSuccessResponse();
+        } else {
+            return $this->buildErrorResponse("Failed to find user to unsuspend.");
+        }
+    }
+
+    public function grantAdminStatus(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            "uid" => "required",
+        ]);
+        if ($validator->fails()){
+            return $this->buildValidationErrorResponse($validator, "Request is missing uid parameter.");
+        }
+
+        $uid = $request->input("uid");
+        $user = User::where("uid", $uid)->first();
+        if (!empty($user)){
+            $userService = new UserService($user);
+            $userService->grantAdminStatus();
+            return $this->buildSuccessResponse();
+        } else {
+            return $this->buildErrorResponse("Failed to find user to unsuspend.");
+        }
+    }
 }

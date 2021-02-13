@@ -19,6 +19,7 @@ $router->group(["prefix" => "v1"], function() use ($router) {
     $router->get("verify-email", "AuthController@verifyEmail");
     $router->post("forgot-password", "AuthController@forgotPassword");
     $router->post("reset-password", "AuthController@resetPassword");
+    $router->post("impersonate", "AuthController@impersonate");
 
     $router->group(["middleware" => "user"], function() use ($router) {
         $router->post("refresh-token", "AuthController@refreshToken");
@@ -38,6 +39,11 @@ $router->group(["prefix" => "v1"], function() use ($router) {
         $router->get("users", "AdminController@getUsers");
         $router->post("ban", "AdminController@banUser");
         $router->post("unban", "AdminController@unbanUser");
+        $router->post("activate", "AdminController@activateUser");
+        $router->post("send-activation-email", "AdminController@sendActivationEmail");
+        $router->post("revoke-admin-status", "AdminController@revokeAdminStatus");
+        $router->post("grant-admin-status", "AdminController@grantAdminStatus");
+        $router->post("impersonation-link", "AuthController@getImpersonationLink");
     });
 });
 

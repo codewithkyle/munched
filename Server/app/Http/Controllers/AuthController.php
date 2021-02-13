@@ -12,14 +12,48 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
 
+// Models
 use App\Models\User;
 use App\Models\EmailVerification;
 use App\Models\PasswordReset;
 
+// Services
 use App\Services\UserService;
 
 class AuthController extends Controller
 {
+    public function impersonate(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            "token" => "required",
+        ]);
+        if ($validator->fails()){
+            return $this->buildValidationErrorResponse($validator, "Request is missing token parameter.");
+        }
+        $token = $request->input("token");
+        $this->setAuthCookie($token, time() + 900);
+        return $this->buildSuccessResponse();
+    }
+
+    public function getImpersonationLink(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            "uid" => "required",
+        ]);
+        if ($validator->fails()){
+            return $this->buildValidationErrorResponse($validator, "Request is missing uid parameter.");
+        }
+
+        $uid = $request->input("uid");
+        $user = User::where("uid", $uid)->first();
+        if (!empty($user)){
+            $data = $this->generateToken($user->uid, 900);
+            return $this->buildSuccessResponse($data);
+        } else {
+            return $this->buildErrorResponse("Failed to find user to unsuspend.");
+        }
+    }
+
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -207,10 +241,13 @@ class AuthController extends Controller
         }
     }
 
-    private function generateToken(string $userUid): array
+    private function generateToken(string $userUid, int $duraiton = null): array
     {
+        if (is_null($duraiton)){
+            $duraiton = env("JWT_TIMEOUT");
+        }
         $iat = time();
-        $exp = $iat + env("JWT_TIMEOUT");
+        $exp = $iat + $duraiton;
         $payload = [
             "iss" => env("API_URL"),
             "iat" => $iat,

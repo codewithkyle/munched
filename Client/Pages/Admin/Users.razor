@@ -43,7 +43,7 @@
                                 <span>@User.Email</span>
                             </td>
                             <td class="text-center">
-                                <i class="icon" aria-label="@User.Name is @(IsVerified ? "verified" : "not verified")">
+                                <i class="icon" aria-label="@User.Name is @(IsVerified ? "verified" : "not verified")" title="@User.Name is @(IsVerified ? "verified" : "not verified")">
                                     <svg viewBox="0 0 24 24">
                                         @if (IsVerified){
                                             <circle class="font-success-400" fill="currentColor" cx="12" cy="12" r="12"/>
@@ -54,44 +54,44 @@
                                 </i>
                             </td>
                             <td class="text-center">
-                                <i class="icon" aria-label="@User.Name is @(IsSuspended ? "suspended" : "not suspended")">
+                                <i class="icon" aria-label="@User.Name is @(IsSuspended ? "suspended" : "not suspended")" title="@User.Name is @(IsSuspended ? "suspended" : "not suspended")">
                                     <svg viewBox="0 0 24 24">
                                         <path class="@(IsSuspended ? "font-danger-500" : "font-grey-300")" fill="currentColor" d="M23,24H1c-0.6,0-1-0.5-1-1V1c0-0.6,0.5-1,1-1h22c0.6,0,1,0.5,1,1v22C24,23.5,23.5,24,23,24z"/>
                                     </svg>
                                 </i>
                             </td>
                             <td class="text-center">
-                                <i class="icon" aria-label="@User.Name is @(IsAdmin ? "an admin" : "not an admin")">
+                                <i class="icon" aria-label="@User.Name is @(IsAdmin ? "an admin" : "not an admin")" title="@User.Name is @(IsAdmin ? "an admin" : "not an admin")">
                                     <svg viewBox="0 0 24 24">
                                         <circle class="@(IsAdmin ? "font-success-400" : "font-grey-300")" fill="currentColor" cx="12" cy="12" r="12"/>
                                     </svg>
                                 </i>
                             </td>
                             <td class="text-center">
-                                <button class="menu-button" aria-label="open @User.Name account action menu">
-                                    <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 512"><path fill="currentColor" d="M32 224c17.7 0 32 14.3 32 32s-14.3 32-32 32-32-14.3-32-32 14.3-32 32-32zM0 136c0 17.7 14.3 32 32 32s32-14.3 32-32-14.3-32-32-32-32 14.3-32 32zm0 240c0 17.7 14.3 32 32 32s32-14.3 32-32-14.3-32-32-32-32 14.3-32 32z"></path></svg>
-                                </button>
-                                <dropdown-menu>
-                                    @if (IsSuspended){
-                                        <button @onclick="@(e => UnsuspendUser(User))">Unsuspend</button>
-                                    } else {
-                                        @if (!IsVerified){
-                                            <button>Activate account</button>
-                                            <button>Send activation email</button>
+                                @if (User.Uid != CurrentUser.Uid){
+                                    <button class="menu-button" aria-label="open @User.Name account action menu">
+                                        <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 512"><path fill="currentColor" d="M32 224c17.7 0 32 14.3 32 32s-14.3 32-32 32-32-14.3-32-32 14.3-32 32-32zM0 136c0 17.7 14.3 32 32 32s32-14.3 32-32-14.3-32-32-32-32 14.3-32 32zm0 240c0 17.7 14.3 32 32 32s32-14.3 32-32-14.3-32-32-32-32 14.3-32 32z"></path></svg>
+                                    </button>
+                                    <dropdown-menu>
+                                        @if (IsSuspended){
+                                            <button @onclick="@(e => UnsuspendUser(User))">Unsuspend</button>
                                         } else {
-                                            @if (User.Uid != CurrentUser.Uid){
-                                                <button>Log in as @User.Name</button>
-                                            }
-                                            @if (IsAdmin){
-                                                <button>Revoke admin privileges</button>
+                                            @if (!IsVerified){
+                                                <button @onclick="@(e => ActivateUser(User))">Activate account</button>
+                                                <button @onclick="@(e => SendActivationEmail(User))">Send activation email</button>
                                             } else {
-                                                <button>Grant admin privileges</button>
+                                                <button @onclick="@(e => GetImpersonationLink(User))">Log in as @User.Name</button>
+                                                @if (IsAdmin){
+                                                    <button @onclick="@(e => RevokeAdmin(User))">Revoke admin privileges</button>
+                                                } else {
+                                                    <button @onclick="@(e => GrantAdmin(User))">Grant admin privileges</button>
+                                                }
                                             }
+                                            <hr>
+                                            <button class="-danger" @onclick="@(e => SuspendUser(User))">Suspend</button>
                                         }
-                                        <hr>
-                                        <button class="-danger" @onclick="@(e => SuspendUser(User))">Suspend</button>
-                                    }
-                                </dropdown-menu>
+                                    </dropdown-menu>
+                                }
                             </td>
                         </tr>
                     }

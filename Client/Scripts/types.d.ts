@@ -1,3 +1,5 @@
+type Method = "GET" | "POST" | "PUT" | "HEAD" | "DELETE";
+
 interface FetchReponse {
     success: boolean;
     data: any;
@@ -36,4 +38,6 @@ interface UsersResponse extends ResponseCore {
     Total: number;
 }
 
-type Method = "GET" | "POST" | "PUT" | "HEAD" | "DELETE";
+interface ImpersonationLinkResponse extends ResponseCore {
+    URL: string;
+}

@@ -142,3 +142,17 @@ function uid(): string {
         .map(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16))
         .join("-");
 }
+
+function Prompt(label: string, value: string): Promise<string> {
+    return new Promise((resolve) => {
+        const response = prompt(label, value);
+        resolve(response);
+    });
+}
+
+function Confirm(message: string): Promise<boolean> {
+    return new Promise((resolve) => {
+        const result = confirm(message);
+        resolve(result);
+    });
+}
