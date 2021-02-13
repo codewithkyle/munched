@@ -4,13 +4,13 @@ namespace Client.Models.Globals
 {
     public static class CurrentUser
     {
-        public static string Name = null;
-        public static string Email = null;
-        public static string Uid = null;
-        public static string[] Groups = null;
-        public static bool Suspended = false;
-        public static bool Verified = true;
-        public static bool Admin = false;
+        public static string Name {get;set;}
+        public static string Email {get;set;}
+        public static string Uid {get;set;}
+        public static string[] Groups {get;set;}
+        public static bool Suspended {get;set;}
+        public static bool Verified{get;set;}
+        public static bool Admin {get;set;}
 
         public static void SetCurrentUser(User User)
         {
