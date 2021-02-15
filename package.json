@@ -8,7 +8,7 @@
         "build:css": "cssmonster",
         "build:js": "tsc",
         "build:client": "dotnet build ./Client",
-        "production": "npm run reset && npm-run-all build:* && node ./Client/build/minify.js && node ./Client/build/release.js && npm run publish",
+        "production": "npm run reset && npm-run-all build:* && node ./Client/build/minify.js && node ./Client/build/release.js && npm run publish && npm run cleanup",
         "publish": "dotnet publish ./Client -c Release && rm -rf ./Client/public && mkdir ./Client/public && mv ./Client/bin/Release/net5.0/publish/wwwroot/* ./Client/public",
         "bundle": "snowpack install",
         "prettier": "npm-run-all prettier:*",
