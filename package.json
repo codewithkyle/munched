@@ -12,7 +12,8 @@
         "bundle": "snowpack install",
         "prettier": "npm-run-all prettier:*",
         "prettier:client": "prettier --write \"./Client/Scripts/*.ts\" && prettier --write \"./Client/Stylesheets/*.scss\"",
-        "prettier:server": "prettier --write \"./Server/app/**/*.php\" && prettier --write \"./Server/database/**/*.php\" && prettier --write \"./Server/routes/*.php\" && prettier --write \"./Server/resources/**/*.php\" && prettier --write \"./Server/bootstrap/*.php\""
+        "prettier:server": "prettier --write \"./Server/app/**/*.php\" && prettier --write \"./Server/database/**/*.php\" && prettier --write \"./Server/routes/*.php\" && prettier --write \"./Server/resources/**/*.php\" && prettier --write \"./Server/bootstrap/*.php\"",
+		"test": "./Server/vendor/bin/phpunit ./Server/tests"
     },
     "dependencies": {
         "@codewithkyle/notifyjs": "^2.1.0",
