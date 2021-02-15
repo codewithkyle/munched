@@ -32,7 +32,7 @@ class ForgottenPassword extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.user.forgotPasswordEmail', [
+        return $this->markdown("emails.user.forgotPasswordEmail", [
             "url" => rtrim(env("APP_URL"), "/") . "/reset-password?code=" . $this->verificationCode,
             "name" => $this->name,
         ])->subject("Password Reset Request");

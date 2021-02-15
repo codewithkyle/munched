@@ -41,10 +41,13 @@ class Controller extends BaseController
 
     protected function returnUnauthorized(string $error = "You are not authorized to preform this action."): JsonResponse
     {
-        return response()->json([
-            "success" => false,
-            "data" => null,
-            "error" => $error,
-        ], 401);
+        return response()->json(
+            [
+                "success" => false,
+                "data" => null,
+                "error" => $error,
+            ],
+            401
+        );
     }
 }

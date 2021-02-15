@@ -13,16 +13,16 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create("users", function (Blueprint $table) {
             $table->increments("id")->autoIncrement();
             $table->string("email")->unique();
             $table->string("name");
             $table->string("password");
-            $table->uuid('uid');
-            $table->boolean('admin')->default(false);
-            $table->boolean('verified')->default(false);
-            $table->boolean('suspended')->default(false);
-            $table->json('groups');
+            $table->uuid("uid");
+            $table->boolean("admin")->default(false);
+            $table->boolean("verified")->default(false);
+            $table->boolean("suspended")->default(false);
+            $table->json("groups");
             $table->timestamps();
         });
     }
@@ -34,6 +34,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists("users");
     }
 }

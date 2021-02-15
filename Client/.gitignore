@@ -1,14 +1,10 @@
 # Build tools
-node_modules
-/brixi
-.vscode
 /_js
-web_modules
 compiled
 public
 /wwwroot/js
 /wwwroot/css
-.editorconfig
+
 
 # User-specific files
 *.rsuser

@@ -13,7 +13,7 @@ class CreateEmailVerificationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('email_verifications', function (Blueprint $table) {
+        Schema::create("email_verifications", function (Blueprint $table) {
             $table->increments("id")->autoIncrement();
             $table->integer("userId");
             $table->string("email");
@@ -29,6 +29,6 @@ class CreateEmailVerificationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('email_verifications');
+        Schema::dropIfExists("email_verifications");
     }
 }

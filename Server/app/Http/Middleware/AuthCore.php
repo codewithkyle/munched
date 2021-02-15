@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use \Illuminate\Http\Request;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
-use \Firebase\JWT\JWT;
+use Firebase\JWT\JWT;
 
 class AuthCore
 {
@@ -17,19 +17,19 @@ class AuthCore
             return null;
         }
 
-        try{
-            $payload = JWT::decode($token, env("JWT_SECRET"), ['HS256']);
-        }catch (\Exception $e){
+        try {
+            $payload = JWT::decode($token, env("JWT_SECRET"), ["HS256"]);
+        } catch (\Exception $e) {
             return null;
         }
 
-        if ($this->tokenIsBlacklisted($token)){
+        if ($this->tokenIsBlacklisted($token)) {
             return null;
         }
 
         $user = Cache::get("user-" . $payload->sub);
-        if (is_null($user)){
-            $user = User::where('uid', $payload->sub)->first();
+        if (is_null($user)) {
+            $user = User::where("uid", $payload->sub)->first();
             Cache::put("user-" . $user->uid, json_encode($user));
         } else {
             $user = json_decode($user);
@@ -50,11 +50,11 @@ class AuthCore
         $blacklist = json_decode($blacklist, true);
         $currentTime = time();
         $isBlacklisted = false;
-        foreach($blacklist as $key => $jwt){
-            if ($jwt["token"] === $token){
+        foreach ($blacklist as $key => $jwt) {
+            if ($jwt["token"] === $token) {
                 $isBlacklisted = true;
             }
-            if ($jwt["exp"] <= $currentTime){
+            if ($jwt["exp"] <= $currentTime) {
                 unset($blacklist[$key]);
             }
         }
@@ -64,22 +64,25 @@ class AuthCore
 
     protected function returnUnverified(): JsonResponse
     {
-        return response()->json([
-            "success" => false,
-            "data" => null,
-            "error" => "Email address has not been verified."
-        ], 403);
+        return response()->json(
+            [
+                "success" => false,
+                "data" => null,
+                "error" => "Email address has not been verified.",
+            ],
+            403
+        );
     }
 
     protected function getTokenFromRequest(Request $request)
     {
         $token = $_COOKIE["JWT"] ?? null;
-        if ($token){
+        if ($token) {
             return $token;
         }
         $token = $request->header("authorization");
-        if ($token){
-            if (str_contains($token, "bearer")){
+        if ($token) {
+            if (str_contains($token, "bearer")) {
                 $token = trim(substr($token, 7));
             }
             return $token;
@@ -93,16 +96,19 @@ class AuthCore
         return response()->json([
             "success" => false,
             "data" => null,
-            "error" => $e->getMessage()
+            "error" => $e->getMessage(),
         ]);
     }
 
     protected function returnUnauthorized(string $error = "You are not authorized to preform this action."): JsonResponse
     {
-        return response()->json([
-            "success" => false,
-            "data" => null,
-            "error" => $error,
-        ], 401);
+        return response()->json(
+            [
+                "success" => false,
+                "data" => null,
+                "error" => $error,
+            ],
+            401
+        );
     }
 }

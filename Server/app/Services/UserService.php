@@ -21,22 +21,14 @@ class UserService
 {
     private $user;
 
-    function __construct(User $user) {
+    function __construct(User $user)
+    {
         $this->user = $user;
     }
 
     protected $permissions = [
-        "global" => [
-            "profile:update",
-            "meal:create",
-            "meal:update",
-            "meal:delete"
-        ],
-        "manager" => [
-            "ingredients:create",
-            "ingredients:update",
-            "ingredients:delete",
-        ]
+        "global" => ["profile:update", "meal:create", "meal:update", "meal:delete"],
+        "manager" => ["ingredients:create", "ingredients:update", "ingredients:delete"],
     ];
 
     public function grantAdminStatus(): void
@@ -74,9 +66,9 @@ class UserService
 
     public function addGroup(string $groupToAdd): void
     {
-        if (isset($this->permissions[$groupToAdd]) && !in_array($this->user->groups, $groupToAdd)){
+        if (isset($this->permissions[$groupToAdd]) && !in_array($this->user->groups, $groupToAdd)) {
             $updatedGroups = [$groupToAdd];
-            foreach ($this->user->groups as $group){
+            foreach ($this->user->groups as $group) {
                 $updatedGroups[] = $group;
             }
             $this->user->groups = $updatedGroups;
@@ -86,10 +78,10 @@ class UserService
 
     public function removeGroup(string $groupToRemove): void
     {
-        if (in_array($groupToRemove, $this->user->groups)){
+        if (in_array($groupToRemove, $this->user->groups)) {
             $updatedGroups = [];
-            foreach ($this->user->groups as $userGroup){
-                if ($userGroup !== $groupToRemove){
+            foreach ($this->user->groups as $userGroup) {
+                if ($userGroup !== $groupToRemove) {
                     $updatedGroups[] = $userGroup;
                 }
             }
@@ -101,8 +93,8 @@ class UserService
     public function can(string $permission): bool
     {
         $allowed = false;
-        foreach ($this->user->groups as $group){
-            if (in_array($permission, $this->permissions[$group])){
+        foreach ($this->user->groups as $group) {
+            if (in_array($permission, $this->permissions[$group])) {
                 $allowed = true;
                 break;
             }
@@ -114,10 +106,12 @@ class UserService
     {
         $verificationCode = Uuid::uuid4()->toString();
 
-        $encodedData = $this->encodeData(json_encode([
-            "email" => $email,
-            "code" => $verificationCode,
-        ]));
+        $encodedData = $this->encodeData(
+            json_encode([
+                "email" => $email,
+                "code" => $verificationCode,
+            ])
+        );
 
         $verification = EmailVerification::create([
             "emailVerificationCode" => $encodedData,
@@ -134,7 +128,9 @@ class UserService
 
     public function resendVerificationEmail(): void
     {
-        $verificationRequest = EmailVerification::where("userId", $this->user->id)->whereNotNull("emailVerificationCode")->first();
+        $verificationRequest = EmailVerification::where("userId", $this->user->id)
+            ->whereNotNull("emailVerificationCode")
+            ->first();
         $mail = new EmailConfirm($verificationRequest->emailVerificationCode, $this->user->name);
         $this->sendMail($verificationRequest->email, $mail);
     }
@@ -176,8 +172,10 @@ class UserService
 
     private function prugePasswordResetRequests(): void
     {
-        $requests = PasswordReset::where("userId", $this->user->id)->whereNotNull("emailVerificationCode")->get();
-        foreach ($requests as $request){
+        $requests = PasswordReset::where("userId", $this->user->id)
+            ->whereNotNull("emailVerificationCode")
+            ->get();
+        foreach ($requests as $request) {
             $request->emailVerificationCode = null;
             $request->save();
         }
@@ -185,8 +183,10 @@ class UserService
 
     private function purgeEmailVerificationRequests(): void
     {
-        $requests = EmailVerification::where("userId", $this->user->id)->whereNotNull("emailVerificationCode")->get();
-        foreach ($requests as $request){
+        $requests = EmailVerification::where("userId", $this->user->id)
+            ->whereNotNull("emailVerificationCode")
+            ->get();
+        foreach ($requests as $request) {
             $request->emailVerificationCode = null;
             $request->save();
         }
@@ -200,14 +200,14 @@ class UserService
 
     private function sendMail(string $email, \Illuminate\Mail\Mailable $mail): void
     {
-        try{
+        try {
             Mail::to($email)->send($mail);
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             Log::error($e->getMessage());
         }
     }
 
-    private function encodeData (string $data): string
+    private function encodeData(string $data): string
     {
         return base64_encode($data);
     }

@@ -20,7 +20,7 @@ class PasswordChanged extends Mailable
 
     public function build()
     {
-        return $this->markdown('emails.user.passwordChangedEmail', [
+        return $this->markdown("emails.user.passwordChangedEmail", [
             "supportEmail" => "mailto:" . env("EMAIL_SUPPORT"),
             "name" => $this->name,
         ])->subject("Your Password Changed");

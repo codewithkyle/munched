@@ -21,7 +21,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             "email" => "required|email|unique:users|max:255",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Email update form contains errors.");
         }
 
@@ -39,7 +39,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             "name" => "required|max:255",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Profile update form contains errors.");
         }
 

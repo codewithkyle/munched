@@ -18,23 +18,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @var array
      */
-    protected $fillable = [
-        "email", "password", "uid", "name", "groups",
-    ];
+    protected $fillable = ["email", "password", "uid", "name", "groups"];
 
     /**
      * The attributes excluded from the model"s JSON form.
      *
      * @var array
      */
-    protected $hidden = [
-        "password",
-        "created_at",
-        "updated_at",
-        "id",
-    ];
+    protected $hidden = ["password", "created_at", "updated_at", "id"];
 
     protected $casts = [
-        "groups" => "array"
+        "groups" => "array",
     ];
 }

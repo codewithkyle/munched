@@ -43,7 +43,7 @@ async function run(){
                 const code = {};
                 code[file] = data;
                 minify(code, options).then(result => {
-                    fs.writeFile(path.join(cwd, "wwwroot", "js", file), result.code, (err) => {
+                    fs.writeFile(path.join(cwd, "Client", "wwwroot", "js", file), result.code, (err) => {
                         if (err){
                             console.log(err);
                             process.exit(1);

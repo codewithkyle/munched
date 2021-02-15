@@ -34,13 +34,13 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), [
             "uid" => "required",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Request is missing uid parameter.");
         }
 
         $uid = $request->input("uid");
         $user = User::where("uid", $uid)->first();
-        if (!empty($user)){
+        if (!empty($user)) {
             $userService = new UserService($user);
             $userService->suspend();
             return $this->buildSuccessResponse();
@@ -54,13 +54,13 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), [
             "uid" => "required",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Request is missing uid parameter.");
         }
 
         $uid = $request->input("uid");
         $user = User::where("uid", $uid)->first();
-        if (!empty($user)){
+        if (!empty($user)) {
             $userService = new UserService($user);
             $userService->unsuspend();
             return $this->buildSuccessResponse();
@@ -74,13 +74,13 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), [
             "uid" => "required",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Request is missing uid parameter.");
         }
 
         $uid = $request->input("uid");
         $user = User::where("uid", $uid)->first();
-        if (!empty($user)){
+        if (!empty($user)) {
             $userService = new UserService($user);
             $userService->activate();
             return $this->buildSuccessResponse();
@@ -94,13 +94,13 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), [
             "uid" => "required",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Request is missing uid parameter.");
         }
 
         $uid = $request->input("uid");
         $user = User::where("uid", $uid)->first();
-        if (!empty($user)){
+        if (!empty($user)) {
             $userService = new UserService($user);
             $userService->resendVerificationEmail();
             return $this->buildSuccessResponse();
@@ -114,13 +114,13 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), [
             "uid" => "required",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Request is missing uid parameter.");
         }
 
         $uid = $request->input("uid");
         $user = User::where("uid", $uid)->first();
-        if (!empty($user)){
+        if (!empty($user)) {
             $userService = new UserService($user);
             $userService->revokeAdminStatus();
             return $this->buildSuccessResponse();
@@ -134,13 +134,13 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), [
             "uid" => "required",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Request is missing uid parameter.");
         }
 
         $uid = $request->input("uid");
         $user = User::where("uid", $uid)->first();
-        if (!empty($user)){
+        if (!empty($user)) {
             $userService = new UserService($user);
             $userService->grantAdminStatus();
             return $this->buildSuccessResponse();

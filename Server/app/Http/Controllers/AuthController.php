@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use \Firebase\JWT\JWT;
+use Firebase\JWT\JWT;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
@@ -27,7 +27,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             "token" => "required",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Request is missing token parameter.");
         }
         $token = $request->input("token");
@@ -40,13 +40,13 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             "uid" => "required",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Request is missing uid parameter.");
         }
 
         $uid = $request->input("uid");
         $user = User::where("uid", $uid)->first();
-        if (!empty($user)){
+        if (!empty($user)) {
             $data = $this->generateToken($user->uid, 900);
             return $this->buildSuccessResponse($data);
         } else {
@@ -57,24 +57,24 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'email'    => 'required|email',
-            'password' => 'required'
+            "email" => "required|email",
+            "password" => "required",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Login form contains errors.");
         }
 
         $email = $request->input("email");
         $password = $request->input("password");
-        $user = User::where('email', $email)->first();
+        $user = User::where("email", $email)->first();
 
-        if (empty($user)){
+        if (empty($user)) {
             $error = "An account with the email " . $email . " does not exists.";
             return $this->buildErrorResponse($error);
         }
 
-        if (Hash::check($password, $user->password)){
-            if ($user->suspended){
+        if (Hash::check($password, $user->password)) {
+            if ($user->suspended) {
                 return $this->returnUnauthorized("Your account has been suspended.");
             }
             $data = $this->generateToken($user->uid);
@@ -91,9 +91,9 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         $this->blacklistToken($request->token, $request->payload->exp);
-        if (isset($_COOKIE['JWT'])) {
-            unset($_COOKIE['JWT']);
-            setcookie('JWT', '', time() - 3600, '/');
+        if (isset($_COOKIE["JWT"])) {
+            unset($_COOKIE["JWT"]);
+            setcookie("JWT", "", time() - 3600, "/");
         }
         return $this->buildSuccessResponse();
     }
@@ -101,7 +101,7 @@ class AuthController extends Controller
     public function refreshToken(Request $request): JsonResponse
     {
         $newToken = $this->generateToken($request->user->uid);
-        if ($newToken["token"] !== $request->token){
+        if ($newToken["token"] !== $request->token) {
             $this->blacklistToken($request->token, $request->payload->exp);
         }
         $this->setAuthCookie($newToken["token"], $newToken["expires"]);
@@ -115,7 +115,7 @@ class AuthController extends Controller
             "password" => "required|min:6|max:255",
             "name" => "required|max:255",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Registration form contains errors.");
         }
 
@@ -143,18 +143,18 @@ class AuthController extends Controller
     {
         $success = false;
         $data = $request->input("code");
-        $verificationRequest = EmailVerification::where('emailVerificationCode', $data)->first();
-        if (!empty($verificationRequest)){
-            $user = User::where('id', $verificationRequest->userId)->first();
-            if (!empty($user)){
+        $verificationRequest = EmailVerification::where("emailVerificationCode", $data)->first();
+        if (!empty($verificationRequest)) {
+            $user = User::where("id", $verificationRequest->userId)->first();
+            if (!empty($user)) {
                 $userService = new UserService($user);
                 $userService->verifyEmailAddress($verificationRequest);
                 $success = true;
             }
         }
-        if ($success){
+        if ($success) {
             return redirect(rtrim(env("APP_URL"), "/") . "/verification/success");
-        } else{
+        } else {
             return redirect(rtrim(env("APP_URL"), "/") . "/verification/error");
         }
     }
@@ -173,13 +173,13 @@ class AuthController extends Controller
             "newPassword" => "required|min:6|max:255",
             "oldPassword" => "required|min:6|max:255",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Password update form contains errors.");
         }
 
-        $user = User::where('id', $request->user->id)->first();
-        if (!empty($user)){
-            if (Hash::check($request->input("oldPassword"), $user->password)){
+        $user = User::where("id", $request->user->id)->first();
+        if (!empty($user)) {
+            if (Hash::check($request->input("oldPassword"), $user->password)) {
                 $newPassword = Hash::make($request->input("newPassword"));
                 $user->password = $newPassword;
                 $user->save();
@@ -197,14 +197,14 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             "email" => "required|max:255|email",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Forgotten password form contains errors.");
         }
 
         $email = $request->input("email");
 
-        $user = User::where('email', $email)->first();
-        if (!empty($user)){
+        $user = User::where("email", $email)->first();
+        if (!empty($user)) {
             $userService = new UserService($user);
             $userService->createPasswordReset();
             return $this->buildSuccessResponse();
@@ -219,7 +219,7 @@ class AuthController extends Controller
             "password" => "required|min:6|max:255",
             "code" => "required",
         ]);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Password reset form contains errors.");
         }
 
@@ -227,9 +227,9 @@ class AuthController extends Controller
         $code = $request->input("code");
 
         $resetRequest = PasswordReset::where("emailVerificationCode", $code)->first();
-        if (!empty($resetRequest)){
+        if (!empty($resetRequest)) {
             $user = User::where("id", $resetRequest->userId)->first();
-            if (!empty($user)){
+            if (!empty($user)) {
                 $userService = new UserService($user);
                 $userService->resetPassword($password);
                 return $this->buildSuccessResponse();
@@ -243,7 +243,7 @@ class AuthController extends Controller
 
     private function generateToken(string $userUid, int $duraiton = null): array
     {
-        if (is_null($duraiton)){
+        if (is_null($duraiton)) {
             $duraiton = env("JWT_TIMEOUT");
         }
         $iat = time();
@@ -255,11 +255,11 @@ class AuthController extends Controller
             "exp" => $exp,
             "sub" => $userUid,
         ];
-        $token = JWT::encode($payload, env("JWT_SECRET"), 'HS256');
+        $token = JWT::encode($payload, env("JWT_SECRET"), "HS256");
         return [
-            'token' => $token,
-            'type' => 'bearer',
-            'expires' => $exp,
+            "token" => $token,
+            "type" => "bearer",
+            "expires" => $exp,
         ];
     }
 

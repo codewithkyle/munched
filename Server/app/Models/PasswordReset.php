@@ -6,13 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PasswordReset extends Model
 {
-    protected $fillable = [
-        "emailVerificationCode",
-        "userId",
-    ];
+    protected $fillable = ["emailVerificationCode", "userId"];
 
-    protected $hidden = [
-        "emailVerificationCode",
-        "userId",
-    ];
+    protected $hidden = ["emailVerificationCode", "userId"];
 }
