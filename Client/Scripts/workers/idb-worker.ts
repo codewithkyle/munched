@@ -81,7 +81,13 @@ class IDBWorker{
 				});
 				break;
 			case "ingest":
-				this.ingestData(data);
+				this.ingestData(data).then(() => {
+					this.send("response", true, uid, origin);
+				})
+				.catch(error => {
+					console.error(error);
+					this.send("response", false, uid, origin);
+				});
 				break;
 			case "purge":
 				this.purgeData();
@@ -106,28 +112,21 @@ class IDBWorker{
 		}
 	}
 
-	private async ingestData(type:string){
-		const request = await fetch(`/ingest.json`);
-		const data = await request.json();
-		if (data?.[type]){
-			for (const ingest of data[type]){
-				const ingestRequest = await fetch(`${API_URL}/${ingest.route.replace(/^\//, "")}`, {
-					method: "GET",
-					credentials: "include",
-					headers: new Headers({
-						Accept: "application/json",
-					}),
-				});
-				const ingestData = await ingestRequest.json();
-				if (ingestData.success){
-					await this.db.clear(ingest.table);
-					for (const data of ingestData.data){
-						await this.db.put(ingest.table, data);
-					}
-				}
+	private async ingestData(data){
+		const { route, table } = data;
+		const ingestRequest = await fetch(`${API_URL}/${route.replace(/^\//, "")}`, {
+			method: "GET",
+			credentials: "include",
+			headers: new Headers({
+				Accept: "application/json",
+			}),
+		});
+		const ingestData = await ingestRequest.json();
+		if (ingestData.success){
+			await this.db.clear(table);
+			for (const data of ingestData.data){
+				await this.db.put(table, data);
 			}
-		} else {
-			console.error(`${type} does not exist on ingest.json`);
 		}
 	}
 

@@ -79,8 +79,17 @@ class IDBManager {
 }
 const idbManager = new IDBManager();
 
-function Ingest(role: string) {
-	idbManager.send("ingest", role);
+function Ingest(route: string, table: string): Promise<boolean> {
+	return new Promise((resolve) => {
+		idbManager.send(
+			"ingest",
+			{
+				route: route,
+				table: table,
+			},
+			resolve
+		);
+	});
 }
 
 function Select(table: string, page: number = 1, limit: number = null): Promise<Array<unknown>> {

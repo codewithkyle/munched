@@ -21,6 +21,7 @@ namespace Client.Pages.Admin
 
         protected override async Task Main()
         {
+			await JSRuntime.InvokeVoidAsync("Ingest", "/v1/ingest/users", "users");
             await LoadUserData();
         }
 
