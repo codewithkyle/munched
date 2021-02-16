@@ -3,26 +3,26 @@
 	"tables": [
 		{
 			"name": "users",
-			"keyPath": "uid",
+			"keyPath": "Uid",
 			"columns": [
 				{
-					"key": "uid",
+					"key": "Uid",
 					"unique": true
 				},
 				{
-					"key": "name"
+					"key": "Name"
 				},
 				{
-					"key": "email"
+					"key": "Email"
 				},
 				{
-					"key": "verified"
+					"key": "Verified"
 				},
 				{
-					"key": "suspended"
+					"key": "Suspended"
 				},
 				{
-					"key": "admin"
+					"key": "Admin"
 				}
 			]
 		}

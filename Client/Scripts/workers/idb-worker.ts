@@ -3,6 +3,7 @@ self.importScripts("/js/idb.js");
 
 // @ts-expect-error
 self.importScripts("/js/fuzzysort.js");
+declare var fuzzysort:any;
 
 // @ts-expect-error
 self.importScripts("/js/config.js");
@@ -41,6 +42,44 @@ class IDBWorker{
 		const origin = e?.origin ?? null;
 		const { type, data, uid } = messageEventData;
 		switch(type){
+			case "delete":
+				this.delete(data).then(() => {
+					this.send("response", true, uid, origin);
+				})
+				.catch(error => {
+					console.error(error);
+					this.send("response", false, uid, origin);
+				});
+				break;
+			case "put":
+				this.put(data).then(() => {
+					this.send("response", true, uid, origin);
+				})
+				.catch(error => {
+					console.error(error);
+					this.send("response", false, uid, origin);
+				});
+				break;
+			case "search":
+				this.search(data).then(output => {
+					this.send("response", output, uid, origin);
+				});
+				break;
+			case "get":
+				this.get(data).then(output => {
+					this.send("response", output, uid, origin);
+				});
+				break;
+			case "count":
+				this.count(data).then(output => {
+					this.send("response", output, uid, origin);
+				});
+				break;
+			case "select":
+				this.select(data).then(output => {
+					this.send("response", output, uid, origin);
+				});
+				break;
 			case "ingest":
 				this.ingestData(data);
 				break;
@@ -72,7 +111,7 @@ class IDBWorker{
 		const data = await request.json();
 		if (data?.[type]){
 			for (const ingest of data[type]){
-				const ingestRequest = await fetch(`${API_URL}/v1/ingest/${ingest.route.replace(/^\//, "")}`, {
+				const ingestRequest = await fetch(`${API_URL}/${ingest.route.replace(/^\//, "")}`, {
 					method: "GET",
 					credentials: "include",
 					headers: new Headers({
@@ -144,6 +183,73 @@ class IDBWorker{
 		} catch (e) {
 			console.error(e);
 		}
+	}
+
+	private async delete(data): Promise<void>{
+		const { table, key } = data;
+		await this.db.delete(table, key);
+		return;
+	}
+
+	private async put(data): Promise<void>{
+		const { table, key, value } = data;
+		if (key !== null){
+			await this.db.put(table, value, key);
+		} else {
+			await this.db.put(table, value);
+		}
+		return;
+	}
+
+	private async search(data): Promise<unknown>{
+		const { table, key, query, limit } = data;
+		let output = [];
+		const rows:Array<unknown> = await this.db.getAll(table);
+		const options = {
+			threshold: -10000,
+			limit: limit,
+			allowTypo: false,
+		};
+		if (Array.isArray(key)){
+			options["keys"] = key;
+		} else {
+			options["key"] = key;
+		}
+		const results = fuzzysort.go(query, rows, options);
+		for (let i = 0; i < results.length; i++) {
+			output.push(results[i].obj);
+		}
+		return output;
+	}
+
+	private async get(data): Promise<unknown>{
+		const { table, key, index } = data;
+		let output = null;
+		if (index !== null){
+			output = await this.db.getFromIndex(table, index, key);
+		} else {
+			output = await this.db.get(table, key);
+		}
+		return output;
+	}
+
+	private async count(table:string):Promise<number>{
+		const rows:Array<unknown> = await this.db.getAll(table);
+		return rows.length;
+	}
+
+	private async select(data): Promise<Array<unknown>>{
+		const { table, page, limit } = data;
+		const rows:Array<unknown> = await this.db.getAll(table);
+		let output = [];
+		if (limit !== null){
+			let start = (page - 1) * limit;
+			let end = page * limit;
+			output = rows.slice(start, end);
+		} else {
+			output = rows;
+		}
+		return output;
 	}
 }
 new IDBWorker();

@@ -28,18 +28,10 @@ namespace Client.Pages.Admin
         {
             IsLoadingUserData = true;
             StateHasChanged();
-            UsersResponse UsersResponse = await JSRuntime.InvokeAsync<UsersResponse>("GetUsers", Page - 1, UsersPerPage);
-            if (UsersResponse.Success)
-            {
-                Users = UsersResponse.Users;
-                TotalUsers = UsersResponse.Total;
-                TotalPages = (int)Math.Ceiling((decimal)TotalUsers / UsersPerPage);
-                IsLoadingUserData = false;
-            }
-            else
-            {
-                await JSRuntime.InvokeVoidAsync("Alert", "error", "Something Went Wrong", UsersResponse.Error);
-            }
+            TotalUsers = await JSRuntime.InvokeAsync<int>("Count", "users");
+			TotalPages = (int)Math.Ceiling((decimal)TotalUsers / UsersPerPage);
+            Users = await JSRuntime.InvokeAsync<List<User>>("Select", "users", Page, UsersPerPage);
+            IsLoadingUserData = false;
             StateHasChanged();
         }
 

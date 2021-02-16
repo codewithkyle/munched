@@ -1,7 +1,7 @@
 {
 	"admin": [
 		{
-			"route": "/users",
+			"route": "/v1/ingest/users",
 			"table": "users"
 		}
 	],

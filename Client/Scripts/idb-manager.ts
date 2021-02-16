@@ -50,14 +50,14 @@ class IDBManager {
 		}
 	}
 
-	private send(type: string, data: any = null, callback: Function = noop) {
+	public send(type: string, data: any = null, resolve: Function = noop) {
 		const messageUid = uid();
 		const message = {
 			type: type,
 			data: data,
 			uid: messageUid,
 		};
-		this.promises[messageUid] = callback;
+		this.promises[messageUid] = resolve;
 		if (this.ready) {
 			this.worker.postMessage(message);
 		} else {
@@ -73,10 +73,6 @@ class IDBManager {
 		}
 	}
 
-	public ingest(role: string) {
-		this.send("ingest", role);
-	}
-
 	public purge() {
 		this.send("purge");
 	}
@@ -84,5 +80,81 @@ class IDBManager {
 const idbManager = new IDBManager();
 
 function Ingest(role: string) {
-	idbManager.ingest(role);
+	idbManager.send("ingest", role);
+}
+
+function Select(table: string, page: number = 1, limit: number = null): Promise<Array<unknown>> {
+	return new Promise((resolve) => {
+		idbManager.send(
+			"select",
+			{
+				table: table,
+				page: page,
+				limit: limit,
+			},
+			resolve
+		);
+	});
+}
+
+function Count(table: string): Promise<number> {
+	return new Promise((resolve) => {
+		idbManager.send("count", table, resolve);
+	});
+}
+
+function Get(table: string, key: string, index: string = null): Promise<unknown> {
+	return new Promise((resolve) => {
+		idbManager.send(
+			"get",
+			{
+				table: table,
+				key: key,
+				index: index,
+			},
+			resolve
+		);
+	});
+}
+
+function Search(table: string, query: string, key: string | string[], limit: number = Infinity): Promise<Array<unknown>> {
+	return new Promise((resolve) => {
+		idbManager.send(
+			"search",
+			{
+				table: table,
+				key: key,
+				query: query,
+				limit: limit,
+			},
+			resolve
+		);
+	});
+}
+
+function Put(table: string, value: unknown, key: string = null): Promise<boolean> {
+	return new Promise((resolve) => {
+		idbManager.send(
+			"put",
+			{
+				table: table,
+				key: key,
+				value: value,
+			},
+			resolve
+		);
+	});
+}
+
+function Delete(table: string, key: string): Promise<boolean> {
+	return new Promise((resolve) => {
+		idbManager.send(
+			"delete",
+			{
+				table: table,
+				key: key,
+			},
+			resolve
+		);
+	});
 }
