@@ -45,4 +45,13 @@ $router->group(["prefix" => "v1"], function () use ($router) {
         $router->post("grant-admin-status", "AdminController@grantAdminStatus");
         $router->post("impersonation-link", "AuthController@getImpersonationLink");
     });
+
+    $router->group(["prefix" => "ingest"], function () use ($router) {
+        $router->group(["middleware" => ["admin"]], function () use ($router) {
+            $router->get("users", "IngestController@getUsers");
+        });
+        $router->group(["middleware" => ["user"]], function () use ($router) {
+            // $router->get("users", "AdminController@getUsers");
+        });
+    });
 });

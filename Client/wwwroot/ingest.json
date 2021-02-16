@@ -1,0 +1,9 @@
+{
+	"admin": [
+		{
+			"route": "/users",
+			"table": "users"
+		}
+	],
+	"user": []
+}

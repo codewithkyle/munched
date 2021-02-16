@@ -30,10 +30,6 @@ namespace Client.Models.Pages
                 NavigationManager.NavigateTo("/");
                 return;
             }
-            ProfileResponse Profile = await JSRuntime.InvokeAsync<ProfileResponse>("GetProfile");
-            if (Profile.Success){
-                CurrentUser.SetCurrentUser(Profile.User);
-            }
             await Main();
         }
 

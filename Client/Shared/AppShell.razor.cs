@@ -17,6 +17,11 @@ namespace Client.Shared
             ProfileResponse Profile = await JSRuntime.InvokeAsync<ProfileResponse>("GetProfile");
             if (Profile.Success){
                 CurrentUser.SetCurrentUser(Profile.User);
+				if (CurrentUser.Admin){
+					await JSRuntime.InvokeVoidAsync("Ingest", "admin");
+				} else {
+					await JSRuntime.InvokeVoidAsync("Ingest", "user");
+				}
             }
         }
     }

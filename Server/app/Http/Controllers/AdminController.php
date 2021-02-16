@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 use App\Services\UserService;
 use App\Services\AdminService;
 
-// Mdoels
+// Models
 use App\Models\User;
 
 class AdminController extends Controller

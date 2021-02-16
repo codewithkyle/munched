@@ -37,6 +37,7 @@ function buildResponseCore(success: boolean, statusCode: number, error: string =
 function ClearStorage() {
 	localStorage.clear();
 	sessionStorage.clear();
+	idbManager.purge();
 }
 
 function Notify(message: string) {
@@ -142,6 +143,8 @@ function uid(): string {
 		.map(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16))
 		.join("-");
 }
+
+const noop = () => {};
 
 function Prompt(label: string, value: string): Promise<string> {
 	return new Promise((resolve) => {
