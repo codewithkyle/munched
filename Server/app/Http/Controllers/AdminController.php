@@ -154,7 +154,7 @@ class AdminController extends Controller
     {
         $isInMaintenance = Cache::get("maintenance", false);
         Cache::flush();
-        if ($isInMaintenance){
+        if ($isInMaintenance) {
             Cache::set("maintenance", true);
         }
         return $this->buildSuccessResponse();

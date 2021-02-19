@@ -13,9 +13,9 @@ class File
         $s3 = self::S3Client();
         try {
             $s3->putObject([
-                'Bucket' => getenv("S3_BUCKET"),
-                'Key'    => $key,
-                'Body'   => fopen($path, 'r'),
+                "Bucket" => getenv("S3_BUCKET"),
+                "Key" => $key,
+                "Body" => fopen($path, "r"),
             ]);
         } catch (S3Exception $e) {
             Log::error($e->getMessage());
@@ -28,8 +28,8 @@ class File
         $result = null;
         try {
             $result = $s3->getObject([
-                'Bucket' => getenv("S3_BUCKET"),
-                'Key'    => $key,
+                "Bucket" => getenv("S3_BUCKET"),
+                "Key" => $key,
             ]);
         } catch (S3Exception $e) {
             Log::error($e->getMessage());
@@ -43,8 +43,8 @@ class File
         $result = null;
         try {
             $result = $s3->deleteObject([
-                'Bucket' => getenv("S3_BUCKET"),
-                'Key'    => $key,
+                "Bucket" => getenv("S3_BUCKET"),
+                "Key" => $key,
             ]);
         } catch (S3Exception $e) {
             Log::error($e->getMessage());
@@ -57,12 +57,12 @@ class File
         $s3 = self::S3Client();
         $result = null;
         try {
-            $cmd = $s3Client->getCommand('GetObject', [
-                'Bucket' => getenv("S3_BUCKET"),
-                'Key'    => $key,
+            $cmd = $s3Client->getCommand("GetObject", [
+                "Bucket" => getenv("S3_BUCKET"),
+                "Key" => $key,
             ]);
-            $request = $s3Client->createPresignedRequest($cmd, '+' . $minutes . ' minutes');
-            $result = (string)$request->getUri();
+            $request = $s3Client->createPresignedRequest($cmd, "+" . $minutes . " minutes");
+            $result = (string) $request->getUri();
         } catch (S3Exception $e) {
             Log::error($e->getMessage());
         }
@@ -72,12 +72,12 @@ class File
     private static function S3Client(): S3Client
     {
         $s3 = new S3Client([
-            'version' => 'latest',
-            'region'  => getenv("S3_REGION"),
+            "version" => "latest",
+            "region" => getenv("S3_REGION"),
             "credentials" => [
-				"key" => getenv("AWS_S3_ACCESS_KEY_ID"),
-				"secret" => getenv("AWS_S3_SECRET_KEY"),
-			],
+                "key" => getenv("AWS_S3_ACCESS_KEY_ID"),
+                "secret" => getenv("AWS_S3_SECRET_KEY"),
+            ],
         ]);
         return $s3;
     }

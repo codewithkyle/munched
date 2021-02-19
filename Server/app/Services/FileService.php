@@ -16,22 +16,20 @@ class FileService
     {
         $file = null;
         $key = null;
-        if (!is_null($uid)){
+        if (!is_null($uid)) {
             $file = File::where("uid", $uid)->first();
-            if (!empty($file)){
+            if (empty($file)) {
+                throw new ErrorException("File does not exist.");
+            } else {
                 $key = $file->key;
             }
         }
-        if (is_null($file) || is_null($key)){
-            $uid = Uuid::uuid4()->toString();
-            $key = Hash::make(uid);
-            $file = File::create([
-                "uid" => $uid,
-                "key" => $key,
-            ]);
+        if (is_null($key)) {
+            $file = self::CreateFile();
+            $key = $file->key;
         }
         FileHelper::Put($key, $uploadedFile->getRelativePathname());
-        if ($file->deleted){
+        if ($file->deleted) {
             $file->deleted = false;
             $file->save();
         }
@@ -40,8 +38,9 @@ class FileService
     public static function DeleteFile(string $uid): void
     {
         $file = File::where("uid", $uid)->first();
-        if (!empty($file))
-        {
+        if (empty($file)) {
+            throw new ErrorException("File does not exist.");
+        } else {
             FileHelper::Delete($file->key);
             $file->deleted = true;
             $file->save();
@@ -53,5 +52,16 @@ class FileService
         $file = File::where("uid", $uid)->first();
         $key = $file->key ?? "";
         return $key;
+    }
+
+    private static function CreateFile(): File
+    {
+        $uid = Uuid::uuid4()->toString();
+        $key = Hash::make(uid);
+        $file = File::create([
+            "uid" => $uid,
+            "key" => $key,
+        ]);
+        return $file;
     }
 }

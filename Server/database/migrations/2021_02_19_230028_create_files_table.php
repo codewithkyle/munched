@@ -13,7 +13,7 @@ class CreateFilesTable extends Migration
      */
     public function up()
     {
-        Schema::create('files', function (Blueprint $table) {
+        Schema::create("files", function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->string("key")->unique();
             $table->boolean("deleted")->default(false);
@@ -29,6 +29,6 @@ class CreateFilesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('files');
+        Schema::dropIfExists("files");
     }
 }

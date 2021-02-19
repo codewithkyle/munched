@@ -16,7 +16,7 @@ class UserAuthenticate extends AuthCore
             return $this->returnUnauthorized();
         }
 
-        if (Cache::get("maintenance", false) && !$$request->user->admin){
+        if (Cache::get("maintenance", false) && !$$request->user->admin) {
             return $this->returnMaintenanceMode();
         }
 
