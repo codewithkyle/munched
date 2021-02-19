@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Firebase\JWT\JWT;
+use App\Models\User;
 
 class AuthCore
 {
@@ -109,6 +110,18 @@ class AuthCore
                 "error" => $error,
             ],
             401
+        );
+    }
+
+    protected function returnMaintenanceMode()
+    {
+        return response()->json(
+            [
+                "success" => false,
+                "data" => null,
+                "error" => "The server is currently unable to handle the request due to maintenance.",
+            ],
+            503
         );
     }
 }

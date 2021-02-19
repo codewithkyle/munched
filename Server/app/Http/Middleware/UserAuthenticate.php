@@ -3,10 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Auth\Factory as Auth;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 
 class UserAuthenticate extends AuthCore
@@ -17,6 +14,10 @@ class UserAuthenticate extends AuthCore
 
         if (\is_null($request)) {
             return $this->returnUnauthorized();
+        }
+
+        if (Cache::get("maintenance", false) && !$$request->user->admin){
+            return $this->returnMaintenanceMode();
         }
 
         // Remove if users are allowed to use the applcation without a verified status

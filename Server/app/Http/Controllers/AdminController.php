@@ -152,13 +152,30 @@ class AdminController extends Controller
 
     public function clearRedisCache(Request $request): JsonResponse
     {
+        $isInMaintenance = Cache::get("maintenance", false);
         Cache::flush();
+        if ($isInMaintenance){
+            Cache::set("maintenance", true);
+        }
         return $this->buildSuccessResponse();
     }
 
     public function clearCloudflareCache(Request $request): JsonResponse
     {
         Cloudflare::flush();
+        return $this->buildSuccessResponse();
+    }
+
+    public function setMaintenanceMode(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            "maintenance" => "required|bool",
+        ]);
+        if ($validator->fails()) {
+            return $this->buildValidationErrorResponse($validator, "Request is missing 'maintenance' parameter.");
+        }
+        $isInMaintenance = $request->input("maintenance", false);
+        Cache::set("maintenance", $isInMaintenance);
         return $this->buildSuccessResponse();
     }
 }
