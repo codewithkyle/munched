@@ -18,12 +18,6 @@ namespace Client.Models.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            ResponseCore TokenCheckResponse = await JSRuntime.InvokeAsync<ResponseCore>("RefreshToken");
-            if (!TokenCheckResponse.Success)
-            {
-                NavigationManager.NavigateTo("/");
-                return;
-            }
             await Main();
         }
 

@@ -53,6 +53,7 @@ async function RefreshToken(): Promise<ResponseCore> {
     const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
     return response;
 }
+RefreshToken();
 
 async function Logout() {
     const request = await apiRequest("/v1/logout", "POST");

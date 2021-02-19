@@ -122,6 +122,8 @@ class IDBWorker{
 			}),
 		});
 		const ingestData = await ingestRequest.json();
+		const existingData = await this.db.getAll(table);
+		// TODO: put and delete as needed
 		if (ingestData.success){
 			await this.db.clear(table);
 			for (const data of ingestData.data){
