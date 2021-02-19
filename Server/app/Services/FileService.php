@@ -50,8 +50,11 @@ class FileService
     public static function GetKey(string $uid): string
     {
         $file = File::where("uid", $uid)->first();
-        $key = $file->key ?? "";
-        return $key;
+        if (empty($file)){
+            throw new ErrorException("File does not exist.");
+        } else {
+            return $file->key;
+        }
     }
 
     private static function CreateFile(): File
