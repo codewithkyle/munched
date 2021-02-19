@@ -44,6 +44,8 @@ $router->group(["prefix" => "v1"], function () use ($router) {
         $router->post("revoke-admin-status", "AdminController@revokeAdminStatus");
         $router->post("grant-admin-status", "AdminController@grantAdminStatus");
         $router->post("impersonation-link", "AuthController@getImpersonationLink");
+        $router->post("clear-redis-cache", "AdminController@clearRedisCache");
+        $router->post("clear-cloudflare-cache", "AdminController@clearCloudflareCache");
     });
 
     $router->group(["prefix" => "ingest"], function () use ($router) {

@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
 
-// Services
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
+use App\Facades\Cloudflare;
+
 use App\Services\UserService;
 use App\Services\AdminService;
 
-// Models
 use App\Models\User;
 
 class AdminController extends Controller
@@ -147,5 +148,17 @@ class AdminController extends Controller
         } else {
             return $this->buildErrorResponse("Failed to find user to unsuspend.");
         }
+    }
+
+    public function clearRedisCache(Request $request): JsonResponse
+    {
+        Cache::flush();
+        return $this->buildSuccessResponse();
+    }
+
+    public function clearCloudflareCache(Request $request): JsonResponse
+    {
+        Cloudflare::flush();
+        return $this->buildSuccessResponse();
     }
 }
