@@ -3,9 +3,7 @@
 namespace App\Services;
 
 use Log;
-use Illuminate\Support\Facades\DB;
 
-// Models
 use App\Models\User;
 
 class AdminService
