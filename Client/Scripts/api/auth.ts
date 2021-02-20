@@ -87,6 +87,13 @@ async function VerifyAdmin(): Promise<ResponseCore> {
     return response;
 }
 
+async function VerifyUser(): Promise<ResponseCore> {
+    const request = await apiRequest("/v1/user/verify");
+    const fetchResponse = await request.json();
+    const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+    return response;
+}
+
 async function ForgotPassword(email: string): Promise<FormResponse> {
     const data = {
         email: email,

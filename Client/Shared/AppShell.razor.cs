@@ -11,13 +11,19 @@ namespace Client.Shared
     {
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
-
+		[Inject]
+        public NavigationManager NavigationManager { get; set; }
+		public bool CanRender = false;
         protected override async Task OnInitializedAsync()
         {
             ProfileResponse Profile = await JSRuntime.InvokeAsync<ProfileResponse>("GetProfile");
             if (Profile.Success){
                 CurrentUser.SetCurrentUser(Profile.User);
-            }
+				CanRender = true;
+				StateHasChanged();
+            } else {
+				NavigationManager.NavigateTo("/");
+			}
         }
     }
 }

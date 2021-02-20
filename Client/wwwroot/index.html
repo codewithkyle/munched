@@ -6,28 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <title>App</title>
-    <meta name="description" content="A macro & calorie tracking app for fitness nerds.">
+    <meta name="description" content="Placeholder app description.">
 
     <base href="/">
 
+	<link rel="icon" href="/images/icons/icon-32.png">
+	<link rel="icon" href="/images/icons/icon.svg" type="image/svg+xml">
+	<link rel="apple-touch-icon" href="/images/icons/icon-180">
+	<link rel="manifest" href="/manifest.webmanifest">
+	<meta name="msapplication-TileColor" content="#4773B8">
+    <meta name="theme-color" content="#4773B8">
+
     <script>navigator.serviceWorker.register('service-worker.js');</script>
 
-    <link href="css/normalize.css" rel="stylesheet">
-    <link href="css/brixi.css" rel="stylesheet">
-    <link href="css/loading.css" rel="stylesheet">
-    <link href="css/shell.css" rel="stylesheet">
-    <link href="css/app.css" rel="stylesheet">
-    <link href="css/tooltip.css" rel="stylesheet">
-    <link href="css/toaster.css" rel="stylesheet">
+	<script defer src="/js/config.js"></script>
+	<script defer src="/js/notifyjs.js"></script>
+	<script defer src="/js/bootstrap.js"></script>
 
-    <link href="css/input.css" rel="stylesheet">
-    <link href="css/buttons.css" rel="stylesheet">
-    <link href="css/snackbar.css" rel="stylesheet">
-    <link href="css/checkbox.css" rel="stylesheet">
-    <link href="css/skeleton-wave.css" rel="stylesheet">
-    <link href="css/table.css" rel="stylesheet">
-    <link href="css/data-table.css" rel="stylesheet">
-    <link href="css/user-table.css" rel="stylesheet">
+    <link href="/css/normalize.css" rel="stylesheet">
+    <link href="/css/brixi.css" rel="stylesheet">
+    <link href="/css/loading.css" rel="stylesheet">
+    <link href="/css/shell.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/tooltip.css" rel="stylesheet">
+    <link href="/css/toaster.css" rel="stylesheet">
+
+    <link href="/css/input.css" rel="stylesheet">
+    <link href="/css/buttons.css" rel="stylesheet">
+    <link href="/css/snackbar.css" rel="stylesheet">
+    <link href="/css/checkbox.css" rel="stylesheet">
+    <link href="/css/skeleton-wave.css" rel="stylesheet">
+    <link href="/css/table.css" rel="stylesheet">
+    <link href="/css/data-table.css" rel="stylesheet">
+    <link href="/css/user-table.css" rel="stylesheet">
 </head>
 
 <body class="bg-grey-200">
@@ -41,33 +52,11 @@
             </div>
         </div>
     </app>
-
-    <!-- <div class="size-warning w-full h-full" flex="items-center justify-center">
-        <p class="p-1 border-1 border-warning-400 border-solid font-warning-800 bg-warning-100 shadow-lg radius-0.5 line-normal text-center" style="max-width: calc(100% - 4rem);">
-            This app requires a window or device size of at least 640px. Resize the window or use a larger device.
-        </p>
-    </div> -->
-
+	
     <soft-loading>
         <transition-bar-one></transition-bar-one>
         <transition-bar-two></transition-bar-two>
     </soft-loading>
-
-    <!-- Libraries -->
-    <script src="js/utilities.js"></script>
-    <script src="js/notifyjs.js"></script>
-    <script src="js/tooltipper.js"></script>
-    <script src="js/lit-html.js"></script>
-	<script src="js/idb-manager.js"></script>
-
-    <!-- API Scripts -->
-    <script src="js/config.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/account.js"></script>
-    <script src="js/admin.js"></script>
-
-    <!-- Blazor core -->
-    <script src="_framework/blazor.webassembly.js"></script>
 </body>
 
 </html>

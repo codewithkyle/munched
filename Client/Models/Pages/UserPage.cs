@@ -18,6 +18,12 @@ namespace Client.Models.Pages
 
         protected override async Task OnInitializedAsync()
         {
+			ResponseCore UserVerificationResponse = await JSRuntime.InvokeAsync<ResponseCore>("VerifyUser");
+            if (!UserVerificationResponse.Success)
+            {
+                NavigationManager.NavigateTo("/");
+                return;
+            }
             await Main();
         }
 

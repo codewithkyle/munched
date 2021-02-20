@@ -8,24 +8,23 @@ self.addEventListener('fetch', event => event.respondWith(onFetch(event)));
 
 const cacheNamePrefix = 'offline-cache-';
 const cacheName = `${cacheNamePrefix}${self.assetsManifest.version}`;
-const offlineAssetsInclude = [ /\.dll$/, /\.pdb$/, /\.wasm/, /\.html/, /\.js$/, /\.json$/, /\.css$/, /\.woff$/, /\.png$/, /\.jpe?g$/, /\.gif$/, /\.ico$/ ];
-const offlineAssetsExclude = [ /^service-worker\.js$/ ];
+const offlineAssetsInclude = [ /\.dll$/, /\.pdb$/, /\.wasm/, /\.html/, /\.js$/, /\.css$/, /\.png$/, /\.jpeg$/, /\.jpg$/, /\.gif$/, /\.mp3$/, /\.wav$/ ];
+const offlineAssetsExclude = [ /^service-worker\.js$/, /^app\.json$/, ];
 
 async function onInstall(event) {
-    console.info('Service worker: Install');
-
-    // Fetch and cache all matching items from the assets manifest
+    self.skipWaiting();
     const assetsRequests = self.assetsManifest.assets
         .filter(asset => offlineAssetsInclude.some(pattern => pattern.test(asset.url)))
         .filter(asset => !offlineAssetsExclude.some(pattern => pattern.test(asset.url)))
-        .map(asset => new Request(asset.url, { integrity: asset.hash }));
-    await caches.open(cacheName).then(cache => cache.addAll(assetsRequests));
+        .map(asset => new Request(asset.url));
+	for (const request of assetsRequests){
+		await caches.open(cacheName).then(cache => cache.add(request)).catch(error => {
+			console.error("Failed to cache:", request);
+		});
+	}
 }
 
 async function onActivate(event) {
-    console.info('Service worker: Activate');
-
-    // Delete unused caches
     const cacheKeys = await caches.keys();
     await Promise.all(cacheKeys
         .filter(key => key.startsWith(cacheNamePrefix) && key !== cacheName)
@@ -45,4 +44,20 @@ async function onFetch(event) {
     }
 
     return cachedResponse || fetch(event.request);
+}
+
+async function cachebust(){
+    const cacheKeys = await caches.keys();
+    await Promise.all(cacheKeys.map(key => caches.delete(key)));
+}
+
+self.onmessage = async (event) => {
+    const { type } = event.data;
+    switch (type){
+        case "reinstall":
+            await cachebust();
+            break;
+        default:
+            break;
+    }
 }

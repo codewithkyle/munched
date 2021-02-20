@@ -17,10 +17,11 @@ app {
 	overflow-y: auto;
 	justify-content: center;
 	align-items: center;
+}
 
-	// @media (min-width: 768px) and (min-height: 500px) {
-	//     display: flex;
-	// }
+.install-notification{
+	bottom: 50%;
+	transform-origin: center;
 }
 
 a {

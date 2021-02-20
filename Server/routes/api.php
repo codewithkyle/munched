@@ -28,6 +28,7 @@ $router->group(["prefix" => "v1"], function () use ($router) {
     });
 
     $router->group(["prefix" => "user", "middleware" => "user"], function () use ($router) {
+        $router->get("verify", "UserController@verify");
         $router->get("profile", "UserController@profile");
         $router->post("profile", "UserController@updateProfile");
         $router->post("update-email", "UserController@updateEmail");

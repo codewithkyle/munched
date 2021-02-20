@@ -16,6 +16,11 @@ class UserController extends Controller
         return $this->buildSuccessResponse($user);
     }
 
+    public function verify(Request $request): JsonResponse
+    {
+        return $this->buildSuccessResponse();
+    }
+
     public function updateEmail(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [

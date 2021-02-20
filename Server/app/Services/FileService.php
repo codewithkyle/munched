@@ -20,7 +20,7 @@ class FileService
             $file = File::where("uid", $uid)->first();
             if (empty($file)) {
                 throw new ErrorException("File does not exist.");
-            } else if ($file->userId !== $userId) {
+            } elseif ($file->userId !== $userId) {
                 throw new ErrorException("You do not have permission to update the file.");
             } else {
                 $key = $file->key;
@@ -42,7 +42,7 @@ class FileService
         $file = File::where("uid", $uid)->first();
         if (empty($file)) {
             throw new ErrorException("File does not exist.");
-        } else if ($file->userId !== $userId) {
+        } elseif ($file->userId !== $userId) {
             throw new ErrorException("You do not have permission to delete the file.");
         } else {
             FileHelper::Delete($file->key);
@@ -54,7 +54,7 @@ class FileService
     public function getKey(string $uid): string
     {
         $file = File::where("uid", $uid)->first();
-        if (empty($file)){
+        if (empty($file)) {
             throw new ErrorException("File does not exist.");
         } else {
             return $file->key;
@@ -64,9 +64,9 @@ class FileService
     public function getPrivateKey(string $uid, int $userId): string
     {
         $file = File::where("uid", $uid)->first();
-        if (empty($file)){
+        if (empty($file)) {
             throw new ErrorException("File does not exist.");
-        } else if ($file->userId !== $userId) {
+        } elseif ($file->userId !== $userId) {
             throw new ErrorException("You do not have permission to view the file.");
         } else {
             return $file->key;

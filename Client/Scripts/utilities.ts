@@ -159,3 +159,26 @@ function Confirm(message: string): Promise<boolean> {
 		resolve(result);
 	});
 }
+
+function Reinstall() {
+	const sw: ServiceWorker = navigator?.serviceWorker?.controller ?? null;
+	if (sw) {
+		sw.postMessage({
+			type: "reinstall",
+		});
+		setTimeout(() => {
+			location.reload();
+		}, 300);
+	}
+}
+
+let deferredInstallPrompt = null;
+window.addEventListener("beforeinstallprompt", (e) => {
+	deferredInstallPrompt = e;
+});
+function Install() {
+	deferredInstallPrompt.prompt();
+	deferredInstallPrompt.userChoice.then(() => {
+		deferredInstallPrompt = null;
+	});
+}

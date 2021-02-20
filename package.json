@@ -2,12 +2,11 @@
     "version": "0.0.0",
     "scripts": {
         "reset": "rm -rf ./Client/wwwroot/css && mkdir ./Client/wwwroot/css && rm -rf ./Client/wwwroot/js && mkdir ./Client/wwwroot/js",
-		"cleanup": "rm -rf ./Client/bin && rm -rf ./Client/obj",
+        "cleanup": "rm -rf ./Client/bin && rm -rf ./Client/obj",
         "brixi": "brixi && mv ./brixi/brixi.css ./Client/Stylesheets/brixi.css && rmdir ./brixi",
         "build": "npm run reset && npm run prettier && npm-run-all build:* && node ./Client/build/relocate.js && npm run publish && npm run cleanup",
         "build:css": "cssmonster",
         "build:js": "tsc",
-        "build:client": "dotnet build ./Client",
         "production": "npm run reset && npm-run-all build:* && node ./Client/build/minify.js && node ./Client/build/release.js && npm run publish && npm run cleanup",
         "publish": "dotnet publish ./Client -c Release && rm -rf ./Client/public && mkdir ./Client/public && mv ./Client/bin/Release/net5.0/publish/wwwroot/* ./Client/public",
         "bundle": "snowpack install",
@@ -15,7 +14,7 @@
         "prettier:client": "prettier --write \"./Client/Scripts/*.ts\" && prettier --write \"./Client/Stylesheets/*.scss\"",
         "prettier:server": "prettier --write \"./Server/app/**/*.php\" && prettier --write \"./Server/database/**/*.php\" && prettier --write \"./Server/routes/*.php\" && prettier --write \"./Server/resources/**/*.php\" && prettier --write \"./Server/bootstrap/*.php\"",
         "test": "./Server/vendor/bin/phpunit ./Server/tests",
-		"docs": "docs"
+        "docs": "docs"
     },
     "dependencies": {
         "@codewithkyle/dev-docs": "^0.2.0",
