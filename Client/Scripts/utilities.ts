@@ -182,3 +182,34 @@ function Install() {
 		deferredInstallPrompt = null;
 	});
 }
+
+const sw: ServiceWorkerContainer = navigator?.serviceWorker ?? null;
+if (sw) {
+	sw.addEventListener("message", (e: MessageEvent) => {
+		const { type, data } = e.data;
+		switch (type) {
+			case "reload":
+				location.reload();
+				break;
+			default:
+				console.warn(`Unhandled Service Worker message: ${type}`);
+				break;
+		}
+	});
+}
+
+function LogoutAllInstances() {
+	if (sw?.controller) {
+		sw.controller.postMessage({
+			type: "logout",
+		});
+	}
+}
+
+function LoginAllInstances() {
+	if (sw?.controller) {
+		sw.controller.postMessage({
+			type: "login",
+		});
+	}
+}

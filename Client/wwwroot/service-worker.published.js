@@ -51,9 +51,27 @@ async function cachebust(){
     await Promise.all(cacheKeys.map(key => caches.delete(key)));
 }
 
+function reloadClients(){
+	self.clients.matchAll().then(clients => {
+		clients.forEach(client => {
+			if (!client.focused){
+				client.postMessage({
+					type: "reload",
+				});
+			}
+		});
+	});
+}
+
 self.onmessage = async (event) => {
     const { type } = event.data;
     switch (type){
+		case "login":
+			reloadClients();
+			break;
+		case "logout":
+			reloadClients();
+			break;
         case "reinstall":
             await cachebust();
             break;

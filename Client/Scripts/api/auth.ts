@@ -25,6 +25,7 @@ async function LoginUser(email: string, password: string, trustDevice: boolean):
         if (!trustDevice) {
             window.onbeforeunload = (e: Event) => {
                 ClearStorage();
+				LogoutAllInstances();
                 fetch(`${API_URL}/v1/logout`, {
                     method: "POST",
                     headers: buildHeaders(),
@@ -34,6 +35,7 @@ async function LoginUser(email: string, password: string, trustDevice: boolean):
             };
         }
         response.IsPendingEmailVerificaiton = fetchResponse.data.pendingEmailVerification;
+		LoginAllInstances();
     } else {
         response.FieldErrors = fetchResponse.data;
         response.IsPendingEmailVerificaiton = false;
@@ -59,6 +61,7 @@ async function Logout() {
     const request = await apiRequest("/v1/logout", "POST");
     if (request.ok){
         ClearStorage();
+		LogoutAllInstances();
         location.href = location.origin;
     } else {
         console.error(`Failed to log out user on the server. ${request.status}: ${request.statusText}`);
