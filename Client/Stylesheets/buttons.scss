@@ -477,8 +477,14 @@
 			border-color: var(--grey-300);
 			color: var(--grey-800);
 
+			&:hover,
+			&:focus-visible {
+				border-color: var(--grey-400);
+			}
+
 			&:active {
 				color: var(--grey-900);
+				border-color: var(--grey-500);
 			}
 
 			&::before {

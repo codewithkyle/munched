@@ -213,3 +213,14 @@ function LoginAllInstances() {
 		});
 	}
 }
+
+function FocusElement(selector: string) {
+	// @ts-ignore
+	document?.activeElement?.blur();
+	setTimeout(() => {
+		const el: HTMLElement = document.body.querySelector(selector);
+		if (el) {
+			el.focus();
+		}
+	}, 300);
+}

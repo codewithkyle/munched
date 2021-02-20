@@ -25,5 +25,16 @@ namespace Client.Shared
 				NavigationManager.NavigateTo("/");
 			}
         }
+
+		public void OpenProfileModal()
+		{
+			AppSettings.OpenModal(AppSettings.Modal.Profile);
+			JSRuntime.InvokeVoidAsync("FocusElement", "#modal-close-button");
+		}
+
+		public void CloseModal()
+		{
+			AppSettings.OpenModal(AppSettings.Modal.None);
+		}
     }
 }
