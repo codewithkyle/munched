@@ -1,5 +1,9 @@
 .app-shell {
 	display: grid;
+	grid-template-areas:
+		"nav head"
+		"nav main";
+	grid-template-rows: 48px 1fr;
 	grid-template-columns: 250px 1fr;
 	gap: 0;
 	width: 100vw;
@@ -14,13 +18,6 @@
 		nav {
 			display: block;
 			width: 100%;
-			padding: 1rem 0;
-
-			&:hover {
-				a {
-					opacity: 0.6;
-				}
-			}
 
 			a {
 				padding: 0 1rem;
@@ -38,30 +35,23 @@
 				padding: 0 1rem;
 				opacity: 1;
 				transition: all 150ms var(--ease-in-out);
+				border-bottom: 1px solid var(--grey-800);
 
 				&:hover,
 				&:focus-visible {
-					opacity: 1 !important;
-
 					&::before {
 						opacity: 0.03;
 					}
 				}
 
 				&:active {
-					opacity: 1 !important;
-
 					&::before {
 						opacity: 0.05;
 					}
 				}
 
 				&.active {
-					&::after {
-						transform: translate(0, -50%);
-						visibility: visible;
-						transition: all 300ms var(--ease-in);
-					}
+					color: var(--primary-500);
 				}
 
 				&::before {
@@ -76,20 +66,6 @@
 					opacity: 0;
 					transition: all 150ms var(--ease-in-out);
 				}
-
-				&::after {
-					content: "";
-					display: inline-block;
-					position: absolute;
-					top: 50%;
-					left: 0;
-					width: 5px;
-					height: 24px;
-					border-radius: 0 3px 3px 0;
-					background-color: var(--white);
-					visibility: hidden;
-					transform: translate(-6px, -50%);
-				}
 			}
 		}
 	}
@@ -97,7 +73,156 @@
 	.app-body {
 		overflow: auto;
 		overscroll-behavior: contain;
-		padding: 0 1rem;
+		padding: 1rem;
 		background-color: var(--white);
+	}
+
+	.app-logo {
+		background-color: var(--grey-900);
+		display: flex;
+		align-items: center;
+		font-weight: var(--font-medium);
+		font-size: var(--font-lg);
+		color: var(--white);
+		position: relative;
+		padding: 0 1rem;
+		border-bottom: 1px solid var(--grey-800);
+
+		&:hover,
+		&:focus-visible {
+			&::before {
+				opacity: 0.03;
+			}
+		}
+
+		&:active {
+			&::before {
+				opacity: 0.05;
+			}
+		}
+
+		&::before {
+			content: "";
+			display: inline-block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: var(--white);
+			opacity: 0;
+			transition: all 150ms var(--ease-in-out);
+		}
+	}
+
+	.app-header {
+		background-color: var(--white);
+		display: flex;
+		align-items: center;
+		flex-flow: row nowrap;
+		justify-content: flex-end;
+		border-bottom: 1px solid var(--grey-300);
+		box-shadow: var(--shadow-lg);
+		position: relative;
+		padding: 0 1rem;
+
+		.profile-button {
+			width: 36px;
+			height: 36px;
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
+			position: relative;
+			color: var(--grey-700);
+			transition: all 150ms var(--ease-in-out);
+
+			&:hover,
+			&:focus-visible {
+				color: var(--grey-800);
+			}
+
+			&:active,
+			&:focus {
+				& + .profile-modal {
+					opacity: 1;
+					visibility: visible;
+					pointer-events: all;
+				}
+			}
+
+			svg {
+				width: 24px;
+				height: 24px;
+			}
+		}
+
+		.profile-modal {
+			position: absolute;
+			top: calc(100% + 0.5rem);
+			right: 0.5rem;
+			opacity: 0;
+			visibility: visible;
+			display: inline-flex;
+			justify-content: center;
+			flex-flow: column wrap;
+			background-color: var(--white);
+			box-shadow: var(--shadow-2xl);
+			z-index: 1000;
+			border-radius: 0.5rem;
+			border: 1px solid var(--grey-300);
+			min-width: 300px;
+			pointer-events: none;
+
+			&:focus-within {
+				opacity: 1;
+				visibility: visible;
+				pointer-events: all;
+			}
+
+			.avatar {
+				width: 80px;
+				height: 80px;
+				margin: 1.5rem auto 1rem;
+				border-radius: 50%;
+				overflow: hidden;
+				position: relative;
+				background-color: var(--grey-100);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+
+				&::after {
+					content: "";
+					display: inline-block;
+					position: absolute;
+					left: 0;
+					top: 0;
+					width: 100%;
+					height: 100%;
+					border-radius: 50%;
+					box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.15);
+				}
+
+				img {
+					position: absolute;
+					left: 0;
+					top: 0;
+					width: 100%;
+					height: 100%;
+					object-fit: cover;
+				}
+
+				svg {
+					width: 32px;
+					height: 32px;
+					color: var(--grey-500);
+				}
+			}
+
+			hr {
+				border-bottom: 1px solid var(--grey-300);
+				margin: 1rem 0;
+			}
+		}
 	}
 }

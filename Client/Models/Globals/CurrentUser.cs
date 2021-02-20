@@ -11,6 +11,7 @@ namespace Client.Models.Globals
         public static bool Suspended {get;set;}
         public static bool Verified{get;set;}
         public static bool Admin {get;set;}
+		public static string Avatar {get;set;}
 
         public static void SetCurrentUser(User User)
         {
@@ -21,6 +22,7 @@ namespace Client.Models.Globals
             Suspended = User.Suspended;
             Verified = User.Verified;
             Admin = User.Admin;
+			Avatar = User.Avatar;
         }
     }
 }

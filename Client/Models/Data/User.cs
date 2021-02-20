@@ -9,5 +9,6 @@ namespace Client.Models.Data
         public bool Suspended {get;set;}
         public bool Verified {get;set;}
         public bool Admin {get;set;}
+		public string Avatar {get;set;}
     }
 }

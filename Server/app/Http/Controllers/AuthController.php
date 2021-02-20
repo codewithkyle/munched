@@ -164,7 +164,7 @@ class AuthController extends Controller
         $user = $request->user;
         $userService = new UserService($user);
         $userService->resendVerificationEmail();
-        return $this->buildSuccessResponse();
+        return $this->buildSuccessResponse($request->user);
     }
 
     public function updatePassword(Request $request): JsonResponse

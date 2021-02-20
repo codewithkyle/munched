@@ -588,11 +588,15 @@
 	}
 
 	&.-rounded {
-		border-radius: 0.125rem;
+		border-radius: 0.25rem;
 	}
 
 	&.-pill {
 		border-radius: 18px;
+
+		&::before {
+			border-radius: 18px;
+		}
 	}
 
 	&.-raised {

@@ -19,9 +19,10 @@ use App\Mail\PasswordChanged;
 
 class UserService
 {
+    /** @var User */
     private $user;
 
-    function __construct(User $user)
+    function __construct($user)
     {
         $this->user = $user;
     }
