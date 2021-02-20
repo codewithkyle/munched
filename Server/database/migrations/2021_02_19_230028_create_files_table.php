@@ -16,6 +16,7 @@ class CreateFilesTable extends Migration
         Schema::create("files", function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->string("key")->unique();
+            $table->integer("userId");
             $table->boolean("deleted")->default(false);
             $table->uuid("uid");
             $table->timestamps();
