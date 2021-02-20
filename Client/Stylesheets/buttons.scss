@@ -46,7 +46,7 @@
 			color: var(--primary-700);
 
 			&:hover,
-			&:focus,
+			&:focus-visible,
 			&:active {
 				color: var(--primary-800);
 			}
@@ -68,7 +68,7 @@
 			color: var(--grey-800);
 
 			&:hover,
-			&:focus,
+			&:focus-visible,
 			&:active {
 				color: var(--grey-900);
 			}
@@ -82,7 +82,7 @@
 			color: var(--neutral-800);
 
 			&:hover,
-			&:focus,
+			&:focus-visible,
 			&:active {
 				color: var(--neutral-900);
 			}
@@ -104,7 +104,7 @@
 			color: var(--success-700);
 
 			&:hover,
-			&:focus,
+			&:focus-visible,
 			&:active {
 				color: var(--success-800);
 			}
@@ -118,7 +118,7 @@
 			color: var(--warning-700);
 
 			&:hover,
-			&:focus,
+			&:focus-visible,
 			&:active {
 				color: var(--warning-800);
 			}
@@ -132,7 +132,7 @@
 			color: var(--danger-700);
 
 			&:hover,
-			&:focus,
+			&:focus-visible,
 			&:active {
 				color: var(--danger-800);
 			}
@@ -143,7 +143,7 @@
 		}
 
 		&:hover,
-		&:focus {
+		&:focus-visible {
 			&::before {
 				opacity: 0.1;
 				transform: translate(-50%, -50%) scale(1);
@@ -183,7 +183,7 @@
 			color: var(--white);
 
 			&:hover,
-			&:focus {
+			&:focus-visible {
 				background-color: var(--primary-600);
 				border-color: var(--primary-600);
 			}
@@ -204,7 +204,7 @@
 				color: var(--black);
 
 				&:hover,
-				&:focus {
+				&:focus-visible {
 					background-color: var(--primary-300);
 					border-color: var(--primary-300);
 				}
@@ -227,7 +227,7 @@
 			color: var(--white);
 
 			&:hover,
-			&:focus {
+			&:focus-visible {
 				background-color: var(--grey-800);
 				border-color: var(--grey-800);
 				color: var(--white);
@@ -251,7 +251,7 @@
 			color: var(--grey-900);
 
 			&:hover,
-			&:focus {
+			&:focus-visible {
 				background-color: var(--grey-300);
 				border-color: var(--grey-300);
 			}
@@ -273,7 +273,7 @@
 			color: var(--neutral-900);
 
 			&:hover,
-			&:focus {
+			&:focus-visible {
 				background-color: var(--neutral-300);
 				border-color: var(--neutral-300);
 			}
@@ -295,7 +295,7 @@
 			color: var(--grey-900);
 
 			&:hover,
-			&:focus {
+			&:focus-visible {
 				background-color: var(--grey-100);
 				border-color: var(--grey-100);
 			}
@@ -317,7 +317,7 @@
 			color: var(--white);
 
 			&:hover,
-			&:focus {
+			&:focus-visible {
 				background-color: var(--success-600);
 				border-color: var(--success-600);
 			}
@@ -338,7 +338,7 @@
 				color: var(--black);
 
 				&:hover,
-				&:focus {
+				&:focus-visible {
 					background-color: var(--success-300);
 					border-color: var(--success-300);
 				}
@@ -361,7 +361,7 @@
 			color: var(--black);
 
 			&:hover,
-			&:focus {
+			&:focus-visible {
 				background-color: var(--warning-300);
 				border-color: var(--warning-300);
 			}
@@ -382,7 +382,7 @@
 				color: var(--black);
 
 				&:hover,
-				&:focus {
+				&:focus-visible {
 					background-color: var(--warning-300);
 					border-color: var(--warning-300);
 				}
@@ -405,7 +405,7 @@
 			color: var(--white);
 
 			&:hover,
-			&:focus {
+			&:focus-visible {
 				background-color: var(--danger-600);
 				border-color: var(--danger-600);
 			}
@@ -426,7 +426,7 @@
 				color: var(--black);
 
 				&:hover,
-				&:focus {
+				&:focus-visible {
 					background-color: var(--danger-300);
 					border-color: var(--danger-300);
 				}
@@ -554,7 +554,7 @@
 		}
 
 		&:hover,
-		&:focus {
+		&:focus-visible {
 			&::before {
 				opacity: 0.1;
 			}

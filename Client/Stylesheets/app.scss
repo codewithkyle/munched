@@ -129,16 +129,33 @@
 		.profile-button {
 			width: 36px;
 			height: 36px;
-			display: inline-flex;
+			border-radius: 50%;
+			overflow: hidden;
+			position: relative;
+			background-color: var(--grey-200);
+			display: flex;
 			justify-content: center;
 			align-items: center;
-			position: relative;
-			color: var(--grey-700);
-			transition: all 150ms var(--ease-in-out);
 
-			&:hover,
-			&:focus-visible {
-				color: var(--grey-800);
+			&::after {
+				content: "";
+				display: inline-block;
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				border-radius: 50%;
+				box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.15);
+			}
+
+			img {
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
 			}
 
 			&:active,
@@ -151,8 +168,9 @@
 			}
 
 			svg {
-				width: 24px;
-				height: 24px;
+				width: 16px;
+				height: 16px;
+				color: var(--grey-500);
 			}
 		}
 

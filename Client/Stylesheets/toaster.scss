@@ -204,7 +204,7 @@ toaster-component {
 				position: relative;
 
 				&:hover,
-				&:focus {
+				&:focus-visible {
 					&::before {
 						transform: scale(1);
 					}

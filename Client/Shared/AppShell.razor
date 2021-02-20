@@ -3,12 +3,16 @@
 
 @if (CanRender){
 	<main class="app-shell">
-		<a href="/" class="app-logo pb-0.125">
+		<a href="/dashboard" class="app-logo pb-0.125">
 			<span>App Name</span>
 		</a>
 		<header class="app-header">
-			<button class="profile-button" aria-label="open profile menu">
-				<svg aria-hidden="true" focusable="false" data-prefix="fad" data-icon="user-circle" class="svg-inline--fa fa-user-circle fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><g class="fa-group"><path class="fa-secondary" fill="currentColor" d="M248,8C111,8,0,119,0,256S111,504,248,504,496,393,496,256,385,8,248,8Zm0,96a88,88,0,1,1-88,88A88,88,0,0,1,248,104Zm0,344a191.61,191.61,0,0,1-146.5-68.2C120.3,344.4,157.1,320,200,320a24.76,24.76,0,0,1,7.1,1.1,124.67,124.67,0,0,0,81.8,0A24.76,24.76,0,0,1,296,320c42.9,0,79.7,24.4,98.5,59.8A191.61,191.61,0,0,1,248,448Z" opacity="0.4"></path><path class="fa-primary" fill="currentColor" d="M248,280a88,88,0,1,0-88-88A88,88,0,0,0,248,280Zm48,40a24.76,24.76,0,0,0-7.1,1.1,124.67,124.67,0,0,1-81.8,0A24.76,24.76,0,0,0,200,320c-42.9,0-79.7,24.4-98.5,59.8,68.07,80.91,188.84,91.32,269.75,23.25A192,192,0,0,0,394.5,379.8C375.7,344.4,338.9,320,296,320Z"></path></g></svg>
+			<button class="profile-button" aria-label="open profile menu" tooltip="Account details">
+				@if (String.IsNullOrEmpty(CurrentUser.Avatar)){						
+					<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-alt" class="svg-inline--fa fa-user-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 288c79.5 0 144-64.5 144-144S335.5 0 256 0 112 64.5 112 144s64.5 144 144 144zm128 32h-55.1c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16H128C57.3 320 0 377.3 0 448v16c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48v-16c0-70.7-57.3-128-128-128z"></path></svg>
+				} else {
+					<img src="@CurrentUser.Avatar" alt="Your profile photo">
+				}
 			</button>
 			<div class="profile-modal">
 				<div class="avatar">
@@ -49,7 +53,7 @@
 			@switch (AppSettings.ActiveModal){
 				case AppSettings.Modal.Profile:
 					<div class="edit-profile">
-						<button @onclick="CloseModal" id="modal-close-button" class="close-button" aria-label="close profile management menu">
+						<button @onclick="CloseModal" id="modal-close-button" class="close-button" aria-label="close profile management menu" tooltip="Close">
 							<svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
 						</button>
 						<h3 class="block w-full font-medium font-md font-grey-800 mb-1">Edit Profile</h3>
