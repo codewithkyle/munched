@@ -11,7 +11,7 @@
         "publish": "dotnet publish ./Client -c Release && rm -rf ./Client/public && mkdir ./Client/public && mv ./Client/bin/Release/net5.0/publish/wwwroot/* ./Client/public",
         "bundle": "snowpack install",
         "prettier": "npm-run-all prettier:*",
-        "prettier:client": "prettier --write \"./Client/Scripts/*.ts\" && prettier --write \"./Client/Stylesheets/*.scss\"",
+        "prettier:client": "prettier --write \"./Client/Scripts/**/*.ts\" && prettier --write \"./Client/Stylesheets/**/*.scss\"",
         "prettier:server": "prettier --write \"./Server/app/**/*.php\" && prettier --write \"./Server/database/**/*.php\" && prettier --write \"./Server/routes/*.php\" && prettier --write \"./Server/resources/**/*.php\" && prettier --write \"./Server/bootstrap/*.php\"",
         "test": "./Server/vendor/bin/phpunit ./Server/tests",
         "docs": "docs"

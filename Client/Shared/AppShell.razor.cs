@@ -29,12 +29,13 @@ namespace Client.Shared
 		public void OpenProfileModal()
 		{
 			AppSettings.OpenModal(AppSettings.Modal.Profile);
-			JSRuntime.InvokeVoidAsync("FocusElement", "#modal-close-button");
+			StateHasChanged();
 		}
 
 		public void CloseModal()
 		{
 			AppSettings.OpenModal(AppSettings.Modal.None);
+			StateHasChanged();
 		}
     }
 }

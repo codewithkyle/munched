@@ -5,7 +5,7 @@ namespace Client.Models.Globals
         public enum Modal
 		{
 			None,
-			Profile
+			Profile,
 		}
 		public static Modal ActiveModal = Modal.None;
 

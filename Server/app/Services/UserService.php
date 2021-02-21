@@ -24,7 +24,7 @@ class UserService
 
     function __construct($user)
     {
-        $this->user = $user;
+        $this->user = User::where("id", $user->id)->first();
     }
 
     protected $permissions = [
@@ -122,8 +122,6 @@ class UserService
 
         $mail = new EmailConfirm($encodedData, $this->user->name);
         $this->sendMail($email, $mail);
-
-        $this->user->verified = false;
         $this->save();
     }
 
@@ -147,6 +145,16 @@ class UserService
     public function updateProfile(array $params): void
     {
         $this->user->name = $params["name"];
+        if ($this->user->email !== $params["email"]) {
+            $temp = User::where("email", $params["email"])->first();
+            if (!empty($temp)) {
+                if ($temp->id !== $this->user->id) {
+                    throw new Exception("This email address has already been taken.");
+                }
+            } else {
+                $this->createEmailVerification($params["email"]);
+            }
+        }
         $this->save();
     }
 

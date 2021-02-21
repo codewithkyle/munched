@@ -8,7 +8,7 @@ toaster-component {
 	position: fixed;
 	top: 0;
 	right: 0;
-	z-index: 2000;
+	z-index: 99999;
 	overflow-y: auto;
 	overflow-x: hidden;
 	pointer-events: none;

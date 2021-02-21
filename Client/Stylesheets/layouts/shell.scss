@@ -22,6 +22,10 @@ app {
 .install-notification {
 	bottom: 50%;
 	transform-origin: center;
+	animation: none;
+	transition: none !important;
+	transform: scale(1) translateX(-50%);
+	opacity: 1;
 }
 
 a {
