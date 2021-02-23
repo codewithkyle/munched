@@ -25,7 +25,8 @@ $router->group(["prefix" => "v1"], function () use ($router) {
         $router->post("refresh-token", "AuthController@refreshToken");
         $router->post("resend-verification-email", "AuthController@resendVerificationEmail");
         $router->post("logout", "AuthController@logout");
-        $router->get("image/{uid}", "ImageController@getImage");
+        $router->get("image/{uid}", "FileController@getImage");
+        $router->get("file/{uid}", "FileController@getFile");
     });
 
     $router->group(["prefix" => "user", "middleware" => "user"], function () use ($router) {
@@ -56,8 +57,7 @@ $router->group(["prefix" => "v1"], function () use ($router) {
         $router->group(["middleware" => ["admin"]], function () use ($router) {
             $router->get("users", "IngestController@getUsers");
         });
-        $router->group(["middleware" => ["user"]], function () use ($router) {
-            // $router->get("users", "AdminController@getUsers");
-        });
+        // $router->group(["middleware" => ["user"]], function () use ($router) {
+        // });
     });
 });
