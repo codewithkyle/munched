@@ -241,6 +241,11 @@ class AuthController extends Controller
         }
     }
 
+    public function maintenanceCheck(Request $request): JsonResponse
+    {
+        $this->buildSuccessResponse();
+    }
+
     private function generateToken(string $userUid, int $duraiton = null): array
     {
         if (is_null($duraiton)) {

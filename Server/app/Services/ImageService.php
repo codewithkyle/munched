@@ -12,5 +12,4 @@ use App\Facades\File as FileHelper;
 
 class ImageService
 {
-
 }

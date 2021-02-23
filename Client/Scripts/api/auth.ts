@@ -109,3 +109,10 @@ async function ForgotPassword(email: string): Promise<FormResponse> {
 	}
 	return response as FormResponse;
 }
+
+async function MaintenanceCheck(): Promise<ResponseCore> {
+	const request = await apiRequest("/v1/maintenance");
+	const fetchResponse = await request.json();
+	const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+	return response;
+}

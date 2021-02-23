@@ -39,11 +39,11 @@ class UserService
     public function updateAvatar(UploadedFile $photo): void
     {
         $fileService = new FileService();
-        if (!is_null($this->user->avatar)){
+        if (!is_null($this->user->avatar)) {
             $this->deleteAvatar();
         }
         $fileUid = $fileService->saveFile($photo, $this->user->id);
-        $this->user->avatar = rtrim(getenv("API_URL"), "/") . "/v1/image/". $fileUid;
+        $this->user->avatar = rtrim(getenv("API_URL"), "/") . "/v1/image/" . $fileUid;
         $this->save();
     }
 
@@ -249,14 +249,14 @@ class UserService
 
     private function deleteAvatar(): void
     {
-        try{
+        try {
             $matches = [];
-            preg_match('/[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3‌​}\-[a-f0-9]{12}/', $this->user->avatar, $matches);
-            if (!empty($matches)){
+            preg_match("/[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3‌​}\-[a-f0-9]{12}/", $this->user->avatar, $matches);
+            if (!empty($matches)) {
                 $fileService = new FileService();
                 $fileService->deleteFile($matches[0], $this->user->id);
             }
-        } catch (Exception $e){
+        } catch (Exception $e) {
             Log::error($e->getMessage());
         }
     }

@@ -27,6 +27,7 @@ $router->group(["prefix" => "v1"], function () use ($router) {
         $router->post("logout", "AuthController@logout");
         $router->get("image/{uid}", "FileController@getImage");
         $router->get("file/{uid}", "FileController@getFile");
+        $router->post("maintenance", "AuthController@maintenanceCheck");
     });
 
     $router->group(["prefix" => "user", "middleware" => "user"], function () use ($router) {

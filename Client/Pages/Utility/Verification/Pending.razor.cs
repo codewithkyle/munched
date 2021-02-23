@@ -25,9 +25,9 @@ namespace Client.Pages.Utility.Verification
             IsSending = false;
             StateHasChanged();
             if (Response.Success){
-                await JSRuntime.InvokeVoidAsync("Notify", "Verification email has been sent.");
+				await JSRuntime.InvokeVoidAsync("Alert", "success", "Success", "The verification email has been resent.");
             } else {
-                NavigationManager.NavigateTo("/");
+                await JSRuntime.InvokeVoidAsync("Alert", "error", "Error", "Failed to resend the verification email.");
             }
         }
     }

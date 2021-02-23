@@ -12,7 +12,7 @@ class FileController extends Controller
 {
     public function getImage(string $uid, Request $request)
     {
-        try{
+        try {
             $fileService = new FileService();
             $response = $fileService->getFile($uid, $request->user->id);
             return response($response["Body"], 200, [
@@ -25,7 +25,7 @@ class FileController extends Controller
 
     public function getFile(string $uid, Request $request)
     {
-        try{
+        try {
             $fileService = new FileService();
             $response = $fileService->getFile($uid, $request->user->id);
             return response($response["Body"], 200, [

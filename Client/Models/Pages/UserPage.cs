@@ -21,8 +21,14 @@ namespace Client.Models.Pages
 			ResponseCore UserVerificationResponse = await JSRuntime.InvokeAsync<ResponseCore>("VerifyUser");
             if (!UserVerificationResponse.Success)
             {
-                NavigationManager.NavigateTo("/");
-                return;
+				switch (UserVerificationResponse.StatusCode){
+					case 503:
+						NavigationManager.NavigateTo("/maintenance");
+						return;
+					default:
+						NavigationManager.NavigateTo("/");
+						return;
+				}
             }
             await Main();
         }
