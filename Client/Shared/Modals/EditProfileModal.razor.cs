@@ -41,6 +41,7 @@ namespace Client.Shared.Modals
             if (ProfileUpdateResponse.Success){
                 ProfileForm.Succeed();
 				await JSRuntime.InvokeVoidAsync("Alert", "success", "Profile Updated", "Your profile has been updated successfully.");
+				await RefreshProfile();
             } else {
                 if (ProfileUpdateResponse.FieldErrors != null){
                     ProfileForm.Fail(ProfileUpdateResponse.FieldErrors[0]);
@@ -97,11 +98,23 @@ namespace Client.Shared.Modals
 
         public async Task OnAvatarUpload(InputFileChangeEventArgs e)
         {
-			ProfileResponse Response = await JSRuntime.InvokeAsync<ProfileResponse>("UpdateProfileAvatar");
+			ResponseCore Response = await JSRuntime.InvokeAsync<ResponseCore>("UpdateProfileAvatar");
+			if (Response.Success){
+				await JSRuntime.InvokeVoidAsync("Alert", "success", "Profile Updated", "Your profile picture has been updated.");
+				await RefreshProfile();
+			} else {
+				await JSRuntime.InvokeVoidAsync("Alert", "error", "Error", Response.Error);
+			}
+			StateHasChanged();
+        }
+
+		private async Task RefreshProfile()
+		{
+			ProfileResponse Response = await JSRuntime.InvokeAsync<ProfileResponse>("GetProfile");
 			if (Response.Success){
 				CurrentUser.SetCurrentUser(Response.User);
 			}
 			StateHasChanged();
-        }
+		}
     }
 }
