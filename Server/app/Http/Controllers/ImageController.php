@@ -12,10 +12,14 @@ class ImageController extends Controller
 {
     public function getImage(string $uid, Request $request)
     {
-        $fileService = new FileService();
-        $file = $fileService->getFile($uid);
-        return response($file["Body"], 200, [
-            "Content-Type" => $file["ContentType"],
-        ]);
+        try{
+            $fileService = new FileService();
+            $response = $fileService->getFile($uid, $request->user->id);
+            return response($response["Body"], 200, [
+                "Content-Type" => $response["ContentType"],
+            ]);
+        } catch (Exception $e) {
+            return response($e->getMessage(), $e->statusCode);
+        }
     }
 }

@@ -69,7 +69,6 @@ class UserController extends Controller
         } catch (Exception $e) {
             return $this->buildErrorResponse($e->getMessage());
         }
-        $response = \json_decode(Cache::get("user-" . $user->uid));
-        return $this->buildSuccessResponse($response);
+        return $this->buildSuccessResponse();
     }
 }

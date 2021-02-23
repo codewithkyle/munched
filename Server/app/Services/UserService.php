@@ -40,7 +40,7 @@ class UserService
     {
         $fileService = new FileService();
         $fileUid = $fileService->saveFile($photo, $this->user->id);
-        $this->user->avatar = $fileUid;
+        $this->user->avatar = rtrim(getenv("API_URL"), "/") . "/v1/image/" . $fileUid;
         $this->save();
     }
 

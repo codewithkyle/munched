@@ -18,6 +18,7 @@ class CreateFilesTable extends Migration
             $table->string("key")->unique();
             $table->integer("userId");
             $table->boolean("deleted")->default(false);
+            $table->boolean("private")->default(false);
             $table->uuid("uid");
             $table->timestamps();
         });
