@@ -224,3 +224,13 @@ function FocusElement(selector: string) {
 		}
 	}, 300);
 }
+
+function ConvertToBase64(file: File | Blob): Promise<string> {
+	return new Promise((resolve) => {
+		const reader = new FileReader();
+		reader.onload = () => {
+			resolve(reader.result as string);
+		};
+		reader.readAsDataURL(file);
+	});
+}

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
@@ -68,6 +69,7 @@ class UserController extends Controller
         } catch (Exception $e) {
             return $this->buildErrorResponse($e->getMessage());
         }
-        return $this->buildSuccessResponse();
+        $response = \json_decode(Cache::get("user-" . $user->uid));
+        return $this->buildSuccessResponse($response);
     }
 }

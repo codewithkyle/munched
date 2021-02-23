@@ -97,12 +97,11 @@ namespace Client.Shared.Modals
 
         public async Task OnAvatarUpload(InputFileChangeEventArgs e)
         {
-            var format = "image/png";
-            var resizedImageFile = await e.File.RequestImageFileAsync(format, 200, 200);
-            var buffer = new byte[resizedImageFile.Size];
-            await resizedImageFile.OpenReadStream().ReadAsync(buffer);
-            var imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
-            ResponseCore Response = await JSRuntime.InvokeAsync<ResponseCore>("UpdateProfileAvatar", imageDataUrl);
+			ProfileResponse Response = await JSRuntime.InvokeAsync<ProfileResponse>("UpdateProfileAvatar");
+			if (Response.Success){
+				CurrentUser.SetCurrentUser(Response.User);
+			}
+			StateHasChanged();
         }
     }
 }

@@ -39,7 +39,7 @@ class UserService
     public function updateAvatar(UploadedFile $photo): void
     {
         $fileService = new FileService();
-        $fileUid = $fileService->saveFile($photo, $this->user->id, $this->user->avatar);
+        $fileUid = $fileService->saveFile($photo, $this->user->id);
         $this->user->avatar = $fileUid;
         $this->save();
     }
