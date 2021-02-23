@@ -9,6 +9,8 @@ namespace Client.Models.Globals
 		}
 		public static Modal ActiveModal = Modal.None;
 
+        public static string API = "http://api.munched.local";
+
         public static void OpenModal(Modal modal)
         {
             ActiveModal = modal;

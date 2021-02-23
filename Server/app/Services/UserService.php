@@ -6,6 +6,7 @@ use Log;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 // Models
 use App\Models\User;
@@ -16,6 +17,9 @@ use App\Models\PasswordReset;
 use App\Mail\EmailConfirm;
 use App\Mail\ForgottenPassword;
 use App\Mail\PasswordChanged;
+
+// Services
+use App\Services\FileService;
 
 class UserService
 {
@@ -31,6 +35,20 @@ class UserService
         "global" => ["profile:update", "meal:create", "meal:update", "meal:delete"],
         "manager" => ["ingredients:create", "ingredients:update", "ingredients:delete"],
     ];
+
+    public function updateAvatar(UploadedFile $photo): void
+    {
+        $fileService = new FileService();
+        $fileUid = $fileService->saveFile($photo, $this->user->id, $this->user->avatar);
+        $this->user->avatar = $fileUid;
+        $this->save();
+    }
+
+    public function delete(): void
+    {
+        Cache::forget("user-" . $this->user->uid);
+        $this->user->delete();
+    }
 
     public function grantAdminStatus(): void
     {

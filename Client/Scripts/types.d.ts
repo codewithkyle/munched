@@ -32,6 +32,7 @@ type User = {
 	Suspended: boolean;
 	Verified: boolean;
 	Admin: boolean;
+	Avatar: string | null;
 };
 interface UsersResponse extends ResponseCore {
 	Users: Array<User>;

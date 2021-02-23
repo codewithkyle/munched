@@ -42,4 +42,32 @@ class UserController extends Controller
 
         return $this->buildSuccessResponse();
     }
+
+    public function deleteProfile(Request $request): JsonResponse
+    {
+        $user = $request->user;
+        $userService = new UserService($user);
+        $userService->delete();
+        return $this->buildSuccessResponse();
+    }
+
+    public function updateProfileAvatar(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            "file" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->buildValidationErrorResponse($validator, "Form contains errors.");
+        }
+        $photo = $request->input("file");
+        $file = $this->parseBase64File($photo);
+        $user = $request->user;
+        $userService = new UserService($user);
+        try {
+            $userService->updateAvatar($file);
+        } catch (Exception $e) {
+            return $this->buildErrorResponse($e->getMessage());
+        }
+        return $this->buildSuccessResponse();
+    }
 }

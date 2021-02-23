@@ -25,13 +25,16 @@ $router->group(["prefix" => "v1"], function () use ($router) {
         $router->post("refresh-token", "AuthController@refreshToken");
         $router->post("resend-verification-email", "AuthController@resendVerificationEmail");
         $router->post("logout", "AuthController@logout");
+        $router->get("image/{uid}", "ImageController@getImage");
     });
 
     $router->group(["prefix" => "user", "middleware" => "user"], function () use ($router) {
         $router->get("verify", "UserController@verify");
         $router->get("profile", "UserController@profile");
         $router->post("profile", "UserController@updateProfile");
+        $router->delete("profile", "UserController@deleteProfile");
         $router->post("update-password", "AuthController@updatePassword");
+        $router->post("profile/avatar", "UserController@updateProfileAvatar");
     });
 
     $router->group(["prefix" => "admin", "middleware" => ["admin"]], function () use ($router) {

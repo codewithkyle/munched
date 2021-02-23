@@ -12,7 +12,7 @@ use App\Facades\File as FileHelper;
 
 class FileService
 {
-    public function saveFile(UploadedFile $uploadedFile, int $userId, string $uid = null): void
+    public function saveFile(UploadedFile $uploadedFile, int $userId, string $uid = null): string
     {
         $file = null;
         $key = null;
@@ -30,11 +30,13 @@ class FileService
             $file = self::CreateFile($userId);
             $key = $file->key;
         }
-        FileHelper::Put($key, $uploadedFile->getRelativePathname());
+        FileHelper::Put($key, $uploadedFile->getPathname());
+        unlink($uploadedFile->getPathname());
         if ($file->deleted) {
             $file->deleted = false;
             $file->save();
         }
+        return $file->uid;
     }
 
     public function deleteFile(string $uid, int $userId): void
@@ -73,10 +75,17 @@ class FileService
         }
     }
 
+    public function getFile(string $uid)
+    {
+        $key = $this->getKey($uid);
+        $file = FileHelper::Get($key);
+        return $file;
+    }
+
     private function createFile(int $userId): File
     {
         $uid = Uuid::uuid4()->toString();
-        $key = Crypt::encrypt(uid);
+        $key = Crypt::encrypt($uid);
         $file = File::create([
             "uid" => $uid,
             "key" => $key,

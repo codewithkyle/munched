@@ -4,13 +4,15 @@ using Client.Models.Globals;
 using Client.Models.Forms;
 using System.Threading.Tasks;
 using Client.Models.API;
-using Microsoft;
+using System;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Client.Shared.Modals
 {
     public class EditProfileModalBase : ComponentBase
     {
         [Inject] public IJSRuntime JSRuntime { get; set; }
+        [Inject] public NavigationManager NavigationManager { get; set; }
 		public EditProfileForm ProfileForm = new EditProfileForm();
 		public PasswordForm PasswordForm = new PasswordForm();
 		public bool ChangingPassword = false;
@@ -74,6 +76,33 @@ namespace Client.Shared.Modals
                 }
             }
             StateHasChanged();
+        }
+
+        public async Task DeleteAccount()
+        {
+            bool DeleteConfirmed = await JSRuntime.InvokeAsync<bool>("Confirm", "This action cannot be undone and your data will be permanently deleted. Continue with account deletion?");
+            if (DeleteConfirmed){
+                ProfileForm.Submit();
+                StateHasChanged();
+                ResponseCore Response = await JSRuntime.InvokeAsync<ResponseCore>("DeleteAccount");
+                if (Response.Success){
+                    ProfileForm.Succeed();
+                    await JSRuntime.InvokeVoidAsync("Alert", "success", "Account Deleted", "Your account has been successfully deleted.");
+                    NavigationManager.NavigateTo("/");
+                } else {
+                    ProfileForm.Fail(Response.Error);
+                }
+            }
+        }
+
+        public async Task OnAvatarUpload(InputFileChangeEventArgs e)
+        {
+            var format = "image/png";
+            var resizedImageFile = await e.File.RequestImageFileAsync(format, 200, 200);
+            var buffer = new byte[resizedImageFile.Size];
+            await resizedImageFile.OpenReadStream().ReadAsync(buffer);
+            var imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+            ResponseCore Response = await JSRuntime.InvokeAsync<ResponseCore>("UpdateProfileAvatar", imageDataUrl);
         }
     }
 }

@@ -13,6 +13,7 @@ async function GetUsers(page: number = 0, limit: number = 10): Promise<UsersResp
 			Suspended: user.suspended === 1 ? true : false,
 			Verified: user.verified === 1 ? true : false,
 			Admin: user.admin === 1 ? true : false,
+			Avatar: user.avatar,
 		});
 	}
 	response.Total = fetchResponse.data.total;

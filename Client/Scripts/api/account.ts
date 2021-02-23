@@ -11,6 +11,7 @@ async function GetProfile(): Promise<ProfileResponse> {
 			Suspended: fetchResponse.data.suspended === 1 ? true : false,
 			Verified: fetchResponse.data.verified === 1 ? true : false,
 			Admin: fetchResponse.data.admin === 1 ? true : false,
+			Avatar: fetchResponse.data.avatar,
 		};
 	}
 	return response as ProfileResponse;
@@ -33,6 +34,27 @@ async function UpdatePassword(oldPassword: string, newPassword: string): Promise
 		newPassword: newPassword,
 	};
 	const request = await apiRequest("/v1/user/update-password", "POST", data);
+	const fetchResponse = await request.json();
+	const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+	return response;
+}
+
+async function DeleteAccount(): Promise<ResponseCore> {
+	const request = await apiRequest("/v1/user/profile", "DELETE");
+	const fetchResponse = await request.json();
+	const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+	if (response.Success) {
+		ClearStorage();
+		LogoutAllInstances();
+	}
+	return response;
+}
+
+async function UpdateProfileAvatar(image: unknown): Promise<ResponseCore> {
+	const data = {
+		file: image,
+	};
+	const request = await apiRequest("/v1/user/profile/avatar", "POST", data);
 	const fetchResponse = await request.json();
 	const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
 	return response;

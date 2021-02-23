@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Validator;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Ramsey\Uuid\Uuid;
 
 class Controller extends BaseController
 {
@@ -49,5 +52,16 @@ class Controller extends BaseController
             ],
             401
         );
+    }
+
+    protected function parseBase64File(string $base64File): UploadedFile
+    {
+        $fileData = base64_decode(preg_replace("#^data:image/\w+;base64,#i", "", $base64File));
+        $storagePath = storage_path("uploads");
+        $tmpFilePath = $storagePath . "/" . Uuid::uuid4()->toString() . ".png";
+        file_put_contents($tmpFilePath, $fileData);
+        $tmpFile = new File($tmpFilePath);
+        $file = new UploadedFile($tmpFile->getPathname(), $tmpFile->getFilename(), $tmpFile->getMimeType(), 0, true);
+        return $file;
     }
 }
