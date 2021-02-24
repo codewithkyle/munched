@@ -7,6 +7,7 @@ using Client.Models.API;
 using Client.Models.Pages;
 using Client.Models.Data;
 using System.Collections.Generic;
+using System.Timers;
 
 namespace Client.Pages.Admin
 {
@@ -18,26 +19,32 @@ namespace Client.Pages.Admin
         public int Page = 1;
         public int TotalUsers = 0;
         public int TotalPages = 1;
+		public string Query = "";
+		private Timer SearchDebouceTimer;
 
         protected override async Task Main()
         {
+			SearchDebouceTimer = new Timer(600);
+        	SearchDebouceTimer.Elapsed += DebounceCallback;
+        	SearchDebouceTimer.AutoReset = false;
 			TotalUsers = await JSRuntime.InvokeAsync<int>("Count", "users");
 			if (TotalUsers == 0){
 				await JSRuntime.InvokeVoidAsync("Ingest", "/v1/ingest/users", "users");
-			}
-            await LoadUserData();
-			if (TotalPages != 0){
+			} else {
 				JSRuntime.InvokeVoidAsync("Ingest", "/v1/ingest/users", "users");
 			}
+            await LoadUserData();
         }
 
         public async Task LoadUserData()
         {
-            IsLoadingUserData = true;
+			IsLoadingUserData = true;
             StateHasChanged();
-            TotalUsers = await JSRuntime.InvokeAsync<int>("Count", "users");
-			TotalPages = (int)Math.Ceiling((decimal)TotalUsers / UsersPerPage);
-            Users = await JSRuntime.InvokeAsync<List<User>>("Select", "users", Page, UsersPerPage);
+			if (String.IsNullOrEmpty(Query)){
+				await SelectUsers();
+			} else {
+				await SearchUsers();
+			}
             IsLoadingUserData = false;
             StateHasChanged();
         }
@@ -189,5 +196,31 @@ namespace Client.Pages.Admin
                 await JSRuntime.InvokeVoidAsync("Alert", "error", "Error", Response.Error);
             }
         }
+
+		public async void DebounceCallback(Object source, ElapsedEventArgs e)
+		{
+			await LoadUserData();
+		}
+
+		public async Task SearchUsers()
+		{
+			string[] Keys = {"Name", "Email"};
+            TotalUsers = await JSRuntime.InvokeAsync<int>("Count", "users", Query, Keys);
+			TotalPages = (int)Math.Ceiling((decimal)TotalUsers / UsersPerPage);
+            Users = await JSRuntime.InvokeAsync<List<User>>("Search", "users", Query, Keys, Page, UsersPerPage);
+		}
+
+		private async Task SelectUsers()
+		{
+			TotalUsers = await JSRuntime.InvokeAsync<int>("Count", "users");
+			TotalPages = (int)Math.Ceiling((decimal)TotalUsers / UsersPerPage);
+            Users = await JSRuntime.InvokeAsync<List<User>>("Select", "users", Page, UsersPerPage);
+		}
+
+		public void HandleKeyUp()
+		{
+			SearchDebouceTimer.Stop();
+			SearchDebouceTimer.Start();
+		}   
     }
 }

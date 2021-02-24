@@ -106,9 +106,17 @@ function Select(table: string, page: number = 1, limit: number = null): Promise<
 	});
 }
 
-function Count(table: string): Promise<number> {
+function Count(table: string, query: string = null, key: string | string[] = null): Promise<number> {
 	return new Promise((resolve) => {
-		idbManager.send("count", table, resolve);
+		idbManager.send(
+			"count",
+			{
+				table: table,
+				query: query,
+				key: key,
+			},
+			resolve
+		);
 	});
 }
 

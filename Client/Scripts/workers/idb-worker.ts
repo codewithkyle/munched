@@ -143,6 +143,9 @@ class IDBWorker {
 		const existingData = await this.db.getAll(table);
 		const key = this.getTableKey(table);
 		if (ingestData.success) {
+			for (const data of ingestData.data) {
+				await this.db.put(table, data);
+			}
 			for (const currData of existingData) {
 				let dead = true;
 				for (const data of ingestData.data) {
@@ -154,9 +157,6 @@ class IDBWorker {
 				if (dead) {
 					await this.db.delete(table, currData);
 				}
-			}
-			for (const data of ingestData.data) {
-				await this.db.put(table, data);
 			}
 		}
 	}
@@ -232,13 +232,9 @@ class IDBWorker {
 		return;
 	}
 
-	private async search(data): Promise<unknown> {
-		const { table, key, query, limit, page } = data;
-		let output = [];
-		const rows: Array<unknown> = await this.db.getAll(table);
+	private fuzzySearch(rows: Array<unknown>, query: string, key: Array<string> | string) {
 		const options = {
-			threshold: -10000,
-			limit: limit,
+			threshold: -Infinity,
 			allowTypo: false,
 		};
 		if (Array.isArray(key)) {
@@ -247,15 +243,26 @@ class IDBWorker {
 			options["key"] = key;
 		}
 		const results = fuzzysort.go(query, rows, options);
+		const output = [];
 		for (let i = 0; i < results.length; i++) {
 			output.push(results[i].obj);
+		}
+		return output;
+	}
+
+	private async search(data): Promise<unknown> {
+		const { table, key, query, limit, page } = data;
+		const rows: Array<unknown> = await this.db.getAll(table);
+		let output = [];
+		if (query) {
+			output = this.fuzzySearch(rows, query, key);
+		} else {
+			output = rows;
 		}
 		if (limit !== null) {
 			let start = (page - 1) * limit;
 			let end = page * limit;
-			output = results.slice(start, end);
-		} else {
-			output = results;
+			output = output.slice(start, end);
 		}
 		return output;
 	}
@@ -271,9 +278,16 @@ class IDBWorker {
 		return output;
 	}
 
-	private async count(table: string): Promise<number> {
+	private async count(data): Promise<number> {
+		const { table, query, key } = data;
 		const rows: Array<unknown> = await this.db.getAll(table);
-		return rows.length;
+		let output = 0;
+		if (query && key) {
+			output = this.fuzzySearch(rows, query, key).length;
+		} else {
+			output = rows.length;
+		}
+		return output;
 	}
 
 	private async select(data): Promise<Array<unknown>> {
