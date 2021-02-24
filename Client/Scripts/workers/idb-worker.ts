@@ -30,10 +30,12 @@ const DB_NAME = "localdb";
 
 class IDBWorker {
 	private db: any;
+	private tables: Array<Table>;
 
 	constructor() {
 		this.db = null;
 		self.onmessage = this.inbox.bind(this);
+		this.tables = [];
 		this.main();
 	}
 
@@ -115,6 +117,19 @@ class IDBWorker {
 		}
 	}
 
+	private getTableKey(table: string) {
+		let key = "id";
+		for (let i = 0; i < this.tables.length; i++) {
+			if (this.tables[i].name === table) {
+				if (this.tables[i]?.keyPath) {
+					key = this.tables[i].keyPath;
+				}
+				break;
+			}
+		}
+		return key;
+	}
+
 	private async ingestData(data) {
 		const { route, table } = data;
 		const ingestRequest = await fetch(`${API_URL}/${route.replace(/^\//, "")}`, {
@@ -126,9 +141,20 @@ class IDBWorker {
 		});
 		const ingestData = await ingestRequest.json();
 		const existingData = await this.db.getAll(table);
-		// TODO: put and delete as needed
+		const key = this.getTableKey(table);
 		if (ingestData.success) {
-			await this.db.clear(table);
+			for (const currData of existingData) {
+				let dead = true;
+				for (const data of ingestData.data) {
+					if (data[key] === currData[key]) {
+						dead = false;
+						break;
+					}
+				}
+				if (dead) {
+					await this.db.delete(table, currData);
+				}
+			}
 			for (const data of ingestData.data) {
 				await this.db.put(table, data);
 			}
@@ -148,6 +174,7 @@ class IDBWorker {
 		try {
 			const request = await fetch(`/schema.json`);
 			const scheam: Schema = await request.json();
+			this.tables = scheam.tables;
 			// @ts-expect-error
 			this.db = await idb.openDB(DB_NAME, scheam.version, {
 				upgrade(db, oldVersion, newVersion, transaction) {
