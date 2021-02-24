@@ -17,18 +17,9 @@ namespace Client.Pages.Utility
 
         protected override async Task OnInitializedAsync()
         {
-            ResponseCore Response = await JSRuntime.InvokeAsync<ResponseCore>("MaintenanceCheck");
-			if (Response.Success){
+            MaintenanceCheckResponse Response = await JSRuntime.InvokeAsync<MaintenanceCheckResponse>("MaintenanceCheck");
+			if (!Response.IsUndergoingMaintenance){
 				NavigationManager.NavigateTo("/");
-			} else {
-				switch (Response.StatusCode){
-					case 503:
-						NavigationManager.NavigateTo("/maintenance");
-						break;
-					default:
-						NavigationManager.NavigateTo("/");
-						break;
-				}
 			}
         }
     }

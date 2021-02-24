@@ -14,6 +14,7 @@ namespace Client.Shared
 		[Inject]
         public NavigationManager NavigationManager { get; set; }
 		public bool CanRender = false;
+		public bool MaintenanceMode = false;
         protected override async Task OnInitializedAsync()
         {
             ProfileResponse Profile = await JSRuntime.InvokeAsync<ProfileResponse>("GetProfile");
@@ -22,7 +23,19 @@ namespace Client.Shared
 				CanRender = true;
 				StateHasChanged();
             } else {
-				NavigationManager.NavigateTo("/");
+				switch (Profile.StatusCode){
+					case 503:
+						NavigationManager.NavigateTo("/maintenance");
+						break;
+					default:
+						NavigationManager.NavigateTo("/");
+						break;
+				}
+			}
+			MaintenanceCheckResponse Response = await JSRuntime.InvokeAsync<MaintenanceCheckResponse>("MaintenanceCheck");
+			MaintenanceMode = Response.IsUndergoingMaintenance;
+			if (MaintenanceMode){
+				await JSRuntime.InvokeVoidAsync("SetTitle", "🚧 Maintenance Mode");
 			}
         }
 

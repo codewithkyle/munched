@@ -71,8 +71,32 @@ async function GetImpersonationLink(uid: string): Promise<ImpersonationLinkRespo
 }
 
 async function Impersonate(jwt: string): Promise<ResponseCore> {
-	const request = await apiRequest(`/v1/impersonate`, "POST", { token: jwt });
+	const request = await apiRequest(`/v1/admin/impersonate`, "POST", { token: jwt });
 	const fetchResponse: FetchReponse = await request.json();
 	const response: ResponseCore = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+	return response;
+}
+
+async function ClearApplicationCache(): Promise<ResponseCore> {
+	const request = await apiRequest("/v1/admin/clear-redis-cache", "POST");
+	const fetchResponse = await request.json();
+	const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+	return response;
+}
+
+async function ClearCloudflareCache(): Promise<ResponseCore> {
+	const request = await apiRequest("/v1/admin/clear-cloudflare-cache", "POST");
+	const fetchResponse = await request.json();
+	const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+	return response;
+}
+
+async function SetMaintenanceMode(isUndergoingMaintenance: boolean): Promise<ResponseCore> {
+	const data = {
+		maintenance: isUndergoingMaintenance,
+	};
+	const request = await apiRequest("/v1/admin/set-maintenance-mode", "POST", data);
+	const fetchResponse = await request.json();
+	const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
 	return response;
 }

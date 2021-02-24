@@ -24,10 +24,11 @@ namespace Client.Pages.Admin
 			TotalUsers = await JSRuntime.InvokeAsync<int>("Count", "users");
 			if (TotalUsers == 0){
 				await JSRuntime.InvokeVoidAsync("Ingest", "/v1/ingest/users", "users");
-			} else {
-				JSRuntime.InvokeVoidAsync("Ingest", "/v1/ingest/users", "users");
 			}
             await LoadUserData();
+			if (TotalPages != 0){
+				JSRuntime.InvokeVoidAsync("Ingest", "/v1/ingest/users", "users");
+			}
         }
 
         public async Task LoadUserData()

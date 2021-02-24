@@ -77,6 +77,10 @@ class AuthController extends Controller
             if ($user->suspended) {
                 return $this->returnUnauthorized("Your account has been suspended.");
             }
+            $maintenance = Cache::get("maintenance", false);
+            if ($maintenance && !$user->admin) {
+                return $this->buildErrorResponse("The server is currently undergoing maintenance.");
+            }
             $data = $this->generateToken($user->uid);
             Cache::put("user-" . $user->uid, json_encode($user));
             $this->setAuthCookie($data["token"], $data["expires"]);
@@ -243,7 +247,7 @@ class AuthController extends Controller
 
     public function maintenanceCheck(Request $request): JsonResponse
     {
-        $this->buildSuccessResponse();
+        return $this->buildSuccessResponse(Cache::get("maintenance", false));
     }
 
     private function generateToken(string $userUid, int $duraiton = null): array

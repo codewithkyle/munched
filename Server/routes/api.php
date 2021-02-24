@@ -19,7 +19,7 @@ $router->group(["prefix" => "v1"], function () use ($router) {
     $router->get("verify-email", "AuthController@verifyEmail");
     $router->post("forgot-password", "AuthController@forgotPassword");
     $router->post("reset-password", "AuthController@resetPassword");
-    $router->post("impersonate", "AuthController@impersonate");
+    $router->get("maintenance", "AuthController@maintenanceCheck");
 
     $router->group(["middleware" => "user"], function () use ($router) {
         $router->post("refresh-token", "AuthController@refreshToken");
@@ -27,7 +27,6 @@ $router->group(["prefix" => "v1"], function () use ($router) {
         $router->post("logout", "AuthController@logout");
         $router->get("image/{uid}", "FileController@getImage");
         $router->get("file/{uid}", "FileController@getFile");
-        $router->post("maintenance", "AuthController@maintenanceCheck");
     });
 
     $router->group(["prefix" => "user", "middleware" => "user"], function () use ($router) {
@@ -52,6 +51,7 @@ $router->group(["prefix" => "v1"], function () use ($router) {
         $router->post("clear-redis-cache", "AdminController@clearRedisCache");
         $router->post("clear-cloudflare-cache", "AdminController@clearCloudflareCache");
         $router->post("set-maintenance-mode", "AdminController@setMaintenanceMode");
+        $router->post("impersonate", "AuthController@impersonate");
     });
 
     $router->group(["prefix" => "ingest"], function () use ($router) {

@@ -234,3 +234,7 @@ function ConvertToBase64(file: File | Blob): Promise<string> {
 		reader.readAsDataURL(file);
 	});
 }
+
+function SetTitle(title: string) {
+	document.title = title;
+}

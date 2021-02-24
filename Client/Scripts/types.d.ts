@@ -42,3 +42,7 @@ interface UsersResponse extends ResponseCore {
 interface ImpersonationLinkResponse extends ResponseCore {
 	URL: string;
 }
+
+interface MaintenanceCheckReponse extends ResponseCore {
+	IsUndergoingMaintenance: boolean;
+}

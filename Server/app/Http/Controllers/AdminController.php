@@ -162,8 +162,12 @@ class AdminController extends Controller
 
     public function clearCloudflareCache(Request $request): JsonResponse
     {
-        Cloudflare::flush();
-        return $this->buildSuccessResponse();
+        $success = Cloudflare::flush();
+        if ($success) {
+            return $this->buildSuccessResponse();
+        } else {
+            return $this->buildErrorResponse("Failed to clear Cloudflare cache.");
+        }
     }
 
     public function setMaintenanceMode(Request $request): JsonResponse

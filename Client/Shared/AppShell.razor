@@ -5,6 +5,9 @@
 @if (CanRender){
 	<main class="app-shell">
 		<a href="/dashboard" class="app-logo pb-0.125">
+			@if (MaintenanceMode){
+				<div style="background: url(/images/maintenance-mode.svg) repeat-x 12px 0;cursor:help;z-index:2000;position:absolute;top:0;left:0;width:100%;height:4px;" title="This application is currently in maintenance mode."></div>
+			}
 			<span>App Name</span>
 		</a>
 		<header class="app-header">
@@ -40,6 +43,7 @@
 			<nav>
 				<NavLink href="/dashboard" Match="NavLinkMatch.All">Dashboard</NavLink>
 				@if (CurrentUser.Admin){
+					<NavLink href="/admin/dashboard">Admin Panel</NavLink>
 					<NavLink href="/admin/users">Manage Users</NavLink>
 				}
 			</nav>
