@@ -126,8 +126,7 @@ function Get(table: string, key: string, index: string = null): Promise<unknown>
 	});
 }
 
-// TODO: add page
-function Search(table: string, query: string, key: string | string[], limit: number = Infinity): Promise<Array<unknown>> {
+function Search(table: string, query: string, key: string | string[], page: number = 1, limit: number = null): Promise<Array<unknown>> {
 	return new Promise((resolve) => {
 		idbManager.send(
 			"search",
@@ -136,6 +135,7 @@ function Search(table: string, query: string, key: string | string[], limit: num
 				key: key,
 				query: query,
 				limit: limit,
+				page: page,
 			},
 			resolve
 		);

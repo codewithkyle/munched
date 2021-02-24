@@ -206,7 +206,7 @@ class IDBWorker {
 	}
 
 	private async search(data): Promise<unknown> {
-		const { table, key, query, limit } = data;
+		const { table, key, query, limit, page } = data;
 		let output = [];
 		const rows: Array<unknown> = await this.db.getAll(table);
 		const options = {
@@ -222,6 +222,13 @@ class IDBWorker {
 		const results = fuzzysort.go(query, rows, options);
 		for (let i = 0; i < results.length; i++) {
 			output.push(results[i].obj);
+		}
+		if (limit !== null) {
+			let start = (page - 1) * limit;
+			let end = page * limit;
+			output = results.slice(start, end);
+		} else {
+			output = results;
 		}
 		return output;
 	}
