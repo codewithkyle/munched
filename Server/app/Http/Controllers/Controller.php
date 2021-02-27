@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Validator;
@@ -12,17 +13,22 @@ use Symfony\Component\HttpKernel\Exception\HttpException as Exception;
 
 class Controller extends BaseController
 {
-    protected function validateAcceptHeader(Request $request): string
+    protected function validateAcceptHeader(Request $request, array $accepts = ["application/json"]): string
     {
-        $accepts = $request->header("Accept") ?? null;
-        switch($accepts){
-            case "application/x-ndjson":
-                return "ndjson";
-            case "application/json":
-                return "json";
-            default:
-                throw new Exception(406, "Invalid 'Accept' header.");
+        $acceptHeader = $request->header("accept") ?? null;
+        $output = null;
+        $acceptedTypes = "";
+        foreach ($accepts as $type){
+            if ($acceptHeader === $type){
+                $output = $type;
+                break;
+            }
+            $acceptedTypes .= $type . ", ";
         }
+        if (is_null($output)){
+            throw new Exception(406, "Invalid 'Accept' header. This method only accepts: " . rtrim($acceptedTypes, ", "));
+        }
+        return $output;
     }
 
     protected function buildValidationErrorResponse(Validator $validator, string $error = "Something went wrong on the server."): JsonResponse

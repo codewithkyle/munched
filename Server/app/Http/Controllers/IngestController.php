@@ -15,15 +15,15 @@ class IngestController extends Controller
     public function getUsers(Request $request)
     {
         try{
-            $accepts = $this->validateAcceptHeader($request);
+            $accepts = $this->validateAcceptHeader($request, ["application/x-ndjson", "application/json"]);
         } catch (Exception $e) {
             return response($e->getMessage(), $e->statusCode);
         }
         switch($accepts){
-            case "ndjson":
+            case "application/x-ndjson":
                 $path = storage_path("ndjson/users.ndjson");
                 return response()->file($path);
-            case "json":
+            case "application/json":
                 $ingestService = new IngestService();
                 $data = $ingestService->getAllUsers();
                 return $this->buildSuccessResponse($data);
