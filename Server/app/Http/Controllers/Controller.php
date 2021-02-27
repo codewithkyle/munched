@@ -8,9 +8,23 @@ use Illuminate\Validation\Validator;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\HttpKernel\Exception\HttpException as Exception;
 
 class Controller extends BaseController
 {
+    protected function validateAcceptHeader(Request $request): string
+    {
+        $accepts = $request->header("Accept") ?? null;
+        switch($accepts){
+            case "application/x-ndjson":
+                return "ndjson";
+            case "application/json":
+                return "json";
+            default:
+                throw new Exception(406, "Invalid 'Accept' header.");
+        }
+    }
+
     protected function buildValidationErrorResponse(Validator $validator, string $error = "Something went wrong on the server."): JsonResponse
     {
         $errors = [];
