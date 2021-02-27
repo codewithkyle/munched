@@ -60,8 +60,8 @@ class UserController extends Controller
         if ($validator->fails()) {
             return $this->buildValidationErrorResponse($validator, "Form contains errors.");
         }
-        $photo = $request->input("file");
-        $file = $this->parseBase64Image($photo);
+        $photoData = $request->input("file");
+        $file = $this->parseBase64File($photoData);
         $user = $request->user;
         $userService = new UserService($user);
         try {

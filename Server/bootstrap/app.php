@@ -50,11 +50,11 @@ $app->singleton(Illuminate\Contracts\Console\Kernel::class, App\Console\Kernel::
 */
 
 $app->configure("app");
-
 $app->configure("mail");
 $app->alias("mailer", Illuminate\Mail\Mailer::class);
 $app->alias("mailer", Illuminate\Contracts\Mail\Mailer::class);
 $app->alias("mailer", Illuminate\Contracts\Mail\MailQueue::class);
+$app->configure("queue");
 
 /*
 |--------------------------------------------------------------------------

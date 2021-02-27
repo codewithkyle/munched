@@ -21,6 +21,9 @@ use App\Mail\PasswordChanged;
 // Services
 use App\Services\FileService;
 
+// Jobs
+use App\Jobs\RefreshUsersFileJob;
+
 class UserService
 {
     /** @var User */
@@ -226,6 +229,7 @@ class UserService
     {
         $this->user->save();
         Cache::put("user-" . $this->user->uid, json_encode($this->user));
+        dispatch(new RefreshUsersFileJob);
     }
 
     private function sendMail(string $email, \Illuminate\Mail\Mailable $mail): void
