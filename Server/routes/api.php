@@ -50,6 +50,7 @@ $router->group(["prefix" => "v1"], function () use ($router) {
         $router->post("impersonation-link", "AuthController@getImpersonationLink");
         $router->post("clear-redis-cache", "AdminController@clearRedisCache");
         $router->post("clear-cloudflare-cache", "AdminController@clearCloudflareCache");
+        $router->post("clear-ndjson-cache", "AdminController@clearNDJSONCache");
         $router->post("set-maintenance-mode", "AdminController@setMaintenanceMode");
         $router->post("impersonate", "AuthController@impersonate");
     });

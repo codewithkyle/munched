@@ -230,7 +230,7 @@ class UserService
     {
         $this->user->save();
         Cache::put("user-" . $this->user->uid, json_encode($this->user));
-        Queue::push(new RefreshUsersFileJob);
+        Queue::push(new RefreshUsersFileJob());
     }
 
     private function sendMail(string $email, \Illuminate\Mail\Mailable $mail): void

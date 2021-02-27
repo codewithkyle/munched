@@ -28,15 +28,14 @@ class RefreshUsersFileJob extends Job
      */
     public function handle()
     {
-        $finalPath = storage_path('ndjson/users.ndjson');
-        $tempPath = storage_path('ndjson/' . $this->uid .'.tmp');
+        $finalPath = storage_path("ndjson/users.ndjson");
+        $tempPath = storage_path("ndjson/" . $this->uid . ".tmp");
         file_put_contents($tempPath, "");
-        $users = User::chunk(200, function ($users){
-            $tempPath = storage_path('ndjson/' . $this->uid .'.tmp');
-            foreach ($users as $user)
-            {
+        $users = User::chunk(200, function ($users) {
+            $tempPath = storage_path("ndjson/" . $this->uid . ".tmp");
+            foreach ($users as $user) {
                 $line = json_encode($user) . "\n";
-                file_put_contents($tempPath, $line , FILE_APPEND);
+                file_put_contents($tempPath, $line, FILE_APPEND);
             }
         });
         rename($tempPath, $finalPath);

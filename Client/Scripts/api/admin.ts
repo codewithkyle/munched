@@ -91,6 +91,13 @@ async function ClearCloudflareCache(): Promise<ResponseCore> {
 	return response;
 }
 
+async function ClearNDJSONCache(): Promise<ResponseCore> {
+	const request = await apiRequest("/v1/admin/clear-ndjson-cache", "POST");
+	const fetchResponse = await request.json();
+	const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+	return response;
+}
+
 async function SetMaintenanceMode(isUndergoingMaintenance: boolean): Promise<ResponseCore> {
 	const data = {
 		maintenance: isUndergoingMaintenance,

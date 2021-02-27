@@ -162,7 +162,7 @@ class AdminController extends Controller
 
     public function clearNDJSONCache(Request $request): JsonResponse
     {
-        Queue::push(new RefreshUsersFileJob);
+        Queue::push(new RefreshUsersFileJob());
         return $this->buildSuccessResponse();
     }
 

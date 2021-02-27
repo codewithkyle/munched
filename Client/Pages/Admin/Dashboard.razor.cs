@@ -48,6 +48,21 @@ namespace Client.Pages.Admin
             await JSRuntime.InvokeAsync<ResponseCore>("StopLoading", ticket);
 		}
 
+		public async Task ClearNDJSONCache()
+		{
+			string ticket = await JSRuntime.InvokeAsync<string>("StartLoading");
+            ResponseCore Response = await JSRuntime.InvokeAsync<ResponseCore>("ClearNDJSONCache");
+            if (Response.Success)
+            {
+                await JSRuntime.InvokeVoidAsync("Alert", "success", "Success","The NDJSON cache has been cleared.");
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("Alert", "error", "Error", Response.Error);
+            }
+            await JSRuntime.InvokeAsync<ResponseCore>("StopLoading", ticket);
+		}
+
 		public async Task ToggleMaintenanceMode()
 		{
 			string ticket = await JSRuntime.InvokeAsync<string>("StartLoading");

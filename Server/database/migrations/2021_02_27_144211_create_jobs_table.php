@@ -13,15 +13,15 @@ class CreateJobsTable extends Migration
      */
     public function up()
     {
-        Schema::create('jobs', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('queue');
-            $table->longText('payload');
-            $table->tinyInteger('attempts')->unsigned();
-            $table->unsignedInteger('reserved_at')->nullable();
-            $table->unsignedInteger('available_at');
-            $table->unsignedInteger('created_at');
-            $table->index(['queue', 'reserved_at']);
+        Schema::create("jobs", function (Blueprint $table) {
+            $table->bigIncrements("id");
+            $table->string("queue");
+            $table->longText("payload");
+            $table->tinyInteger("attempts")->unsigned();
+            $table->unsignedInteger("reserved_at")->nullable();
+            $table->unsignedInteger("available_at");
+            $table->unsignedInteger("created_at");
+            $table->index(["queue", "reserved_at"]);
         });
     }
 
@@ -32,6 +32,6 @@ class CreateJobsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('jobs');
+        Schema::dropIfExists("jobs");
     }
 }
