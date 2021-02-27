@@ -55,7 +55,7 @@ class UserService
     {
         $this->user->delete();
         Cache::forget("user-" . $this->user->uid);
-        Queue::push(new RefreshUsersFileJob);
+        Queue::push(new RefreshUsersFileJob());
     }
 
     public function grantAdminStatus(): void

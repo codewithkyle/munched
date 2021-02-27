@@ -18,14 +18,14 @@ class Controller extends BaseController
         $acceptHeader = $request->header("accept") ?? null;
         $output = null;
         $acceptedTypes = "";
-        foreach ($accepts as $type){
-            if ($acceptHeader === $type){
+        foreach ($accepts as $type) {
+            if ($acceptHeader === $type) {
                 $output = $type;
                 break;
             }
             $acceptedTypes .= $type . ", ";
         }
-        if (is_null($output)){
+        if (is_null($output)) {
             throw new Exception(406, "Invalid 'Accept' header. This method only accepts: " . rtrim($acceptedTypes, ", "));
         }
         return $output;

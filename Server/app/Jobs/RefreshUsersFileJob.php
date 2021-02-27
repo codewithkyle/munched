@@ -34,14 +34,15 @@ class RefreshUsersFileJob extends Job
         $users = User::chunk(200, function ($users) {
             $tempPath = storage_path("ndjson/" . $this->uid . ".tmp");
             foreach ($users as $user) {
-                $line = json_encode([
-                    "Name" => $user->name,
-                    "Email" => $user->email,
-                    "Uid" => $user->uid,
-                    "Suspended" => boolval($user->suspended),
-                    "Verified" => boolval($user->verified),
-                    "Admin" => boolval($user->admin),
-                ]) . "\n";
+                $line =
+                    json_encode([
+                        "Name" => $user->name,
+                        "Email" => $user->email,
+                        "Uid" => $user->uid,
+                        "Suspended" => boolval($user->suspended),
+                        "Verified" => boolval($user->verified),
+                        "Admin" => boolval($user->admin),
+                    ]) . "\n";
                 file_put_contents($tempPath, $line, FILE_APPEND);
             }
         });

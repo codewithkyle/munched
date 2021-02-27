@@ -14,12 +14,12 @@ class IngestController extends Controller
 {
     public function getUsers(Request $request)
     {
-        try{
+        try {
             $accepts = $this->validateAcceptHeader($request, ["application/x-ndjson", "application/json"]);
         } catch (Exception $e) {
             return response($e->getMessage(), $e->statusCode);
         }
-        switch($accepts){
+        switch ($accepts) {
             case "application/x-ndjson":
                 $path = storage_path("ndjson/users.ndjson");
                 return response()->file($path);
