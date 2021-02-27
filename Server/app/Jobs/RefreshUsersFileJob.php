@@ -9,6 +9,8 @@ use App\Models\User;
 
 class RefreshUsersFileJob extends Job
 {
+    private $uid;
+
     /**
      * Create a new job instance.
      *
@@ -16,7 +18,7 @@ class RefreshUsersFileJob extends Job
      */
     public function __construct()
     {
-
+        $this->uid = Uuid::uuid4()->toString();
     }
 
     /**
@@ -27,10 +29,10 @@ class RefreshUsersFileJob extends Job
     public function handle()
     {
         $finalPath = storage_path('ndjson/users.ndjson');
-        $uid = Uuid::uuid4()->toString();
-        $tempPath = storage_path('ndjson/' . $uid .'.tmp');
+        $tempPath = storage_path('ndjson/' . $this->uid .'.tmp');
         file_put_contents($tempPath, "");
         $users = User::chunk(200, function ($users){
+            $tempPath = storage_path('ndjson/' . $this->uid .'.tmp');
             foreach ($users as $user)
             {
                 $line = json_encode($user) . "\n";

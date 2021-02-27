@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
-use App\Facades\Cloudflare;
+use Illuminate\Support\Facades\Queue;
 
+use App\Facades\Cloudflare;
 use App\Services\UserService;
 use App\Services\AdminService;
-
 use App\Models\User;
+use App\Jobs\RefreshUsersFileJob;
 
 class AdminController extends Controller
 {
@@ -157,6 +157,12 @@ class AdminController extends Controller
         if ($isInMaintenance) {
             Cache::set("maintenance", true);
         }
+        return $this->buildSuccessResponse();
+    }
+
+    public function clearNDJSONCache(Request $request): JsonResponse
+    {
+        Queue::push(new RefreshUsersFileJob);
         return $this->buildSuccessResponse();
     }
 

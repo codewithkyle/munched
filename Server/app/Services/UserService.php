@@ -7,6 +7,7 @@ use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Illuminate\Support\Facades\Queue;
 
 // Models
 use App\Models\User;
@@ -229,7 +230,7 @@ class UserService
     {
         $this->user->save();
         Cache::put("user-" . $this->user->uid, json_encode($this->user));
-        dispatch(new RefreshUsersFileJob);
+        Queue::push(new RefreshUsersFileJob);
     }
 
     private function sendMail(string $email, \Illuminate\Mail\Mailable $mail): void
