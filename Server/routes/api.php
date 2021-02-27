@@ -58,6 +58,7 @@ $router->group(["prefix" => "v1"], function () use ($router) {
     $router->group(["prefix" => "ingest"], function () use ($router) {
         $router->group(["middleware" => ["admin"]], function () use ($router) {
             $router->get("users", "IngestController@getUsers");
+            $router->get("users/count", "IngestController@countUsers");
         });
         // $router->group(["middleware" => ["user"]], function () use ($router) {
         // });

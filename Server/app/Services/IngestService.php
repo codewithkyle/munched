@@ -24,4 +24,10 @@ class IngestService
         }
         return $output;
     }
+
+    public function countUsers()
+    {
+        $count = User::count();
+        return $count;
+    }
 }

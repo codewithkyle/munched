@@ -1,5 +1,15 @@
 const API_URL = "http://api.munched.local";
-const scripts = ["/js/utilities.js", "/js/tooltipper.js", "/js/lit-html.js", "/js/idb-manager.js", "/js/auth.js", "/js/account.js", "/js/admin.js", "/js/influencer.js"];
+const scripts = [
+	"/js/uid.js",
+	"/js/utilities.js",
+	"/js/tooltipper.js",
+	"/js/lit-html.js",
+	"/js/idb-manager.js",
+	"/js/auth.js",
+	"/js/account.js",
+	"/js/admin.js",
+	"/js/influencer.js",
+];
 const stylesheets = [
 	"/css/loading.css",
 	"/css/app.css",

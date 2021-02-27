@@ -44,6 +44,18 @@ class IDBManager {
 			case "ready":
 				this.flushQueue();
 				break;
+			case "download-tick":
+				post(data.workerUid, "download-tick");
+				break;
+			case "download-finished":
+				post(data.workerUid, "download-finished");
+				break;
+			case "unpack-tick":
+				post(data.workerUid, "unpack-tick");
+				break;
+			case "unpack-finished":
+				post(data.workerUid, "unpack-finished");
+				break;
 			default:
 				console.warn(`Unhandled IDB Manager inbox message type: ${type}`);
 				break;
@@ -80,6 +92,27 @@ class IDBManager {
 const idbManager = new IDBManager();
 
 function Ingest(route: string, table: string): Promise<boolean> {
+	return new Promise((resolve) => {
+		new Promise((streamStartedCallback) => {
+			idbManager.send(
+				"ingest",
+				{
+					route: route,
+					table: table,
+				},
+				streamStartedCallback
+			);
+		})
+			.then(({ workerUid, total }) => {
+				resolve(true);
+			})
+			.catch(() => {
+				resolve(false);
+			});
+	});
+}
+
+function IngestTracked(route: string, table: string): Promise<{ workerUid: string; total: number }> {
 	return new Promise((resolve) => {
 		idbManager.send(
 			"ingest",

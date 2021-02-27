@@ -22,11 +22,18 @@ class IngestController extends Controller
         switch ($accepts) {
             case "application/x-ndjson":
                 $path = storage_path("ndjson/users.ndjson");
-                return response()->file($path);
+                return response(file_get_contents($path));
             case "application/json":
                 $ingestService = new IngestService();
                 $data = $ingestService->getAllUsers();
                 return $this->buildSuccessResponse($data);
         }
+    }
+
+    public function countUsers(Request $request): JsonResponse
+    {
+        $ingestService = new IngestService();
+        $data = $ingestService->countUsers();
+        return $this->buildSuccessResponse($data);
     }
 }

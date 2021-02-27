@@ -1,17 +1,16 @@
-type Subscription = {
+type Subscriptions = {
 	[ticket: string]: {
 		[id: string]: Function;
 	};
 };
 class Influencer {
-	private subscriptions: Subscription;
+	private subscriptions: Subscriptions;
 
 	constructor() {
 		this.subscriptions = {};
 	}
 
-	public create() {
-		const ticket = uid();
+	public create(ticket: string = uid()) {
 		this.subscriptions[ticket] = {};
 		return ticket;
 	}
@@ -40,8 +39,8 @@ class Influencer {
 	}
 }
 const influencer = new Influencer();
-const create = influencer.create.bind(influencer);
+const createSubscription = influencer.create.bind(influencer);
 const subscribe = influencer.subscribe.bind(influencer);
 const unsubscribe = influencer.unsubscribe.bind(influencer);
 const post = influencer.post.bind(influencer);
-const destroy = influencer.destroy.bind(influencer);
+const destroySubscription = influencer.destroy.bind(influencer);

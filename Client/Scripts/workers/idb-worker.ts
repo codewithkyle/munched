@@ -1,12 +1,15 @@
 // @ts-expect-error
-self.importScripts("/js/idb.js");
+importScripts("/js/idb.js");
 
 // @ts-expect-error
-self.importScripts("/js/fuzzysort.js");
+importScripts("/js/fuzzysort.js");
 declare var fuzzysort: any;
 
 // @ts-expect-error
-self.importScripts("/js/config.js");
+importScripts("/js/config.js");
+
+// @ts-expect-error
+importScripts("/js/uid.js");
 
 type Schema = {
 	version: number;
@@ -26,15 +29,29 @@ type Column = {
 	unique?: boolean;
 };
 
+type WorkerPool = {
+	[key: string]: {
+		worker: Worker | StreamParser;
+		table: string;
+		rows: Array<any>;
+		busy: boolean;
+		status: "PARSING" | "INSERTING";
+		total: number;
+		streamStartedCallback: Function;
+	};
+};
+
 const DB_NAME = "localdb";
 
 class IDBWorker {
 	private db: any;
 	private tables: Array<Table>;
+	private workerPool: WorkerPool;
 
 	constructor() {
 		this.db = null;
 		self.onmessage = this.inbox.bind(this);
+		this.workerPool = {};
 		this.tables = [];
 		this.main();
 	}
@@ -86,12 +103,12 @@ class IDBWorker {
 				break;
 			case "ingest":
 				this.ingestData(data)
-					.then(() => {
-						this.send("response", true, uid, origin);
+					.then((output) => {
+						this.send("response", output, uid, origin);
 					})
 					.catch((error) => {
 						console.error(error);
-						this.send("response", false, uid, origin);
+						this.send("response", null, uid, origin);
 					});
 				break;
 			case "purge":
@@ -99,6 +116,36 @@ class IDBWorker {
 				break;
 			default:
 				console.warn(`Unhandled IDB Worker inbox message type: ${type}`);
+				break;
+		}
+	}
+
+	async workerInbox(e) {
+		const { worker, table, rows, busy, streamStartedCallback: startCallback, total } = this.workerPool[e.data.uid];
+		switch (e.data.type) {
+			case "done":
+				this.send("download-finished", e.data.uid);
+				// @ts-expect-error
+				if (worker?.terminate) {
+					// @ts-expect-error
+					worker.terminate();
+				}
+				this.workerPool[e.data.uid].worker = null;
+				this.workerPool[e.data.uid].status = "INSERTING";
+				if (!busy) {
+					this.insertData(e.data.uid);
+				}
+				break;
+			default:
+				rows.push(e.data.result);
+				this.send("download-tick", e.data.uid);
+				if (!busy) {
+					this.insertData(e.data.uid);
+				}
+				if (startCallback !== null) {
+					startCallback(e.data.uid, total);
+					this.workerPool[e.data.uid].streamStartedCallback = null;
+				}
 				break;
 		}
 	}
@@ -130,35 +177,76 @@ class IDBWorker {
 		return key;
 	}
 
-	private async ingestData(data) {
-		const { route, table } = data;
-		const ingestRequest = await fetch(`${API_URL}/${route.replace(/^\//, "")}`, {
+	async insertData(uid: string) {
+		this.workerPool[uid].busy = true;
+		const table = this.workerPool[uid].table;
+		const row = this.workerPool[uid].rows.splice(0, 1)?.[0] ?? null;
+		if (row !== null) {
+			await this.db.put(table, row);
+			this.send("unpack-tick", uid);
+		}
+		if (!this.workerPool[uid].rows.length) {
+			this.workerPool[uid].busy = false;
+			if (this.workerPool[uid].status === "INSERTING") {
+				this.send("unpack-finished", uid);
+				delete this.workerPool[uid];
+			}
+		} else {
+			this.insertData(uid);
+		}
+	}
+
+	private async getIngestCount(route) {
+		const countRequest = await fetch(`${API_URL}/${route}/count`, {
 			method: "GET",
 			credentials: "include",
 			headers: new Headers({
 				Accept: "application/json",
 			}),
 		});
-		const ingestData = await ingestRequest.json();
-		const existingData = await this.db.getAll(table);
-		const key = this.getTableKey(table);
-		if (ingestData.success) {
-			for (const data of ingestData.data) {
-				await this.db.put(table, data);
-			}
-			for (const currData of existingData) {
-				let dead = true;
-				for (const data of ingestData.data) {
-					if (data[key] === currData[key]) {
-						dead = false;
-						break;
-					}
+		const countResponse = await countRequest.json();
+		return countResponse.data;
+	}
+
+	private ingestData(data) {
+		return new Promise(async (resolve) => {
+			let { route, table } = data;
+			route = route.replace(/^\//, "");
+			const total = await this.getIngestCount(route);
+			const workerUid = uid();
+			try {
+				const worker = new Worker("/js/stream-parser-worker.js");
+				this.workerPool[workerUid] = {
+					worker: worker,
+					table: table,
+					rows: [],
+					busy: false,
+					status: "PARSING",
+					total: total,
+					streamStartedCallback: resolve,
+				};
+				worker.onmessage = this.workerInbox.bind(this);
+				worker.postMessage({
+					url: `${API_URL}/${route}`,
+					uid: workerUid,
+				});
+			} catch (e) {
+				if (typeof StreamParser === "undefined") {
+					// @ts-ignore
+					importScripts("/js/stream-parser.js");
 				}
-				if (dead) {
-					await this.db.delete(table, currData);
-				}
+				const parser = new StreamParser(route, workerUid, this.workerInbox.bind(this));
+				this.workerPool[workerUid] = {
+					worker: parser,
+					table: table,
+					rows: [],
+					busy: false,
+					status: "PARSING",
+					total: total,
+					streamStartedCallback: resolve,
+				};
 			}
-		}
+		});
 	}
 
 	private async purgeData() {
