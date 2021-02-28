@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => "database",
+    'default' => getenv("QUEUE_CONNECTION", "sync"),
 
     /*
     |--------------------------------------------------------------------------
