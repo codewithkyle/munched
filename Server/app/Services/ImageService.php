@@ -142,7 +142,7 @@ class ImageService
                 $img->writeImage($tempImage);
                 break;
             default:
-                if (\count(\Imagick::queryFormats("WEBP")) > 0 || file_exists("/usr/bin/cjpeg")) {
+                if (\count(\Imagick::queryFormats("WEBP")) > 0 || file_exists("/usr/bin/cwebp")) {
                     if (\count(\Imagick::queryFormats("WEBP")) > 0) {
                         $img->setImageFormat("webp");
                         $img->setImageCompressionQuality($transform["quality"]);
