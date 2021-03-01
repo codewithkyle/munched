@@ -13,7 +13,7 @@ class CreateTransformedImagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('transformed_images', function (Blueprint $table) {
+        Schema::create("transformed_images", function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->string("key")->unique();
             $table->string("token");
@@ -30,6 +30,6 @@ class CreateTransformedImagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('transformed_images');
+        Schema::dropIfExists("transformed_images");
     }
 }
