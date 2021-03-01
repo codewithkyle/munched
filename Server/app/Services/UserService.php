@@ -21,6 +21,7 @@ use App\Mail\PasswordChanged;
 
 // Services
 use App\Services\FileService;
+use App\Services\ImageService;
 
 // Jobs
 use App\Jobs\RefreshUsersFileJob;
@@ -42,12 +43,12 @@ class UserService
 
     public function updateAvatar(UploadedFile $photo): void
     {
-        $fileService = new FileService();
+        $imageService = new ImageService();
         if (!is_null($this->user->avatar)) {
             $this->deleteAvatar();
         }
-        $fileUid = $fileService->saveFile($photo, $this->user->id);
-        $this->user->avatar = rtrim(getenv("API_URL"), "/") . "/v1/image/" . $fileUid;
+        $imageUid = $imageService->saveImage($photo, $this->user->id);
+        $this->user->avatar = rtrim(getenv("API_URL"), "/") . "/v1/image/" . $imageUid;
         $this->save();
     }
 

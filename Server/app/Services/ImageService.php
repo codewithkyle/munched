@@ -7,13 +7,57 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\HttpException as Exception;
 use Imagick;
+use Illuminate\Support\Facades\Crypt;
 
 use App\Models\Image;
 use App\Facades\File;
+use App\Models\TransformedImage;
 
 class ImageService
 {
-    public function getImage(string $uid, int $userId, array $params)
+    public function deleteFile(string $uid, int $userId): void
+    {
+        $image = Image::where("uid", $uid)->first();
+        if (empty($image)) {
+            throw new Exception(404, "Image does not exist.");
+        } elseif ($image->userId !== $userId) {
+            throw new Exception(401, "You do not have permission to view this image.");
+        } else {
+            File::Delete($image->key);
+            $image->deleted = true;
+            $image->save();
+            $this->purgeImageTransforms($image->id);
+        }
+    }
+
+    public function saveImage(UploadedFile $uploadedFile, int $userId, string $uid = null): string
+    {
+        $image = null;
+        $key = null;
+        if (!is_null($uid)) {
+            $image = Image::where("uid", $uid)->first();
+            if (empty($image)) {
+                throw new Exception(404, "Image does not exist.");
+            } elseif ($image->userId !== $userId) {
+                throw new Exception(401, "You do not have permission to view this image.");
+            } else {
+                $key = $image->key;
+            }
+        }
+        if (is_null($key)) {
+            $image = $this->createImage($userId, $uploadedFile);
+            $key = $image->key;
+        }
+        File::Put($key, $uploadedFile->getPathname());
+        unlink($uploadedFile->getPathname());
+        if ($image->deleted) {
+            $image->deleted = false;
+            $image->save();
+        }
+        return $image->uid;
+    }
+
+    public function getTransformedImage(string $uid, int $userId, array $params)
     {
         $image = Image::where("uid", $uid)->first();
         if (empty($image) || $image->deleted){
@@ -23,32 +67,24 @@ class ImageService
             throw new Exception(401, "You do not have permission to view this image.");
         }
 
-        $clientAcceptsWebp = false; // TODO: figure out if the client accepts webp
-        $transform = $this->buildTransformSettings($params, $image);
-        if ($transform["format"] === "auto"){
-            if ($clientAcceptsWebp){
-                $transform["format"] = "webp";
-            } else {
-                // TODO: set to base image format
-            }
-        }
+        $clientAcceptsWebp = strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false;
+        $transform = $this->buildTransformSettings($params, $image, $clientAcceptsWebp);
         $token = $this->buildTransformToken($transform);
-
         $transformedImage = TransformedImage::where([
             "token" => $token,
             "imageId" => $image->id,
         ])->first();
+
         if (empty($transformedImage)){
             $file = File::Get($image->key);
             $tempImage = storage_path("images") . "/" . Uuid::uuid4()->toString();
             file_put_contents($tempImage, $file["Body"]);
             $this->transformImage($tempImage, $transform, $params);
             $this->convertImageFormat($tempImage, $transform);
-            $contentType = "???"; // TODO: get content type based on format
-            // TODO: create new TransformedImage model
+            $this->saveTransformedImage($tempImage, $token, $image->id);
             $file = [
-                "Body" => \file_get_contents($tempImage),
-                "ContentType" => $contentType,
+                "Body" => file_get_contents($tempImage),
+                "ContentType" => mime_content_type($tempImage),
             ];
             unlink($tempImage);
         } else {
@@ -58,12 +94,41 @@ class ImageService
         return $file;
     }
 
+    private function createImage(int $userId, UploadedFile $uploadedFile): Image
+    {
+        $uid = Uuid::uuid4()->toString();
+        $key = Crypt::encrypt($uid);
+        $img = new Imagick($uploadedFile->getPathname());
+        $image = Image::create([
+            "uid" => $uid,
+            "key" => $key,
+            "userId" => $userId,
+            "width" => $img->getImageWidth(),
+            "height" => $img->getImageHeight(),
+            "contentType" => $uploadedFile->getMimeType(),
+        ]);
+        return $image;
+    }
+
+    private function saveTransformedImage(string $imagePath, string $token, int $imageId): void
+    {
+        $uid = Uuid::uuid4()->toString();
+        $key = Crypt::encrypt($uid);
+        File::Put($key, $imagePath);
+        TransformedImage::create([
+            "key" => $key,
+            "imageId" => $imageId,
+            "uid" => $uid,
+            "token" => $token,
+        ]);
+    }
+
     private function convertImageFormat(string $tempImage, array $transform): void
     {
         $img = new Imagick($tempImage);
         switch ($transform['format'])
         {
-            case "jpg":
+            case "jpeg":
                 $img->setImageFormat("jpeg");
                 $img->setImageCompressionQuality($transform['quality']);
                 $img->writeImage($tempImage);
@@ -97,9 +162,9 @@ class ImageService
         }
     }
 
-    private function transformImage(string $tempPath, array $transform, array $params): void
+    private function transformImage(string $tempImage, array $transform, array $params): void
     {
-        $img = new Imagick($tempPath);
+        $img = new Imagick($tempImage);
         $img->setImageCompression(Imagick::COMPRESSION_NO);
         $img->setImageCompressionQuality(100);
         $img->setOption('png:compression-level', 9);
@@ -176,7 +241,7 @@ class ImageService
         return \md5($key);
     }
 
-    private function buildTransformSettings(array $params, Image $image): array
+    private function buildTransformSettings(array $params, Image $image, bool $clientAcceptsWebp): array
     {
         $width = $image->width;
         $height = $image->height;
@@ -252,15 +317,62 @@ class ImageService
             $focusPoints = [0.5, 0.5];
         }
 
+        $format = "auto";
+        if (isset($params['fm'])){
+            switch($params['fm']){
+                case "gif":
+                    $format = "gif";
+                    break;
+                case "jpeg":
+                    $format = "jpeg";
+                    break;
+                case "webp":
+                    $format = "webp";
+                    break;
+                case "png":
+                    $format = "png";
+                    break;
+                default:
+                    $format = "auto";
+                    break;
+            }
+        }
+        if ($format === "auto"){
+            if ($clientAcceptsWebp){
+                $format = "webp";
+            } else {
+                switch ($image->contentType){
+                    case "image/gif":
+                        $format = "gif";
+                        break;
+                    case "image/jpeg":
+                        $format = "jpeg";
+                        break;
+                    default:
+                        $format = "png";
+                        break;
+                }
+            }
+        }
+
         $transform = [
             'width' => round($width),
             'height' => round($height),
-            'format' => $params['fm'] ?? 'auto',
+            'format' => $format,
             'mode' => $mode,
             'quality' => $quality,
             'background' => $bg,
             'focusPoint' => $focusPoints
         ];
         return $transform;
+    }
+
+    private function purgeImageTransforms(int $imageId): void
+    {
+        $images = TransformedImage::where("imageId", $imageId)->all();
+        foreach($images as $image){
+            File::Delete($image->key);
+            $image->delete();
+        }
     }
 }

@@ -15,7 +15,7 @@ class FileController extends Controller
     {
         try {
             $imageService = new ImageService();
-            $response = $imageService->getImage($uid, $request->user->id, $request->all());
+            $response = $imageService->getTransformedImage($uid, $request->user->id, $request->all());
             return response($response["Body"], 200, [
                 "Content-Type" => $response["ContentType"],
             ]);

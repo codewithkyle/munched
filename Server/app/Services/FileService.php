@@ -28,7 +28,7 @@ class FileService
             }
         }
         if (is_null($key)) {
-            $file = self::CreateFile($userId);
+            $file = $this->createFile($userId);
             $key = $file->key;
         }
         FileHelper::Put($key, $uploadedFile->getPathname());

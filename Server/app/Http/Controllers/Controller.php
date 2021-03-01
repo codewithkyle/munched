@@ -74,7 +74,7 @@ class Controller extends BaseController
         );
     }
 
-    protected function parseBase64File(string $base64File): UploadedFile
+    protected function parseBase64Image(string $base64File): UploadedFile
     {
         $fileData = base64_decode(preg_replace("#^data:\w+/\w+;base64,#i", "", $base64File));
         $storagePath = storage_path("uploads");
