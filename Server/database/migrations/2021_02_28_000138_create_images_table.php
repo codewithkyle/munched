@@ -19,7 +19,7 @@ class CreateImagesTable extends Migration
             $table->integer("userId");
             $table->integer("width");
             $table->integer("height");
-            $table->string("contentType");
+            $table->string("type");
             $table->boolean("deleted")->default(false);
             $table->boolean("private")->default(false);
             $table->uuid("uid");

@@ -12,6 +12,7 @@
         "php": "^7.3|^8.0",
         "aws/aws-sdk-php": "^3.173",
         "cloudflare/sdk": "^1.1",
+        "codewithkyle/jitter-core": "^1.0",
         "firebase/php-jwt": "^5.2",
         "flipbox/lumen-generator": "^8.2",
         "illuminate/mail": "^8.22",
