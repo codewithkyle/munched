@@ -27,7 +27,8 @@ namespace Client.Shared.Modals
 
 		protected override void OnAfterRender(bool firstRender)
 		{
-			if (firstRender){
+			if (firstRender)
+			{
 				JSRuntime.InvokeVoidAsync("FocusElement", "#modal-close-button");
 			}
 			base.OnAfterRender(firstRender);
@@ -38,14 +39,27 @@ namespace Client.Shared.Modals
             ProfileForm.Submit();
             StateHasChanged();
             FormResponse ProfileUpdateResponse = await JSRuntime.InvokeAsync<FormResponse>("UpdateProfile", ProfileForm.Name, ProfileForm.Email);
-            if (ProfileUpdateResponse.Success){
+            if (ProfileUpdateResponse.Success)
+			{
                 ProfileForm.Succeed();
-				await JSRuntime.InvokeVoidAsync("Alert", "success", "Profile Updated", "Your profile has been updated successfully.");
+				if (ProfileForm.Email != CurrentUser.Email)
+				{
+					await JSRuntime.InvokeVoidAsync("Alert", "success", "Profile Updated", "Your profile has been updated. Check your email for a new verification code.");
+				}
+				else
+				{
+					await JSRuntime.InvokeVoidAsync("Alert", "success", "Profile Updated", "Your profile has been updated.");
+				}
 				await RefreshProfile();
-            } else {
-                if (ProfileUpdateResponse.FieldErrors != null){
+            }
+			else
+			{
+                if (ProfileUpdateResponse.FieldErrors != null)
+				{
                     ProfileForm.Fail(ProfileUpdateResponse.FieldErrors[0]);
-                } else {
+                }
+				else
+				{
                     ProfileForm.Fail(ProfileUpdateResponse.Error);
                 }
             }

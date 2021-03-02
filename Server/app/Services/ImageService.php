@@ -79,8 +79,8 @@ class ImageService
             $tempImage = storage_path("images") . "/" . Uuid::uuid4()->toString();
             file_put_contents($tempImage, $file["Body"]);
             $resizeOn = null;
-            if (isset($params["w"]) && !isset($params["h"]) || isset($params["h"]) && !isset($params["w"])){
-                if (isset($params["w"])){
+            if ((isset($params["w"]) && !isset($params["h"])) || (isset($params["h"]) && !isset($params["w"]))) {
+                if (isset($params["w"])) {
                     $resizeOn = "width";
                 } else {
                     $resizeOn = "height";
@@ -103,7 +103,7 @@ class ImageService
     private function getTypeFromMimeType(string $path): string
     {
         $mimeType = mime_content_type($path);
-        switch ($mimeType){
+        switch ($mimeType) {
             case "image/png":
                 return "png";
             case "image/jpeg":
@@ -115,7 +115,7 @@ class ImageService
             case "image/webp":
                 return "wepb";
             default:
-                return"png";
+                return "png";
         }
     }
 

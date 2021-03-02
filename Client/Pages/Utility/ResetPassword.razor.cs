@@ -10,13 +10,8 @@ namespace Client.Pages.Utility
 {
     public class ResetPasswordBase : ComponentBase
     {
-
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        private IJSRuntime JSRuntime { get; set; }
-
+        [Inject] private NavigationManager NavigationManager { get; set; }
+        [Inject] private IJSRuntime JSRuntime { get; set; }
         public ResetPasswordForm ResetPasswordForm = new ResetPasswordForm();
 
         public async Task SubmitResetPasswordForm()
@@ -24,16 +19,23 @@ namespace Client.Pages.Utility
             ResetPasswordForm.Submit();
             StateHasChanged();
             string Code = null;
-            if (QueryHelpers.ParseQuery(new Uri(NavigationManager.Uri).Query).TryGetValue("code", out var value)){
+            if (QueryHelpers.ParseQuery(new Uri(NavigationManager.Uri).Query).TryGetValue("code", out var value))
+			{
                 Code = value;
             }
             FormResponse Response = await JSRuntime.InvokeAsync<FormResponse>("ResetPassword", ResetPasswordForm.Password, Code);
-            if (Response.Success){
+            if (Response.Success)
+			{
                 ResetPasswordForm.Succeed();
-            } else {
-                if (Response.FieldErrors != null){
+            }
+			else
+			{
+                if (Response.FieldErrors != null)
+				{
                     ResetPasswordForm.Fail(Response.FieldErrors[0]);
-                } else {
+                }
+				else
+				{
                     ResetPasswordForm.Fail(Response.Error);
                 }
             }

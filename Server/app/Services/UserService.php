@@ -260,8 +260,8 @@ class UserService
             $matches = [];
             preg_match("/[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3‌​}\-[a-f0-9]{12}/", $this->user->avatar, $matches);
             if (!empty($matches)) {
-                $fileService = new FileService();
-                $fileService->deleteFile($matches[0], $this->user->id);
+                $imageService = new ImageService();
+                $imageService->deleteImage($matches[0], $this->user->id);
             }
         } catch (Exception $e) {
             Log::error($e->getMessage());

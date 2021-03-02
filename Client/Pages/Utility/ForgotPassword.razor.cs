@@ -9,13 +9,8 @@ namespace Client.Pages.Utility
 {
     public class ForgotPasswordBase : ComponentBase
     {
-
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        private IJSRuntime JSRuntime { get; set; }
-
+        [Inject] private NavigationManager NavigationManager { get; set; }
+        [Inject] private IJSRuntime JSRuntime { get; set; }
         public ForgotPasswordForm ForgotPasswordForm = new ForgotPasswordForm();
 
         public async Task SubmitForgotPasswordForm()
@@ -23,12 +18,18 @@ namespace Client.Pages.Utility
             ForgotPasswordForm.Submit();
             StateHasChanged();
             FormResponse Response = await JSRuntime.InvokeAsync<FormResponse>("ForgotPassword", ForgotPasswordForm.Email);
-            if (Response.Success){
+            if (Response.Success)
+			{
                 ForgotPasswordForm.Succeed();
-            } else {
-                if (Response.FieldErrors != null){
+            }
+			else
+			{
+                if (Response.FieldErrors != null)
+				{
                     ForgotPasswordForm.Fail(Response.FieldErrors[0]);
-                } else {
+                }
+				else
+				{
                     ForgotPasswordForm.Fail(Response.Error);
                 }
             }

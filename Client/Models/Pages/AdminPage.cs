@@ -9,12 +9,8 @@ namespace Client.Models.Pages
 {
     public class AdminPage : ComponentBase
     {
-
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        public IJSRuntime JSRuntime { get; set; }
+        [Inject] public NavigationManager NavigationManager { get; set; }
+        [Inject] public IJSRuntime JSRuntime { get; set; }
 
         protected override async Task OnInitializedAsync()
         {

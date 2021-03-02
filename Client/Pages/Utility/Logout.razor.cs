@@ -7,12 +7,8 @@ namespace Client.Pages.Utility
 {
     public class LogoutBase : ComponentBase
     {
-
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        private IJSRuntime JSRuntime { get; set; }
+        [Inject] private NavigationManager NavigationManager { get; set; }
+        [Inject] private IJSRuntime JSRuntime { get; set; }
 
         protected override async Task OnInitializedAsync()
         {

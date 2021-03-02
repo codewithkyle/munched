@@ -9,19 +9,16 @@ namespace Client.Models.Pages
 {
     public class UserPage : ComponentBase
     {
-
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        public IJSRuntime JSRuntime { get; set; }
+        [Inject] public NavigationManager NavigationManager { get; set; }
+        [Inject] public IJSRuntime JSRuntime { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
 			ResponseCore UserVerificationResponse = await JSRuntime.InvokeAsync<ResponseCore>("VerifyUser");
             if (!UserVerificationResponse.Success)
             {
-				switch (UserVerificationResponse.StatusCode){
+				switch (UserVerificationResponse.StatusCode)
+				{
 					case 503:
 						NavigationManager.NavigateTo("/maintenance");
 						return;
