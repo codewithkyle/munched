@@ -7,6 +7,7 @@ use App\Services\UserService;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
+use Symfony\Component\HttpKernel\Exception\HttpException as Exception;
 
 class UserController extends Controller
 {
@@ -21,7 +22,7 @@ class UserController extends Controller
             "Suspended" => (bool) $user->suspended,
             "Verified" => (bool) $user->verified,
             "Admin" => (bool) $user->admin,
-            "Avatar" => (bool) $user->avatar,
+            "Avatar" => $user->avatar,
         ];
         return $this->buildSuccessResponse($data);
     }

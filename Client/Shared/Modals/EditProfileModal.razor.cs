@@ -62,6 +62,7 @@ namespace Client.Shared.Modals
 				{
                     ProfileForm.Fail(ProfileUpdateResponse.Error);
                 }
+				await JSRuntime.InvokeVoidAsync("Alert", "error", "Error", ProfileUpdateResponse.Error);
             }
             StateHasChanged();
         }
@@ -77,18 +78,24 @@ namespace Client.Shared.Modals
             PasswordForm.Submit();
             StateHasChanged();
             FormResponse Response = await JSRuntime.InvokeAsync<FormResponse>("UpdatePassword", PasswordForm.OldPassword, PasswordForm.NewPassword);
-            if (Response.Success){
+            if (Response.Success)
+			{
                 PasswordForm.Succeed();
 				await JSRuntime.InvokeVoidAsync("Alert", "success", "Password Changed", "Your password has been updated successfully.");
 				PasswordForm.OldPassword = null;
 				PasswordForm.NewPassword = null;
 				ChangingPassword = false;
-            } else {
-                if (Response.FieldErrors != null){
+            }
+			else
+			{
+                if (Response.FieldErrors != null)
+				{
                     PasswordForm.Fail(Response.FieldErrors[0]);
-                } else {
+                }else
+				{
                     PasswordForm.Fail(Response.Error);
                 }
+				await JSRuntime.InvokeVoidAsync("Alert", "error", "Error", Response.Error);
             }
             StateHasChanged();
         }
@@ -96,16 +103,21 @@ namespace Client.Shared.Modals
         public async Task DeleteAccount()
         {
             bool DeleteConfirmed = await JSRuntime.InvokeAsync<bool>("Confirm", "This action cannot be undone and your data will be permanently deleted. Continue with account deletion?");
-            if (DeleteConfirmed){
+            if (DeleteConfirmed)
+			{
                 ProfileForm.Submit();
                 StateHasChanged();
                 ResponseCore Response = await JSRuntime.InvokeAsync<ResponseCore>("DeleteAccount");
-                if (Response.Success){
+                if (Response.Success)
+				{
                     ProfileForm.Succeed();
                     await JSRuntime.InvokeVoidAsync("Alert", "success", "Account Deleted", "Your account has been successfully deleted.");
                     NavigationManager.NavigateTo("/");
-                } else {
+                }
+				else
+				{
                     ProfileForm.Fail(Response.Error);
+					await JSRuntime.InvokeVoidAsync("Alert", "error", "Error", Response.Error);
                 }
             }
         }
@@ -113,10 +125,13 @@ namespace Client.Shared.Modals
         public async Task OnAvatarUpload(InputFileChangeEventArgs e)
         {
 			ResponseCore Response = await JSRuntime.InvokeAsync<ResponseCore>("UpdateProfileAvatar");
-			if (Response.Success){
+			if (Response.Success)
+			{
 				await JSRuntime.InvokeVoidAsync("Alert", "success", "Profile Updated", "Your profile picture has been updated.");
 				await RefreshProfile();
-			} else {
+			}
+			else
+			{
 				await JSRuntime.InvokeVoidAsync("Alert", "error", "Error", Response.Error);
 			}
 			StateHasChanged();
@@ -125,7 +140,8 @@ namespace Client.Shared.Modals
 		private async Task RefreshProfile()
 		{
 			ProfileResponse Response = await JSRuntime.InvokeAsync<ProfileResponse>("GetProfile");
-			if (Response.Success){
+			if (Response.Success)
+			{
 				CurrentUser.SetCurrentUser(Response.User);
 			}
 			StateHasChanged();

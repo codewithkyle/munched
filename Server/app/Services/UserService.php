@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Support\Facades\Queue;
+use Symfony\Component\HttpKernel\Exception\HttpException as Exception;
 
 // Models
 use App\Models\User;
@@ -37,19 +38,22 @@ class UserService
     }
 
     protected $permissions = [
-        "global" => ["profile:update", "meal:create", "meal:update", "meal:delete"],
-        "manager" => ["ingredients:create", "ingredients:update", "ingredients:delete"],
+        "global" => ["profile:update", "image:create", "image:delete"],
     ];
 
     public function updateAvatar(UploadedFile $photo): void
     {
-        $imageService = new ImageService();
-        if (!is_null($this->user->avatar)) {
-            $this->deleteAvatar();
+        if ($this->can("image:create")) {
+            $imageService = new ImageService();
+            if (!is_null($this->user->avatar)) {
+                $this->deleteAvatar();
+            }
+            $imageUid = $imageService->saveImage($photo, $this->user->id);
+            $this->user->avatar = rtrim(getenv("API_URL"), "/") . "/v1/image/" . $imageUid;
+            $this->save();
+        } else {
+            throw new Exception(401, "You do not have permission to upload a new profile picture.");
         }
-        $imageUid = $imageService->saveImage($photo, $this->user->id);
-        $this->user->avatar = rtrim(getenv("API_URL"), "/") . "/v1/image/" . $imageUid;
-        $this->save();
     }
 
     public function delete(): void
@@ -174,18 +178,22 @@ class UserService
 
     public function updateProfile(array $params): void
     {
-        $this->user->name = $params["name"];
-        if ($this->user->email !== $params["email"]) {
-            $temp = User::where("email", $params["email"])->first();
-            if (!empty($temp)) {
-                if ($temp->id !== $this->user->id) {
-                    throw new Exception("This email address has already been taken.");
+        if ($this->can("profile:update")) {
+            $this->user->name = $params["name"];
+            if ($this->user->email !== $params["email"]) {
+                $temp = User::where("email", $params["email"])->first();
+                if (!empty($temp)) {
+                    if ($temp->id !== $this->user->id) {
+                        throw new Exception(406, "This email address has already been taken.");
+                    }
+                } else {
+                    $this->createEmailVerification($params["email"]);
                 }
-            } else {
-                $this->createEmailVerification($params["email"]);
             }
+            $this->save();
+        } else {
+            throw new Exception(401, "You do not have permission to update your profile.");
         }
-        $this->save();
     }
 
     public function createPasswordReset(): void
@@ -259,11 +267,13 @@ class UserService
 
     private function deleteAvatar(): void
     {
-        $matches = [];
-        preg_match("/([0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})$/", $this->user->avatar, $matches);
-        if (!empty($matches)) {
-            $imageService = new ImageService();
-            $imageService->deleteImage($matches[0], $this->user->id);
+        if ($this->can("image:delete")) {
+            $matches = [];
+            preg_match("/([0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})$/", $this->user->avatar, $matches);
+            if (!empty($matches)) {
+                $imageService = new ImageService();
+                $imageService->deleteImage($matches[0], $this->user->id);
+            }
         }
     }
 }

@@ -20,12 +20,16 @@ namespace Client.Shared
         protected override async Task OnInitializedAsync()
         {
             ProfileResponse Profile = await JSRuntime.InvokeAsync<ProfileResponse>("GetProfile");
-            if (Profile.Success){
+            if (Profile.Success)
+			{
                 CurrentUser.SetCurrentUser(Profile.User);
 				CanRender = true;
 				StateHasChanged();
-            } else {
-				switch (Profile.StatusCode){
+            }
+			else
+			{
+				switch (Profile.StatusCode)
+				{
 					case 503:
 						NavigationManager.NavigateTo("/maintenance");
 						break;
@@ -36,7 +40,8 @@ namespace Client.Shared
 			}
 			MaintenanceCheckResponse Response = await JSRuntime.InvokeAsync<MaintenanceCheckResponse>("MaintenanceCheck");
 			MaintenanceMode = Response.IsUndergoingMaintenance;
-			if (MaintenanceMode){
+			if (MaintenanceMode)
+			{
 				await JSRuntime.InvokeVoidAsync("SetTitle", "🚧 Maintenance Mode");
 			}
         }
@@ -56,9 +61,12 @@ namespace Client.Shared
 		public void ToggleNavigation()
 		{
 			NavigationIsOpen ^= true;
-			if (NavigationIsOpen){
+			if (NavigationIsOpen)
+			{
 				JSRuntime.InvokeVoidAsync("FocusElement", ".js-nav-drawer");
-			} else {
+			}
+			else
+			{
 				JSRuntime.InvokeVoidAsync("FocusElement", ".js-nav-menu-button");
 			}
 			StateHasChanged();
@@ -66,7 +74,8 @@ namespace Client.Shared
 
 		public void KeyPress(KeyboardEventArgs e)
 		{
-			if (NavigationIsOpen && e.Key == "Escape"){
+			if (NavigationIsOpen && e.Key == "Escape")
+			{
 				NavigationIsOpen = false;
 				JSRuntime.InvokeVoidAsync("FocusElement", ".js-nav-menu-button");
 				StateHasChanged();

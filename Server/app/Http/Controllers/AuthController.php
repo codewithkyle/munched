@@ -11,6 +11,7 @@ use Ramsey\Uuid\Uuid;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
+use Symfony\Component\HttpKernel\Exception\HttpException as Exception;
 
 // Models
 use App\Models\User;

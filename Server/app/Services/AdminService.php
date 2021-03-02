@@ -27,7 +27,7 @@ class AdminService
                 "Suspended" => (bool) $user->suspended,
                 "Verified" => (bool) $user->verified,
                 "Admin" => (bool) $user->admin,
-                "Avatar" => (bool) $user->avatar,
+                "Avatar" => $user->avatar,
             ];
         }
         return $output;
