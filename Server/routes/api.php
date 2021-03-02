@@ -20,6 +20,7 @@ $router->group(["prefix" => "v1"], function () use ($router) {
     $router->post("forgot-password", "AuthController@forgotPassword");
     $router->post("reset-password", "AuthController@resetPassword");
     $router->get("maintenance", "AuthController@maintenanceCheck");
+    $router->post("impersonate", "AuthController@impersonate");
 
     $router->group(["middleware" => "user"], function () use ($router) {
         $router->post("refresh-token", "AuthController@refreshToken");
@@ -52,7 +53,6 @@ $router->group(["prefix" => "v1"], function () use ($router) {
         $router->post("clear-cloudflare-cache", "AdminController@clearCloudflareCache");
         $router->post("clear-ndjson-cache", "AdminController@clearNDJSONCache");
         $router->post("set-maintenance-mode", "AdminController@setMaintenanceMode");
-        $router->post("impersonate", "AuthController@impersonate");
     });
 
     $router->group(["prefix" => "ingest"], function () use ($router) {

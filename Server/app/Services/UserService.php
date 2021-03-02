@@ -54,6 +54,9 @@ class UserService
 
     public function delete(): void
     {
+        if (!is_null($this->user->avatar)) {
+            $this->deleteAvatar();
+        }
         $this->user->delete();
         Cache::forget("user-" . $this->user->uid);
         Queue::push(new RefreshUsersFileJob());
@@ -256,15 +259,11 @@ class UserService
 
     private function deleteAvatar(): void
     {
-        try {
-            $matches = [];
-            preg_match("/[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3‌​}\-[a-f0-9]{12}/", $this->user->avatar, $matches);
-            if (!empty($matches)) {
-                $imageService = new ImageService();
-                $imageService->deleteImage($matches[0], $this->user->id);
-            }
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
+        $matches = [];
+        preg_match("/([0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})$/", $this->user->avatar, $matches);
+        if (!empty($matches)) {
+            $imageService = new ImageService();
+            $imageService->deleteImage($matches[0], $this->user->id);
         }
     }
 }

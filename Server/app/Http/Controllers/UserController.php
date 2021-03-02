@@ -13,8 +13,17 @@ class UserController extends Controller
     public function profile(Request $request): JsonResponse
     {
         $user = $request->user;
-
-        return $this->buildSuccessResponse($user);
+        $data = [
+            "Name" => $user->name,
+            "Email" => $user->email,
+            "Uid" => $user->uid,
+            "Groups" => $user->groups,
+            "Suspended" => (bool) $user->suspended,
+            "Verified" => (bool) $user->verified,
+            "Admin" => (bool) $user->admin,
+            "Avatar" => (bool) $user->avatar,
+        ];
+        return $this->buildSuccessResponse($data);
     }
 
     public function verify(Request $request): JsonResponse

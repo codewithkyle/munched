@@ -38,6 +38,7 @@ type WorkerPool = {
 		status: "PARSING" | "INSERTING";
 		total: number;
 		streamStartedCallback: Function;
+		keys: Array<any>;
 	};
 };
 
@@ -177,17 +178,37 @@ class IDBWorker {
 		return key;
 	}
 
+	async purgeStaleData(table: string, keys: Array<any>) {
+		const rows = await this.db.getAll(table);
+		const key = this.getTableKey(table);
+		for (let i = 0; i < rows.length; i++) {
+			let dead = true;
+			for (let k = 0; k < keys.length; k++) {
+				if (rows[i][key] === keys[k]) {
+					dead = false;
+					break;
+				}
+			}
+			if (dead) {
+				await this.db.delete(table, rows[i][key]);
+			}
+		}
+	}
+
 	async insertData(uid: string) {
 		this.workerPool[uid].busy = true;
 		const table = this.workerPool[uid].table;
+		const tableKey = this.getTableKey(table);
 		const row = this.workerPool[uid].rows.splice(0, 1)?.[0] ?? null;
 		if (row !== null) {
 			await this.db.put(table, row);
+			this.workerPool[uid].keys.push(row[tableKey]);
 			this.send("unpack-tick", uid);
 		}
 		if (!this.workerPool[uid].rows.length) {
 			this.workerPool[uid].busy = false;
 			if (this.workerPool[uid].status === "INSERTING") {
+				await this.purgeStaleData(table, this.workerPool[uid].keys);
 				this.send("unpack-finished", uid);
 				delete this.workerPool[uid];
 			}
@@ -224,6 +245,7 @@ class IDBWorker {
 					status: "PARSING",
 					total: total,
 					streamStartedCallback: resolve,
+					keys: [],
 				};
 				worker.onmessage = this.workerInbox.bind(this);
 				worker.postMessage({
@@ -244,6 +266,7 @@ class IDBWorker {
 					status: "PARSING",
 					total: total,
 					streamStartedCallback: resolve,
+					keys: [],
 				};
 			}
 		});

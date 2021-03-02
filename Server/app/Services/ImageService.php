@@ -3,16 +3,18 @@
 namespace App\Services;
 
 use Log;
+use Imagick;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\HttpException as Exception;
-use Imagick;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Queue;
 use codewithkyle\JitterCore\Jitter;
 
 use App\Models\Image;
 use App\Facades\File;
 use App\Models\TransformedImage;
+use App\Jobs\PurgeTransformedImagesJob;
 
 class ImageService
 {
@@ -27,7 +29,7 @@ class ImageService
             File::Delete($image->key);
             $image->deleted = true;
             $image->save();
-            $this->purgeImageTransforms($image->id);
+            Queue::push(new PurgeTransformedImagesJob($image->id));
         }
     }
 
@@ -168,14 +170,5 @@ class ImageService
             "-" .
             $transform["format"];
         return \md5($key);
-    }
-
-    private function purgeImageTransforms(int $imageId): void
-    {
-        $images = TransformedImage::where("imageId", $imageId)->all();
-        foreach ($images as $image) {
-            File::Delete($image->key);
-            $image->delete();
-        }
     }
 }

@@ -3,16 +3,7 @@ async function GetProfile(): Promise<ProfileResponse> {
 	const fetchResponse: FetchReponse = await request.json();
 	const response: Partial<ProfileResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
 	if (response.Success) {
-		response.User = {
-			Name: fetchResponse.data.name,
-			Email: fetchResponse.data.email,
-			Uid: fetchResponse.data.uid,
-			Groups: fetchResponse.data.groups,
-			Suspended: fetchResponse.data.suspended === 1 ? true : false,
-			Verified: fetchResponse.data.verified === 1 ? true : false,
-			Admin: fetchResponse.data.admin === 1 ? true : false,
-			Avatar: fetchResponse.data.avatar,
-		};
+		response.User = fetchResponse.data;
 	}
 	return response as ProfileResponse;
 }

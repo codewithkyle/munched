@@ -2,21 +2,10 @@ async function GetUsers(page: number = 0, limit: number = 10): Promise<UsersResp
 	const request = await apiRequest(`/v1/admin/users?p=${page}&limit=${limit}`);
 	const fetchResponse: FetchReponse = await request.json();
 	const response: Partial<UsersResponse> = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
-	response.Users = [];
-	for (let i = 0; i < fetchResponse.data.users.length; i++) {
-		const user = fetchResponse.data.users[i];
-		response.Users.push({
-			Name: user.name,
-			Email: user.email,
-			Uid: user.uid,
-			Groups: user.groups,
-			Suspended: user.suspended === 1 ? true : false,
-			Verified: user.verified === 1 ? true : false,
-			Admin: user.admin === 1 ? true : false,
-			Avatar: user.avatar,
-		});
+	if (response.Success) {
+		response.Users = fetchResponse.data.users;
+		response.Total = fetchResponse.data.total;
 	}
-	response.Total = fetchResponse.data.total;
 	return response as UsersResponse;
 }
 
@@ -71,7 +60,7 @@ async function GetImpersonationLink(uid: string): Promise<ImpersonationLinkRespo
 }
 
 async function Impersonate(jwt: string): Promise<ResponseCore> {
-	const request = await apiRequest(`/v1/admin/impersonate`, "POST", { token: jwt });
+	const request = await apiRequest(`/v1/impersonate`, "POST", { token: jwt });
 	const fetchResponse: FetchReponse = await request.json();
 	const response: ResponseCore = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
 	return response;
