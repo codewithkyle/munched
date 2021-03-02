@@ -43,6 +43,9 @@ function ClearStorage() {
 function Notify(message: string) {
 	snackbar({
 		message: message,
+		duration: Infinity,
+		closeable: true,
+		force: true,
 	});
 }
 
