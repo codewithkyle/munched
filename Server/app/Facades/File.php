@@ -5,6 +5,7 @@ namespace App\Facades;
 use Log;
 use Aws\S3\S3Client;
 use Aws\S3\Exception\S3Exception;
+use Symfony\Component\HttpKernel\Exception\HttpException as Exception;
 
 class File
 {
@@ -18,7 +19,7 @@ class File
                 "Body" => fopen($path, "r"),
             ]);
         } catch (S3Exception $e) {
-            Log::error($e->getMessage());
+            throw new Exception(500, $e->getMessage());
         }
     }
 
@@ -32,7 +33,7 @@ class File
                 "Key" => $key,
             ]);
         } catch (S3Exception $e) {
-            Log::error($e->getMessage());
+            throw new Exception(500, $e->getMessage());
         }
         return $result;
     }
@@ -47,7 +48,7 @@ class File
                 "Key" => $key,
             ]);
         } catch (S3Exception $e) {
-            Log::error($e->getMessage());
+            throw new Exception(500, $e->getMessage());
         }
         return $result;
     }
@@ -64,7 +65,7 @@ class File
             $request = $s3Client->createPresignedRequest($cmd, "+" . $minutes . " minutes");
             $result = (string) $request->getUri();
         } catch (S3Exception $e) {
-            Log::error($e->getMessage());
+            throw new Exception(500, $e->getMessage());
         }
         return $result;
     }

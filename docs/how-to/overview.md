@@ -5,6 +5,7 @@ Here you’ll find short answers to the **"How do I…?"** types of questions. T
 ## Lumen Guides
 
 - [Redis Cache](/how-to/redis-cache)
+- [S3 File Storage](/how-to/file-storage)
 
 ## Blazor Guides
 
