@@ -8,6 +8,7 @@ Here you’ll find short answers to the **"How do I…?"** types of questions. T
 - [S3 File Storage](/how-to/file-storage)
 - [New Model](/how-to/model)
 - [New Service](/how-to/service)
+- [Database Migrations](/how-to/migrations)
 
 ## Blazor Guides
 
