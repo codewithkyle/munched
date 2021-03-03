@@ -187,7 +187,7 @@ class Notifier {
             .join("-");
     }
     loop() {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         const newTime = performance.now();
         const deltaTime = (newTime - this.time) / 1000;
         this.time = newTime;
@@ -211,11 +211,11 @@ class Notifier {
                 }
             }
             if (this.snackbarQueue.length) {
-                if (!this.snackbarQueue[0].el) {
+                if (!((_d = (_c = this.snackbarQueue) === null || _c === void 0 ? void 0 : _c[0]) === null || _d === void 0 ? void 0 : _d.el)) {
                     this.snackbarQueue[0].el = new SnackbarComponent(this.snackbarQueue[0]);
                     document.body.appendChild(this.snackbarQueue[0].el);
                 }
-                if (((_c = this.snackbarQueue[0]) === null || _c === void 0 ? void 0 : _c.duration) && ((_d = this.snackbarQueue[0]) === null || _d === void 0 ? void 0 : _d.duration) !== Infinity) {
+                if (((_e = this.snackbarQueue[0]) === null || _e === void 0 ? void 0 : _e.duration) && ((_f = this.snackbarQueue[0]) === null || _f === void 0 ? void 0 : _f.duration) !== Infinity && ((_h = (_g = this.snackbarQueue[0]) === null || _g === void 0 ? void 0 : _g.el) === null || _h === void 0 ? void 0 : _h.isConnected)) {
                     this.snackbarQueue[0].duration -= deltaTime;
                     if (this.snackbarQueue[0].duration <= 0) {
                         this.snackbarQueue[0].el.remove();
@@ -227,7 +227,7 @@ class Notifier {
         window.requestAnimationFrame(this.loop.bind(this));
     }
     snackbar(settings) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         const snackbar = {};
         if (!(settings === null || settings === void 0 ? void 0 : settings.message) || ((_a = settings === null || settings === void 0 ? void 0 : settings.message) === null || _a === void 0 ? void 0 : _a.length) === 0) {
             console.error("Snackbar notificaitons require a message");
@@ -311,7 +311,9 @@ class Notifier {
             }
         }
         if (snackbar.force && this.snackbarQueue.length) {
-            this.snackbarQueue[0].el.remove();
+            if ((_h = (_g = this.snackbarQueue[0]) === null || _g === void 0 ? void 0 : _g.el) === null || _h === void 0 ? void 0 : _h.isConnected) {
+                this.snackbarQueue[0].el.remove();
+            }
             this.snackbarQueue.splice(0, 1, snackbar);
         }
         else {

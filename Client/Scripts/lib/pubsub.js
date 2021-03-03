@@ -17,7 +17,6 @@ class EventBusController {
         return id;
     }
     unsubscribe(id, ticket = null) {
-        var _a, _b, _c, _d;
         if (ticket === null) {
             for (const subTicket in this.subscriptions) {
                 for (const inboxId in this.subscriptions[subTicket]) {
@@ -31,20 +30,18 @@ class EventBusController {
                 }
             }
         }
-        (_b = (_a = this.subscriptions) === null || _a === void 0 ? void 0 : _a[ticket]) === null || _b === void 0 ? true : delete _b[id];
-        if (((_d = Object.keys((_c = this.subscriptions) === null || _c === void 0 ? void 0 : _c[ticket])) === null || _d === void 0 ? void 0 : _d.length) === 0) {
+        delete this.subscriptions?.[ticket]?.[id];
+        if (Object.keys(this.subscriptions?.[ticket])?.length === 0) {
             delete this.subscriptions[ticket];
         }
     }
-    post(ticket, data) {
-        var _a;
-        for (const id in (_a = this.subscriptions) === null || _a === void 0 ? void 0 : _a[ticket]) {
+    publish(ticket, data) {
+        for (const id in this.subscriptions?.[ticket]) {
             this.subscriptions[ticket][id](data);
         }
     }
     destroy(ticket) {
-        var _a;
-        (_a = this.subscriptions) === null || _a === void 0 ? true : delete _a[ticket];
+        delete this.subscriptions?.[ticket];
     }
     uid() {
         return new Array(4)
@@ -54,3 +51,10 @@ class EventBusController {
     }
 }
 const EventBus = new EventBusController();
+const createSubscription = EventBus.create.bind(EventBus);
+const destroySubscription = EventBus.destroy.bind(EventBus);
+/** @deprecated use the `publish()` method instead */
+const post = EventBus.publish.bind(EventBus);
+const publish = EventBus.publish.bind(EventBus);
+const subscribe = EventBus.subscribe.bind(EventBus);
+const unsubscribe = EventBus.unsubscribe.bind(EventBus);
