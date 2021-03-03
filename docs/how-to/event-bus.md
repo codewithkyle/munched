@@ -1,6 +1,6 @@
 # Event Bus
 
-Additional details about the [Publish-subscribe software architecture pattern](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern).
+For techinical information read the [event bus reference document](/references/event-bus).
 
 ## Create Subscription
 
