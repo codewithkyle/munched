@@ -8,7 +8,7 @@ const scripts = [
 	"/js/auth.js",
 	"/js/account.js",
 	"/js/admin.js",
-	"/js/influencer.js",
+	"/js/pubsub.js",
 ];
 const stylesheets = [
 	"/css/loading.css",
