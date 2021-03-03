@@ -51,10 +51,3 @@ class EventBusController {
     }
 }
 const EventBus = new EventBusController();
-const createSubscription = EventBus.create.bind(EventBus);
-const destroySubscription = EventBus.destroy.bind(EventBus);
-/** @deprecated use the `publish()` method instead */
-const post = EventBus.publish.bind(EventBus);
-const publish = EventBus.publish.bind(EventBus);
-const subscribe = EventBus.subscribe.bind(EventBus);
-const unsubscribe = EventBus.unsubscribe.bind(EventBus);

@@ -34,3 +34,11 @@ EventBus.unsubscribe(inboxId, ticket);
 ```javascript
 EventBus.destory(ticket);
 ```
+
+## Send Messages
+
+```javascript
+const ticket = "my-unique-id";
+const data = "Hello world!";
+EventBus.publish(ticket, data);
+```
