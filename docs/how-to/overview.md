@@ -6,6 +6,8 @@ Here you’ll find short answers to the **"How do I…?"** types of questions. T
 
 - [Redis Cache](/how-to/redis-cache)
 - [S3 File Storage](/how-to/file-storage)
+- [New Model](/how-to/model)
+- [New Service](/how-to/service)
 
 ## Blazor Guides
 
