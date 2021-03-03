@@ -1,6 +1,6 @@
 # Snackbar Notifications
 
-For techinical information read the [snackbar notifications reference document](/references/snackbar-notifications).
+For technical information read the [snackbar notifications reference document](/references/snackbar-notifications).
 
 ## Blazor
 

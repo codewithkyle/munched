@@ -2,7 +2,7 @@
 
 ## Global Animation
 
-For additional information read the [globalloading animation reference document](/references/global-loading-animation).
+For technical information read the [globalloading animation reference document](/references/global-loading-animation).
 
 ### Start Animation
 

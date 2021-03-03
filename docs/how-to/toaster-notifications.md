@@ -1,6 +1,6 @@
 # Toaster Notifications
 
-For techinical information read the [toaster notifications reference document](/references/toaster-notifications).
+For technical information read the [toaster notifications reference document](/references/toaster-notifications).
 
 ## Blazor
 

@@ -1,6 +1,6 @@
 # Event Bus
 
-For techinical information read the [event bus reference document](/references/event-bus).
+For technical information read the [event bus reference document](/references/event-bus).
 
 ## Create Subscription
 

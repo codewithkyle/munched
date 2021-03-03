@@ -10,3 +10,4 @@ References are split into two types of references. Lumen References will provide
 - [Global Loading Animation](/references/global-loading-animation)
 - [Snacbar Notifications](/references/snackbar-notifications)
 - [Toaster Notifications](/references/toaster-notifications)
+- [Event Bus](/references/event-bus)
