@@ -9,6 +9,8 @@ Here you’ll find short answers to the **"How do I…?"** types of questions. T
 - [New Model](/how-to/model)
 - [New Service](/how-to/service)
 - [Database Migrations](/how-to/migrations)
+- [Creating Jobs](/how-to/jobs)
+- [Queueing Jobs](/how-to/jobs)
 
 ## Blazor Guides
 

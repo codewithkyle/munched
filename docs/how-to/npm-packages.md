@@ -15,3 +15,5 @@ npm run bundle
 ```
 
 Copy the JavaScript file from `web_modules` into `Client/Scripts/lib` directory and delete the `export` syntax from the file. This boilerplate does **NOT** support ES Modules.
+
+For additional information about how the bundling process works read the [Snowpack documentation](https://www.snowpack.dev/).
