@@ -23,3 +23,4 @@ Here you’ll find short answers to the **"How do I…?"** types of questions. T
 - [Adding Scripts](/how-to/scripts)
 - [Adding Stylesheets](/how-to/stylesheets)
 - [Adding NPM Packages](/how-to/npm-packages)
+- [Sending API Requests](/how-to/api-requests)
