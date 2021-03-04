@@ -17,3 +17,5 @@ Here you’ll find short answers to the **"How do I…?"** types of questions. T
 - [Native APIs](/how-to/native-apis)
 - [Loading Animations](/how-to/loading-animations)
 - [Event Bus](/how-to/event-bus)
+- [Adding Scripts](/how-to/scripts)
+- [Adding Stylesheets](/how-to/stylesheets)
