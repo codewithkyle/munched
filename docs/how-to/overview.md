@@ -19,3 +19,4 @@ Here you’ll find short answers to the **"How do I…?"** types of questions. T
 - [Event Bus](/how-to/event-bus)
 - [Adding Scripts](/how-to/scripts)
 - [Adding Stylesheets](/how-to/stylesheets)
+- [Adding NPM Packages](/how-to/npm-packages)
