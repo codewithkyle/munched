@@ -11,6 +11,7 @@ Here you’ll find short answers to the **"How do I…?"** types of questions. T
 - [Database Migrations](/how-to/migrations)
 - [Creating Jobs](/how-to/jobs)
 - [Queueing Jobs](/how-to/jobs)
+- [Emails](/how-to/emails)
 
 ## Blazor Guides
 
