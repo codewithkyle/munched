@@ -84,4 +84,9 @@ class Controller extends BaseController
         $file = new UploadedFile($tmpFile->getPathname(), $tmpFile->getFilename(), $tmpFile->getMimeType(), 0, true);
         return $file;
     }
+
+    protected function generateEtag(string $path): string
+    {
+        return md5_file($path) . filesize($path) . filemtime($path);
+    }
 }

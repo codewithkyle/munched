@@ -31,7 +31,7 @@ class RefreshUsersFileJob extends Job
         $finalPath = storage_path("ndjson/users.ndjson");
         $tempPath = storage_path("ndjson/" . $this->uid . ".tmp");
         file_put_contents($tempPath, "");
-        $users = User::chunk(200, function ($users) {
+        $users = User::orderBy('updated_at', 'DESC')->chunk(200, function ($users) {
             $tempPath = storage_path("ndjson/" . $this->uid . ".tmp");
             foreach ($users as $user) {
                 $line =

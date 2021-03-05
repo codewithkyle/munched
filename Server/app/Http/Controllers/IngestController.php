@@ -22,7 +22,8 @@ class IngestController extends Controller
         switch ($accepts) {
             case "application/x-ndjson":
                 $path = storage_path("ndjson/users.ndjson");
-                return response(file_get_contents($path));
+                $etag = $this->generateEtag($path);
+                return response(file_get_contents($path))->header("ETag", $etag);
             case "application/json":
                 $ingestService = new IngestService();
                 $data = $ingestService->getAllUsers();

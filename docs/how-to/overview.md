@@ -24,4 +24,4 @@ Here you’ll find short answers to the **"How do I…?"** types of questions. T
 - [Adding Stylesheets](/how-to/stylesheets)
 - [Adding NPM Packages](/how-to/npm-packages)
 - [Sending API Requests](/how-to/api-requests)
-- [Using IDB](/how-to/idb)
+- [Using IDB](/how-to/idb-access)

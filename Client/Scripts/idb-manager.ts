@@ -45,16 +45,16 @@ class IDBManager {
 				this.flushQueue();
 				break;
 			case "download-tick":
-				EventBus.post(data.workerUid, "download-tick");
+				EventBus.publish(data.workerUid, "download-tick");
 				break;
 			case "download-finished":
-				EventBus.post(data.workerUid, "download-finished");
+				EventBus.publish(data.workerUid, "download-finished");
 				break;
 			case "unpack-tick":
-				EventBus.post(data.workerUid, "unpack-tick");
+				EventBus.publish(data.workerUid, "unpack-tick");
 				break;
 			case "unpack-finished":
-				EventBus.post(data.workerUid, "unpack-finished");
+				EventBus.publish(data.workerUid, "unpack-finished");
 				break;
 			default:
 				console.warn(`Unhandled IDB Manager inbox message type: ${type}`);
