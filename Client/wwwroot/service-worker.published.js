@@ -6,10 +6,13 @@ self.addEventListener('install', event => event.waitUntil(onInstall(event)));
 self.addEventListener('activate', event => event.waitUntil(onActivate(event)));
 self.addEventListener('fetch', event => event.respondWith(onFetch(event)));
 
-const cacheNamePrefix = 'offline-cache-';
+const cacheNamePrefix = 'resource-cache-';
+const apiCachePrefix = "api-cache-";
+const imageCacheName = "image-cache";
 const cacheName = `${cacheNamePrefix}${self.assetsManifest.version}`;
-const offlineAssetsInclude = [ /\.dll$/, /\.pdb$/, /\.wasm/, /\.html/, /\.js$/, /\.css$/, /\.png$/, /\.jpeg$/, /\.jpg$/, /\.gif$/, /\.webp$/, /\.mp3$/, /\.wav$/ ];
-const offlineAssetsExclude = [ /^service-worker\.js$/, /^app\.json$/, ];
+const apiCacheName = `${apiCachePrefix}${self.assetsManifest.version}`;
+const offlineAssetsInclude = [ /\.dll$/, /\.pdb$/, /\.wasm/, /\.html/, /\.js$/, /\.css$/, /\.png$/, /\.jpeg$/, /\.jpg$/, /\.gif$/, /\.webp$/, /\.svg$/, /\.mp3$/, /\.wav$/, /\.json$/, /\.webmanifest$/ ];
+const offlineAssetsExclude = [ /service-worker\.js$/, /app\.json$/, ];
 
 async function onInstall(event) {
     self.skipWaiting();
@@ -31,34 +34,66 @@ async function onActivate(event) {
         .map(key => caches.delete(key)));
 }
 
+async function tryAppCache(request){
+    const cache = await caches.open(cacheName);
+    const cachedResponse = await cache.match(request);
+    return cachedResponse;
+}
+
+async function tryImageCache(request){
+    const cache = await caches.open(imageCacheName);
+    const cachedResponse = await cache.match(request);
+    return cachedResponse;
+}
+
+async function tryFetch(request){
+    const response =  await fetch(request);
+    // Skip caching bad responses
+    if (!response || response.status !== 200 || response.type !== "basic" && response.type !== "cors" || response.redirected) {
+        return response;
+    }
+    // Only cache image API responses
+    if (response.type === "cors"){
+        const responseToCache = response.clone();
+        if (response.url.indexOf("/v1/image/") !== -1){
+            const imgCache = await caches.open(imageCacheName);
+            await imgCache.put(request, responseToCache);
+        } else {
+            const apiCache = await caches.open(apiCacheName);
+            await apiCache.put(request, responseToCache);
+        }
+    } else if (response.type === "basic"){
+        await appCache.put(request, responseToCache);
+    }
+    return response;
+}
+
 async function onFetch(event) {
+    const shouldServeIndexHtml = event.request.mode === 'navigate';
+    const request = shouldServeIndexHtml ? 'index.html' : event.request;
     try {
         if (event.request.method === 'GET' && !event.request.url.match(/app\.json$/)) {
-            const shouldServeIndexHtml = event.request.mode === 'navigate';
-            const request = shouldServeIndexHtml ? 'index.html' : event.request;
-            const cache = await caches.open(cacheName);
-            const cachedResponse = await cache.match(request);
-            if (!cachedResponse){
-                return fetch(event.request).then(async (response) => {
-                    // Skip caching bad responses
-                    if (!response || response.status !== 200 || response.type !== "basic" && response.type !== "cors" || response.redirected) {
+            let response = await tryAppCache(request);
+            if (!response){
+                if (event.request.url.indexOf("/v1/image/") !== -1){
+                    response = await tryImageCache(event.request);
+                    if (response){
                         return response;
                     }
-                    // Only cache image API responses
-                    if (response.type === "cors" && response.url.indexOf("/v1/image/") !== -1){
-                        var responseToCache = response.clone();
-                        await cache.put(event.request, responseToCache);
-                    }
-                    return response;
-                });
-            } else {
-                return cachedResponse;
+                }
             }
+            if (!response){
+                response = await tryFetch(event.request);
+            }
+            return response;
         } else {
-            throw "Forced cache miss";
+            return fetch(event.request);
         }
     } catch (e){
-        return fetch(event.request);   
+        // API cache is only hit when the client doesn't have a network connection
+        const apiCache = await caches.open(apiCacheName);
+        const cachedResponse = await apiCache.match(request);
+        return cachedResponse;
     }
 }
 
@@ -79,6 +114,12 @@ function reloadClients(){
 	});
 }
 
+function clearCache(){
+    caches.delete(imageCacheName);
+    caches.delete(apiCacheName);
+    indexedDB.deleteDatabase("localdb");
+}
+
 self.onmessage = async (event) => {
     const { type } = event.data;
     switch (type){
@@ -86,6 +127,7 @@ self.onmessage = async (event) => {
 			reloadClients();
 			break;
 		case "logout":
+            clearCache();
 			reloadClients();
 			break;
         case "reinstall":

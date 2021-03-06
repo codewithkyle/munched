@@ -23,6 +23,9 @@ namespace Client.Pages.Utility
 					case 503:
 						NavigationManager.NavigateTo("/maintenance");
 						return;
+                    case 418:
+						NavigationManager.NavigateTo("/network-offline");
+						break;
 					default:
 						ViewIsReady = true;
 						return;

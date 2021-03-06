@@ -37,7 +37,6 @@ function buildResponseCore(success: boolean, statusCode: number, error: string =
 function ClearStorage() {
 	localStorage.clear();
 	sessionStorage.clear();
-	idbManager.purge();
 }
 
 function Notify(message: string) {

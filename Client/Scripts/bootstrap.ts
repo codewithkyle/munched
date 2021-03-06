@@ -60,16 +60,20 @@ function LoadFramework() {
 async function Bootstrap() {
 	let latestVersion = null;
 	const loadedVersion = localStorage.getItem("version");
-	const request = await fetch(`${location.origin}/app.json`, {
-		headers: new Headers({
-			Accept: "application/json",
-		}),
-		cache: "no-cache",
-	});
-	if (request.ok) {
-		const response = await request.json();
-		latestVersion = response.build;
-		localStorage.setItem("version", latestVersion);
+	try {
+		const request = await fetch(`${location.origin}/app.json`, {
+			headers: new Headers({
+				Accept: "application/json",
+			}),
+			cache: "no-cache",
+		});
+		if (request.ok) {
+			const response = await request.json();
+			latestVersion = response.build;
+			localStorage.setItem("version", latestVersion);
+		}
+	} catch (e) {
+		latestVersion = localStorage.getItem("version");
 	}
 	if (loadedVersion !== latestVersion && loadedVersion !== null) {
 		const sw: ServiceWorker = navigator?.serviceWorker?.controller ?? null;
@@ -103,7 +107,6 @@ async function Bootstrap() {
 			classes: ["install-notification"],
 		});
 	} else {
-		localStorage.setItem("version", latestVersion);
 		await LoadStylesheets();
 		await LoadScripts();
 		LoadFramework();

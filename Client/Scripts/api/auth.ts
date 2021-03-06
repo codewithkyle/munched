@@ -58,13 +58,17 @@ async function RefreshToken(): Promise<ResponseCore> {
 RefreshToken();
 
 async function Logout() {
-	const request = await apiRequest("/v1/logout", "POST");
-	if (request.ok) {
-		ClearStorage();
-		LogoutAllInstances();
-		location.href = location.origin;
-	} else {
-		console.error(`Failed to log out user on the server. ${request.status}: ${request.statusText}`);
+	ClearStorage();
+	LogoutAllInstances();
+	try{
+		const request = await apiRequest("/v1/logout", "POST");
+		if (request.ok) {
+			location.href = location.origin;
+		} else {
+			console.error(`Failed to log out user on the server. ${request.status}: ${request.statusText}`);
+			location.href = location.origin;
+		}
+	} catch (e){
 		location.href = location.origin;
 	}
 }
@@ -91,10 +95,14 @@ async function VerifyAdmin(): Promise<ResponseCore> {
 }
 
 async function VerifyUser(): Promise<ResponseCore> {
-	const request = await apiRequest("/v1/user/verify");
-	const fetchResponse = await request.json();
-	const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
-	return response;
+	try {
+		const request = await apiRequest("/v1/user/verify");
+		const fetchResponse = await request.json();
+		const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+		return response;
+	} catch (e) {
+		return buildResponseCore(false, 418, "Your device does not currently have a network connection.");
+	}
 }
 
 async function ForgotPassword(email: string): Promise<FormResponse> {
