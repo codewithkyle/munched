@@ -60,7 +60,7 @@ RefreshToken();
 async function Logout() {
 	ClearStorage();
 	LogoutAllInstances();
-	try{
+	try {
 		const request = await apiRequest("/v1/logout", "POST");
 		if (request.ok) {
 			location.href = location.origin;
@@ -68,7 +68,7 @@ async function Logout() {
 			console.error(`Failed to log out user on the server. ${request.status}: ${request.statusText}`);
 			location.href = location.origin;
 		}
-	} catch (e){
+	} catch (e) {
 		location.href = location.origin;
 	}
 }
@@ -101,7 +101,7 @@ async function VerifyUser(): Promise<ResponseCore> {
 		const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
 		return response;
 	} catch (e) {
-		return buildResponseCore(false, 418, "Your device does not currently have a network connection.");
+		return buildResponseCore(false, 502, "Your device does not currently have a network connection.");
 	}
 }
 
