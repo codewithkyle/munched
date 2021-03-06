@@ -8,7 +8,7 @@ using Client.Models.API;
 ExampleResponse Response = await JSRuntime.InvokeAsync<ExampleResponse>("GetExampleData");
 ```
 
-Define the response model in the `Client/Models/Api` directory.
+Define the response model in the `Client/Models/API` directory.
 
 ```csharp
 namespace Client.Models.API

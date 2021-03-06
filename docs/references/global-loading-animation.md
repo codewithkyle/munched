@@ -4,7 +4,7 @@ The global loading animation enables an infinite progress bar and forces the cur
 
 When a ticket is issued the `<html>` element's `[state]` attribute changes from "idling" to "loading". This can be utilized in other UI elements with the following SCSS:
 
-```scss
+```sass
 .element{
     // CSS properties while DOM is idling
 

@@ -1,6 +1,6 @@
 # Creating Services
 
-Service classes is where most of the business logic should be performed. You can create a new service class file in the `Server/app/services/` directory.
+Within service classes is where most of the business logic should be performed. You can create a new service class file in the `Server/app/Services/` directory.
 
 ```php
 <?php
@@ -32,7 +32,7 @@ class ExampleService
 }
 ```
 
-When creating this type of service you should create an alias for the models `save()` and `delete()` method.
+When creating this type of service you should create an alias for the models `save()` and `delete()` methods.
 
 ```php
 private function save()
@@ -88,3 +88,5 @@ class ExampleService
     }
 }
 ```
+
+For more information about managing user permissions read the [user permissions how-to guide](/how-to/user-permissions).

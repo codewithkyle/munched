@@ -1,10 +1,6 @@
 # Blazor at a glance
 
-Blazor is a framework for building interactive client-side web UI with .NET:
-
-- Write code in C# instead of JavaScript.
-- Leverage the existing .NET ecosystem of .NET libraries.
-- Benefit from .NET's performance, reliability, and security.
+Blazor is a framework for building interactive client-side web UI with .NET.
 
 ## Components
 

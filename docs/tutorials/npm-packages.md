@@ -6,7 +6,7 @@ Install the package:
 npm i -S PACKAGE_NAME
 ```
 
-Open the `pacakge.json` file and add the package name to the snowpack -> install array.
+Open the `package.json` file and add the package name to the snowpack -> install array.
 
 Run the bundle command:
 

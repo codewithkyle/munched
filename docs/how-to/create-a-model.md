@@ -16,3 +16,5 @@ class ExampleModel extends Model
     protected $hidden = ["id", "created_at", "updated_at"];
 }
 ```
+
+> **Note:** models are manipulated by service classes. If your model will need a companion service class read the [how-to create a service class guide](/how-to/create-a-service).

@@ -51,12 +51,16 @@ namespace Client.Pages
 
 Let's add interactive elements to our view. In the example below we will add a button that when clicked fetches another array of strings.
 
+Update the code in the `Example.razor` file.
+
 ```html
 <div>
     <h1>Hello world!</h1>
     <button @onclick="FetchData">Fetch data</button>
 </div>
 ```
+
+Update the code in the `Example.razor.cs` file.
 
 ```csharp
 public async Task FetchData()
@@ -68,4 +72,4 @@ public async Task FetchData()
 
 > **Note:** for additional information about Blazor event handling read the [Blazor documentation](https://docs.microsoft.com/en-us/aspnet/core/blazor/components/event-handling?view=aspnetcore-5.0).
 
-That's it! You now have a working page that can be accessed by navigating to the "/example" page. Your next step should be to [create a new endpoint](/tutorials/creating-endpoints).
+That's it! You now have a working page that can be accessed by navigating to the `/example` page. Your next step should be to [create a new endpoint](/tutorials/creating-endpoints).

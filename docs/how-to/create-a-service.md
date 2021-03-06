@@ -15,3 +15,5 @@ class ExampleService
     // ...
 }
 ```
+
+> **Note:** if your service class is managing a model make sure you read the [creating services tutorial](/tutorials/creating-services).

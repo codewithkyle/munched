@@ -11,7 +11,7 @@ New to Blazor, Lumen or to web development in general? Well, you came to the rig
 - [Fetching data](/tutorials/fetching-data)
 - [Ingesting data](/tutorials/ingesting-data)
 - [Creating emails](/tutorials/creating-emails)
-- [Database migrations](/tutorials/migrations)
+- [Creating tables](/tutorials/creating-tables)
 - [Adding NPM packages](/tutorials/npm-packages)
 - [Adding scripts](/tutorials/scripts)
 - [Adding stylesheets](/tutorials/stylesheets)
