@@ -19,6 +19,12 @@ class FileController extends Controller
             $response = $imageService->getTransformedImage($uid, $request->user->id, $request->all());
             return response($response["Body"], 200, [
                 "Content-Type" => $response["ContentType"],
+                "Access-Control-Allow-Credentials" => "true",
+                "Access-Control-Allow-Origin" => rtrim(getenv("APP_URL"), "/"),
+                "Access-Control-Allow-Methods" => "GET, OPTIONS",
+                "Access-Control-Max-Age" => "86400",
+                "Cache-Control" => "public",
+                "Access-Control-Allow-Headers" => "Content-Type, Authorization, X-Requested-With, Accept",
             ]);
         } catch (Exception $e) {
             return response($e->getMessage(), $e->statusCode);
@@ -32,6 +38,12 @@ class FileController extends Controller
             $response = $fileService->getFile($uid, $request->user->id);
             return response($response["Body"], 200, [
                 "Content-Type" => $response["ContentType"],
+                "Access-Control-Allow-Credentials" => "true",
+                "Access-Control-Allow-Origin" => rtrim(getenv("APP_URL"), "/"),
+                "Access-Control-Allow-Methods" => "GET, OPTIONS",
+                "Access-Control-Max-Age" => "86400",
+                "Cache-Control" => "public",
+                "Access-Control-Allow-Headers" => "Content-Type, Authorization, X-Requested-With, Accept",
             ]);
         } catch (Exception $e) {
             return response($e->getMessage(), $e->statusCode);

@@ -17,6 +17,7 @@ class CreateTransformedImagesTable extends Migration
             $table->id()->autoIncrement();
             $table->string("key")->unique();
             $table->string("token");
+            $table->string("mimeType");
             $table->string("imageId");
             $table->uuid("uid");
             $table->timestamps();

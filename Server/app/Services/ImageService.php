@@ -97,6 +97,7 @@ class ImageService
             unlink($tempImage);
         } else {
             $file = File::Get($transformedImage->key);
+            $file["ContentType"] = $transformedImage->mimeType;
         }
 
         return $file;
@@ -148,6 +149,7 @@ class ImageService
             "imageId" => $imageId,
             "uid" => $uid,
             "token" => $token,
+            "mimeType" => mime_content_type($imagePath),
         ]);
     }
 

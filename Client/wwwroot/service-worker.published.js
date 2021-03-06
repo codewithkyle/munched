@@ -8,7 +8,7 @@ self.addEventListener('fetch', event => event.respondWith(onFetch(event)));
 
 const cacheNamePrefix = 'offline-cache-';
 const cacheName = `${cacheNamePrefix}${self.assetsManifest.version}`;
-const offlineAssetsInclude = [ /\.dll$/, /\.pdb$/, /\.wasm/, /\.html/, /\.js$/, /\.css$/, /\.png$/, /\.jpeg$/, /\.jpg$/, /\.gif$/, /\.mp3$/, /\.wav$/ ];
+const offlineAssetsInclude = [ /\.dll$/, /\.pdb$/, /\.wasm/, /\.html/, /\.js$/, /\.css$/, /\.png$/, /\.jpeg$/, /\.jpg$/, /\.gif$/, /\.webp$/, /\.mp3$/, /\.wav$/ ];
 const offlineAssetsExclude = [ /^service-worker\.js$/, /^app\.json$/, ];
 
 async function onInstall(event) {
@@ -19,7 +19,7 @@ async function onInstall(event) {
         .map(asset => new Request(asset.url));
 	for (const request of assetsRequests){
 		await caches.open(cacheName).then(cache => cache.add(request)).catch(error => {
-			console.error("Failed to cache:", request);
+			console.error("Failed to cache:", request, error);
 		});
 	}
 }
@@ -32,18 +32,34 @@ async function onActivate(event) {
 }
 
 async function onFetch(event) {
-    let cachedResponse = null;
-    if (event.request.method === 'GET') {
-        // For all navigation requests, try to serve index.html from cache
-        // If you need some URLs to be server-rendered, edit the following check to exclude those URLs
-        const shouldServeIndexHtml = event.request.mode === 'navigate';
-
-        const request = shouldServeIndexHtml ? 'index.html' : event.request;
-        const cache = await caches.open(cacheName);
-        cachedResponse = await cache.match(request);
+    try {
+        if (event.request.method === 'GET' && !event.request.url.match(/app\.json$/)) {
+            const shouldServeIndexHtml = event.request.mode === 'navigate';
+            const request = shouldServeIndexHtml ? 'index.html' : event.request;
+            const cache = await caches.open(cacheName);
+            const cachedResponse = await cache.match(request);
+            if (!cachedResponse){
+                return fetch(event.request).then(async (response) => {
+                    // Skip caching bad responses
+                    if (!response || response.status !== 200 || response.type !== "basic" && response.type !== "cors" || response.redirected) {
+                        return response;
+                    }
+                    // Only cache image API responses
+                    if (response.type === "cors" && response.url.indexOf("/v1/image/") !== -1){
+                        var responseToCache = response.clone();
+                        await cache.put(event.request, responseToCache);
+                    }
+                    return response;
+                });
+            } else {
+                return cachedResponse;
+            }
+        } else {
+            throw "Forced cache miss";
+        }
+    } catch (e){
+        return fetch(event.request);   
     }
-
-    return cachedResponse || fetch(event.request);
 }
 
 async function cachebust(){
