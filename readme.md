@@ -14,8 +14,11 @@ An installable PWA boilerplate built using Blazor, Lumen, Redis, Cloudflare, and
 
 ## Install
 
-1. Download the latest [releases](https://github.com/codewithkyle/blazor-lumen-boilerplate/releases).
+1. Download the latest [release](https://github.com/codewithkyle/blazor-lumen-boilerplate/releases).
 1. Navigate your terminal to the projects root directory.
+
+## Setup
+
 1. Run the setup command `npm run setup`
 1. Point your web server to the `Client/public/` directory.
 1. Update the `API_URL` value in the `Client/Scripts/config.ts` file.

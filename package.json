@@ -16,7 +16,7 @@
         "prettier:server": "prettier --write \"./Server/app/**/*.php\" && prettier --write \"./Server/database/**/*.php\" && prettier --write \"./Server/routes/*.php\" && prettier --write \"./Server/resources/**/*.php\" && prettier --write \"./Server/bootstrap/*.php\"",
         "test": "./Server/vendor/bin/phpunit ./Server/tests",
         "docs": "docs",
-        "setup": "rm ./readme.md && npm ci && cd ./Server && composer install && cp ./.env.example ./.env && cd ../ && echo 'Setup complete.'"
+        "setup": "npm ci && cd ./Server && composer install && cp ./.env.example ./.env && php artisan key:generate && cd ../ && echo 'Setup complete.'"
     },
     "dependencies": {
         "@codewithkyle/dev-docs": "^0.2.0",
