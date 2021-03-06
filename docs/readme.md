@@ -1,4 +1,4 @@
-# Blazor Lumen Boilerplate
+# Replace With Project Name
 
 Everything you need to know about this project.
 
