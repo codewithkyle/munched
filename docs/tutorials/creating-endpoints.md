@@ -40,4 +40,4 @@ If we needed to identify our user we can access the `User` model that's injected
 $user = $request->user;
 ```
 
-That's it! At this point we can continue to add new endpoints to our controller. If we need to perform business logic (outside of parameter validation) we will need to [create a service](/how-to/create-a-service).
+That's it! At this point we can continue to add new endpoints to our controller. If we need to perform business logic (outside of parameter validation) we will need to [create a service](/tutorials/creating-services).
