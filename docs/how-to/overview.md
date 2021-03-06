@@ -23,3 +23,5 @@ Here you’ll find short answers to the **"How do I…?"** types of questions. T
 - [Event Bus](/how-to/event-bus)
 - [Sending API Requests](/how-to/api-requests)
 - [Using IDB](/how-to/idb-access)
+- [Images](/how-to/images)
+- [Files](/how-to/files)

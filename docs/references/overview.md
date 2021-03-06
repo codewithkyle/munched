@@ -7,3 +7,6 @@ References are split into two types of references. Lumen References will provide
 - [Toaster Notifications](/references/toaster-notifications)
 - [Event Bus](/references/event-bus)
 - [API Requests](/references/api-requests)
+- [Controllers](/references/controllers)
+- [Files](/references/files)
+- [Images](/references/images)
