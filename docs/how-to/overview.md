@@ -6,12 +6,12 @@ Here you’ll find short answers to the **"How do I…?"** types of questions. T
 
 - [Redis Cache](/how-to/redis-cache)
 - [S3 File Storage](/how-to/file-storage)
-- [New Model](/how-to/model)
-- [New Service](/how-to/service)
-- [Database Migrations](/how-to/migrations)
-- [Creating Jobs](/how-to/jobs)
-- [Queueing Jobs](/how-to/jobs)
+- [New Model](/how-to/create-a-model)
+- [New Service](/how-to/create-a-service)
+- [Creating Jobs](/how-to/create-a-job)
+- [Queueing Jobs](/how-to/queueing-jobs)
 - [Emails](/how-to/emails)
+- [Request Validation](/how-to/request-validation)
 
 ## Blazor Guides
 
@@ -20,8 +20,5 @@ Here you’ll find short answers to the **"How do I…?"** types of questions. T
 - [Native APIs](/how-to/native-apis)
 - [Loading Animations](/how-to/loading-animations)
 - [Event Bus](/how-to/event-bus)
-- [Adding Scripts](/how-to/scripts)
-- [Adding Stylesheets](/how-to/stylesheets)
-- [Adding NPM Packages](/how-to/npm-packages)
 - [Sending API Requests](/how-to/api-requests)
 - [Using IDB](/how-to/idb-access)

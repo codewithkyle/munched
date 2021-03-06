@@ -16,9 +16,7 @@ Are you new to programming with Blazor or Lumen? This is a good place to start!
 
 - From scratch: [Blazor Overview](/intros/blazor) | [Lumen Overview](/intros/lumen)
 - Recommended Tutorials:
-	1. [Templates](/tutorials/templates)
-	1. [Components](/tutorials/components)
-	1. [Layouts](/tutorials/layouts)
-	1. [Forms](/tutorials/forms)
-	1. [Request and Responses](/tutorials/request-and-responses)
-	1. [Testing](/tutorials/testing)
+	1. [Templates](/tutorials/creating-pages)
+	1. [Forms](/tutorials/creating-forms)
+	1. [Creating Scripts](/tutorials/scripts)
+	1. [Creating Stylesheets](/tutorials/stylesheets)

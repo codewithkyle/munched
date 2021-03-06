@@ -1,4 +1,4 @@
-# New Model
+# Creating a Model
 
 Create the file in `Server/app/Models`
 

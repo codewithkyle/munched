@@ -12,6 +12,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException as Exception;
 
 class ExampleService
 {
-    
+    // ...
 }
 ```

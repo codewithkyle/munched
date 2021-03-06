@@ -4,15 +4,12 @@ For technical information read the [snackbar notifications reference document](/
 
 ## Blazor
 
-### Success
-
 ```csharp
 await JSRuntime.InvokeVoidAsync("Notify", "Notification message.");
 ```
 
 ## JavaScript
 
-### Success
 
 ```javascript
 Notify("Notificaiton message.");
