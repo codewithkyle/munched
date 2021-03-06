@@ -6,6 +6,7 @@ New to Blazor, Lumen or to web development in general? Well, you came to the rig
 - [Introduction to Lumen](/intros/lumen)
 - [Building your first page](/tutorials/creating-pages)
 - [Creating API endpoints](/tutorials/creating-endpoints)
+- [Creating services](/tutorials/creating-services)
 - [Creating your first form](/tutorials/creating-forms)
 - [Fetching data](/tutorials/fetching-data)
 - [Ingesting data](/tutorials/ingesting-data)

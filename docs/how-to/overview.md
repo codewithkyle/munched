@@ -12,6 +12,7 @@ Here you’ll find short answers to the **"How do I…?"** types of questions. T
 - [Queueing Jobs](/how-to/queueing-jobs)
 - [Emails](/how-to/emails)
 - [Request Validation](/how-to/request-validation)
+- [User Permissions](/how-to/user-permissions)
 
 ## Blazor Guides
 
