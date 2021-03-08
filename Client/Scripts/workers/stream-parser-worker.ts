@@ -33,11 +33,11 @@ async function processText({ done, value }) {
 		const objects = buffer.split("\n");
 		buffer = objects.pop();
 		if (objects.length) {
-			await processJSON(objects.reverse());
+			await processJSON(objects);
 		}
 	} else if (buffer.length) {
 		const objects = buffer.split("\n");
-		await processJSON(objects.reverse());
+		await processJSON(objects);
 	}
 	return done;
 }
@@ -66,6 +66,11 @@ async function fetchData(url) {
 		});
 	} else {
 		console.error(`${response.status}: ${response.statusText}`);
+		// @ts-ignore
+		self.postMessage({
+			type: "error",
+			uid: workerUid,
+		});
 	}
 }
 self.onmessage = (e) => {

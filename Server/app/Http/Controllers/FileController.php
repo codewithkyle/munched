@@ -27,7 +27,7 @@ class FileController extends Controller
                 "Access-Control-Allow-Headers" => "Content-Type, Authorization, X-Requested-With, Accept",
             ]);
         } catch (Exception $e) {
-            return response($e->getMessage(), $e->statusCode);
+            return response($e->getMessage(), $e->getStatusCode());
         }
     }
 
@@ -46,7 +46,7 @@ class FileController extends Controller
                 "Access-Control-Allow-Headers" => "Content-Type, Authorization, X-Requested-With, Accept",
             ]);
         } catch (Exception $e) {
-            return response($e->getMessage(), $e->statusCode);
+            return response($e->getMessage(), $e->getStatusCode());
         }
     }
 }

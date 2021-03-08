@@ -2,36 +2,27 @@
 
 namespace App\Jobs;
 
-use Ramsey\Uuid\Uuid;
 use Log;
+use Ramsey\Uuid\Uuid;
+use Illuminate\Support\Facades\Cache;
 
 use App\Models\User;
 
-class RefreshUsersFileJob extends Job
+class RefreshUsersFileJob extends UniqueJob
 {
     private $uid;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->uid = Uuid::uuid4()->toString();
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
         $finalPath = storage_path("ndjson/users.ndjson");
         $tempPath = storage_path("ndjson/" . $this->uid . ".tmp");
         file_put_contents($tempPath, "");
-        $users = User::orderBy("updated_at", "DESC")->chunk(200, function ($users) {
+        User::orderBy("updated_at", "DESC")->chunk(200, function ($users) {
             $tempPath = storage_path("ndjson/" . $this->uid . ".tmp");
             foreach ($users as $user) {
                 $line =
@@ -47,5 +38,7 @@ class RefreshUsersFileJob extends Job
             }
         });
         rename($tempPath, $finalPath);
+        $total = User::count();
+        Cache::set("user-count", $total);
     }
 }

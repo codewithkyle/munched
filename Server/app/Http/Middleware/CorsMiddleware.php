@@ -11,16 +11,18 @@ class CorsMiddleware
         $origin = rtrim(getenv("APP_URL"), "/");
 
         $response->header("Access-Control-Allow-Methods", "HEAD, GET, POST, PUT, PATCH, DELETE");
-        $response->header("Access-Control-Allow-Headers", "Content-Type, Accpets");
+        $response->header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, ETag");
         $response->header("Access-Control-Allow-Origin", $origin);
         $response->header("Access-Control-Allow-Credentials", "true");
+        $response->header("Access-Control-Expose-Headers", "ETag");
 
         $headers = [
             "Access-Control-Allow-Origin" => $origin,
-            "Access-Control-Allow-Methods" => "POST, GET, OPTIONS, PUT, DELETE",
+            "Access-Control-Allow-Methods" => "POST, GET, OPTIONS, PUT, DELETE, HEAD",
             "Access-Control-Allow-Credentials" => "true",
             "Access-Control-Max-Age" => "86400",
-            "Access-Control-Allow-Headers" => "Content-Type, Authorization, X-Requested-With, Accept",
+            "Access-Control-Allow-Headers" => "Content-Type, Authorization, X-Requested-With, Accept, ETag",
+            "Access-Control-Expose-Headers" => "Etag",
         ];
 
         if ($request->isMethod("OPTIONS")) {

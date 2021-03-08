@@ -10,6 +10,7 @@ New to Blazor, Lumen or to web development in general? Well, you came to the rig
 - [Creating your first form](/tutorials/creating-forms)
 - [Fetching data](/tutorials/fetching-data)
 - [Ingesting data](/tutorials/ingesting-data)
+- [Rehyrdating NDJSON Files](/tutorials/rehydrating-ndjson)
 - [Creating emails](/tutorials/creating-emails)
 - [Creating tables](/tutorials/creating-tables)
 - [Adding NPM packages](/tutorials/npm-packages)

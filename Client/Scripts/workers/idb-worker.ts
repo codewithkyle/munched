@@ -123,8 +123,18 @@ class IDBWorker {
 	}
 
 	async workerInbox(e) {
-		const { worker, table, rows, busy, streamStartedCallback: startCallback, total } = this.workerPool[e.data.uid];
+		const { worker, table, rows, busy, streamStartedCallback, total } = this.workerPool[e.data.uid];
 		switch (e.data.type) {
+			case "error":
+				// @ts-expect-error
+				if (worker?.terminate) {
+					// @ts-expect-error
+					worker.terminate();
+				}
+				this.send("download-error", e.data.uid);
+				streamStartedCallback(null);
+				delete this.workerPool[e.data.uid];
+				break;
 			case "done":
 				this.send("download-finished", e.data.uid);
 				// @ts-expect-error
@@ -144,8 +154,8 @@ class IDBWorker {
 				if (!busy) {
 					this.insertData(e.data.uid);
 				}
-				if (startCallback !== null) {
-					startCallback(e.data.uid, total);
+				if (streamStartedCallback !== null) {
+					streamStartedCallback(e.data.uid, total);
 					this.workerPool[e.data.uid].streamStartedCallback = null;
 				}
 				break;
@@ -218,7 +228,7 @@ class IDBWorker {
 		}
 	}
 
-	private async getIngestCount(route) {
+	private async fetchExpectedTotal(route) {
 		const countRequest = await fetch(`${API_URL}/${route}/count`, {
 			method: "GET",
 			credentials: "include",
@@ -230,45 +240,99 @@ class IDBWorker {
 		return countResponse.data;
 	}
 
-	private ingestData(data) {
+	private async lookupIngestInfo(route) {
+		return await this.db.getFromIndex("ingest-tracker", "route", route);
+	}
+
+	private async fetchIngestEtag(route: string) {
+		const response = await fetch(`${API_URL}/${route}`, {
+			method: "HEAD",
+			credentials: "include",
+		});
+		const incomingETag = response.headers.get("ETag") ?? null;
+		return incomingETag;
+	}
+
+	private putIngestInfoInCache(route, etag): Promise<void> {
+		return new Promise(async (resolve) => {
+			await this.db.put("ingest-tracker", {
+				route: route,
+				etag: etag,
+			});
+			resolve();
+		});
+	}
+
+	private async isIngestRequired(route: string, table: string): Promise<{ ingestRequired: boolean; expectedTotal: number }> {
+		let ingestRequired = false;
+		const cached = await this.lookupIngestInfo(route);
+		const expectedTotal = await this.fetchExpectedTotal(route);
+		const incomingETag = await this.fetchIngestEtag(route);
+
+		if (typeof cached !== "undefined") {
+			if (cached.etag === incomingETag) {
+				const currentTotal = await (await this.db.getAll(table)).length;
+				if (currentTotal !== expectedTotal) {
+					ingestRequired = true;
+				}
+			} else {
+				ingestRequired = true;
+				await this.putIngestInfoInCache(route, incomingETag);
+			}
+		} else {
+			ingestRequired = true;
+			await this.putIngestInfoInCache(route, incomingETag);
+		}
+		return { ingestRequired: ingestRequired, expectedTotal: expectedTotal };
+	}
+
+	private async startIngest(route: string, table: string, expectedTotal: number, callback: Function) {
+		const workerUid = uid();
+		try {
+			const worker = new Worker("/js/stream-parser-worker.js");
+			this.workerPool[workerUid] = {
+				worker: worker,
+				table: table,
+				rows: [],
+				busy: false,
+				status: "PARSING",
+				total: expectedTotal,
+				streamStartedCallback: callback,
+				keys: [],
+			};
+			worker.onmessage = this.workerInbox.bind(this);
+			worker.postMessage({
+				url: `${API_URL}/${route}`,
+				uid: workerUid,
+			});
+		} catch (e) {
+			if (typeof StreamParser === "undefined") {
+				// @ts-ignore
+				importScripts("/js/stream-parser.js");
+			}
+			const parser = new StreamParser(route, workerUid, this.workerInbox.bind(this));
+			this.workerPool[workerUid] = {
+				worker: parser,
+				table: table,
+				rows: [],
+				busy: false,
+				status: "PARSING",
+				total: expectedTotal,
+				streamStartedCallback: callback,
+				keys: [],
+			};
+		}
+	}
+
+	private ingestData(data): Promise<object> {
 		return new Promise(async (resolve) => {
 			let { route, table } = data;
 			route = route.replace(/^\//, "");
-			const total = await this.getIngestCount(route);
-			const workerUid = uid();
-			try {
-				const worker = new Worker("/js/stream-parser-worker.js");
-				this.workerPool[workerUid] = {
-					worker: worker,
-					table: table,
-					rows: [],
-					busy: false,
-					status: "PARSING",
-					total: total,
-					streamStartedCallback: resolve,
-					keys: [],
-				};
-				worker.onmessage = this.workerInbox.bind(this);
-				worker.postMessage({
-					url: `${API_URL}/${route}`,
-					uid: workerUid,
-				});
-			} catch (e) {
-				if (typeof StreamParser === "undefined") {
-					// @ts-ignore
-					importScripts("/js/stream-parser.js");
-				}
-				const parser = new StreamParser(route, workerUid, this.workerInbox.bind(this));
-				this.workerPool[workerUid] = {
-					worker: parser,
-					table: table,
-					rows: [],
-					busy: false,
-					status: "PARSING",
-					total: total,
-					streamStartedCallback: resolve,
-					keys: [],
-				};
+			const { ingestRequired, expectedTotal } = await this.isIngestRequired(route, table);
+			if (!ingestRequired) {
+				resolve(null);
+			} else {
+				await this.startIngest(route, table, expectedTotal, resolve);
 			}
 		});
 	}
@@ -294,6 +358,14 @@ class IDBWorker {
 					for (let i = 0; i < db.objectStoreNames.length; i++) {
 						db.deleteObjectStore(db.objectStoreNames[i]);
 					}
+
+					const ingestTracker = db.createObjectStore("ingest-tracker", {
+						keyPath: "route",
+						autoIncrement: false,
+					});
+					ingestTracker.createIndex("route", "route", { unique: true });
+					ingestTracker.createIndex("etag", "etag", { unique: true });
+
 					for (let i = 0; i < scheam.tables.length; i++) {
 						const table: Table = scheam.tables[i];
 						const options = {

@@ -3,12 +3,13 @@
 namespace App\Services;
 
 use Log;
+use Illuminate\Support\Facades\Cache;
 
 use App\Models\User;
 
 class IngestService
 {
-    public function getAllUsers()
+    public function getAllUsers(): array
     {
         $output = [];
         $users = User::get();
@@ -25,9 +26,12 @@ class IngestService
         return $output;
     }
 
-    public function countUsers()
+    public function countUsers(): int
     {
-        $count = User::count();
-        return $count;
+        $count = Cache::get("user-count", null);
+        if (is_null($count)) {
+            $count = User::count();
+        }
+        return (int) $count;
     }
 }

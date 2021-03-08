@@ -50,6 +50,9 @@ class IDBManager {
 			case "download-finished":
 				EventBus.publish(data.workerUid, "download-finished");
 				break;
+			case "download-error":
+				EventBus.publish(data.workerUid, "download-error");
+				break;
 			case "unpack-tick":
 				EventBus.publish(data.workerUid, "unpack-tick");
 				break;
@@ -103,8 +106,12 @@ function Ingest(route: string, table: string): Promise<boolean> {
 				streamStartedCallback
 			);
 		})
-			.then(({ workerUid, total }) => {
-				resolve(true);
+			.then((data) => {
+				if (data === null) {
+					resolve(true);
+				} else {
+					resolve(false);
+				}
 			})
 			.catch(() => {
 				resolve(false);

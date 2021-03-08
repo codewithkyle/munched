@@ -17,7 +17,7 @@ class IngestController extends Controller
         try {
             $accepts = $this->validateAcceptHeader($request, ["application/x-ndjson", "application/json"]);
         } catch (Exception $e) {
-            return response($e->getMessage(), $e->statusCode);
+            return response($e->getMessage(), $e->getStatusCode());
         }
         switch ($accepts) {
             case "application/x-ndjson":
@@ -29,6 +29,13 @@ class IngestController extends Controller
                 $data = $ingestService->getAllUsers();
                 return $this->buildSuccessResponse($data);
         }
+    }
+
+    public function getUsersHead(Request $request)
+    {
+        $path = storage_path("ndjson/users.ndjson");
+        $etag = $this->generateEtag($path);
+        return response("")->header("ETag", $etag);
     }
 
     public function countUsers(Request $request): JsonResponse

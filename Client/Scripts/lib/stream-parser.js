@@ -73,6 +73,10 @@ class StreamParser {
 			});
 		} else {
 			console.error(`${response.status}: ${response.statusText}`);
+		    this.inbox({
+		    	type: "error",
+		    	uid: this.workerUid,
+		    });
 		}
     }
 }

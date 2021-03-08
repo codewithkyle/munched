@@ -107,7 +107,7 @@ class UserService
                 $updatedGroups[] = $group;
             }
             $this->user->groups = $updatedGroups;
-            $this->user->save();
+            $this->save();
         }
     }
 
@@ -121,7 +121,7 @@ class UserService
                 }
             }
             $this->user->groups = $updatedGroups;
-            $this->user->save();
+            $this->save();
         }
     }
 
