@@ -56,3 +56,39 @@ async function GetExampleData(): Promise<ExampleResponse> {
 ```
 
 > **NOTE:** the `ExampleResponse` interface should be added to the `Client/Scripts/types.d.ts` file.
+
+## Using the Offline Outbox
+
+```csharp
+using Client.Models.API;
+
+ResponseCore Response = await JSRuntime.InvokeAsync<ResponseCore>("ExampleRequest", "example data");
+if (Response.Success)
+{
+	switch (Response.StatusCode){
+		case 502:
+			await JSRuntime.InvokeVoidAsync("Alert", "warning", "Request Pending", "The request is sitting in your outbox because you do not currently have an internet connection.");
+			break;
+		default:
+			return;
+	}
+}
+```
+
+```typescript
+async function ExampleRequest(example:any): Promise<ResponseCore> {
+	const data = {
+		example: example,
+	};
+	try{
+		const request = await apiRequest("/v1/example", "POST", data);
+		const fetchResponse = await request.json();
+		const response = buildResponseCore(fetchResponse.success, request.status, fetchResponse.error);
+		return response;
+	} catch (e) {
+		const success = await Outbox(`${API_URL}/v1/example`, "POST", data);
+		const response = buildResponseCore(success, 502, null);
+		return response;
+	}
+}
+```

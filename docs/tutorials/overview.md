@@ -16,3 +16,4 @@ New to Blazor, Lumen or to web development in general? Well, you came to the rig
 - [Adding NPM packages](/tutorials/npm-packages)
 - [Adding scripts](/tutorials/scripts)
 - [Adding stylesheets](/tutorials/stylesheets)
+- [Creating Tables in IndexedDB](/tutorials/creating-idb-tables)
