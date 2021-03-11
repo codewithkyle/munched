@@ -196,6 +196,9 @@ connection.addEventListener("change", (e) => {
 self.onmessage = async (event) => {
     const { type } = event.data;
     switch (type){
+        case "flush-outbox":
+            flushOutbox();
+            break;
         case "queue":
             if (event.data?.url && event.data?.method && event.data?.payload){
                 queue(event.data.url, event.data.method, event.data.payload);
@@ -216,7 +219,7 @@ self.onmessage = async (event) => {
     }
 }
 
-// VENDOR CODE BELOW -- DO NOT TOUCH
+///////// VENDOR CODE BELOW -- DO NOT TOUCH \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 var idb = function (e) {
     "use strict";
     let t, n;

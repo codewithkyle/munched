@@ -264,3 +264,8 @@ function Outbox(url: string, method: "POST" | "DELETE" | "PUT", data: any) {
 		});
 	}
 }
+if (sw?.controller && navigator.onLine) {
+	sw.controller.postMessage({
+		type: "flush-outbox",
+	});
+}
