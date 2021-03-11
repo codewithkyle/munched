@@ -253,3 +253,14 @@ connection.addEventListener("change", (e) => {
 if (!navigator.onLine) {
 	Alert("warning", "Application Offline", "You do not have a network connection. Parts of this application may not work as expected.");
 }
+
+function Outbox(url: string, method: "POST" | "DELETE" | "PUT", data: any) {
+	if (sw?.controller) {
+		sw.controller.postMessage({
+			type: "queue",
+			url: url,
+			method: method,
+			payload: data,
+		});
+	}
+}

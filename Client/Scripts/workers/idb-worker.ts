@@ -43,7 +43,7 @@ type WorkerPool = {
 };
 
 // If you change the DB name you must also update the Service Worker's clearCache() method
-const DB_NAME = "localdb";
+const DB_NAME = "application";
 
 class IDBWorker {
 	private db: any;
