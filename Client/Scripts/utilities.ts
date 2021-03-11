@@ -233,3 +233,23 @@ function ConvertToBase64(file: File | Blob): Promise<string> {
 function SetTitle(title: string) {
 	document.title = title;
 }
+
+// @ts-ignore
+var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+let wasOffline = navigator.onLine === false;
+connection.addEventListener("change", (e) => {
+	if (navigator.onLine) {
+		if (wasOffline) {
+			Alert("success", "Reconnected", "Your network connection has been reestablished.");
+		}
+		wasOffline = false;
+	} else {
+		if (!wasOffline) {
+			Alert("warning", "Connection Lost", "Your network connection has gone away. Parts of this application may no longer work as expected.");
+		}
+		wasOffline = true;
+	}
+});
+if (!navigator.onLine) {
+	Alert("warning", "Application Offline", "You do not have a network connection. Parts of this application may not work as expected.");
+}
