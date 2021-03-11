@@ -254,7 +254,7 @@ if (!navigator.onLine) {
 	Alert("warning", "Application Offline", "You do not have a network connection. Parts of this application may not work as expected.");
 }
 
-function Outbox(url: string, method: "POST" | "DELETE" | "PUT", data: any) {
+async function Outbox(url: string, method: "POST" | "DELETE" | "PUT", data: any):Promise<boolean> {
 	if (sw?.controller) {
 		sw.controller.postMessage({
 			type: "queue",
@@ -262,7 +262,9 @@ function Outbox(url: string, method: "POST" | "DELETE" | "PUT", data: any) {
 			method: method,
 			payload: data,
 		});
+		return true;
 	}
+	return false;
 }
 if (sw?.controller && navigator.onLine) {
 	sw.controller.postMessage({
